@@ -32,10 +32,10 @@ This is a paper idea (for DIS?), which I discussed (in a high-level format) with
       1. Config files for cases 1 and 2.
       2. Output from tool: blank project for cases 1 and 2;
       3. Full REFI-QDA file and sources from cases 1 and 2;
-5. Findings
+5. Findings and contributions
    1. TBD;
 6. Future research
-   1. Complementing the materials by combining them with recordings of let's play videos or dev streaming;
-   2. Use for software studies, as it allows for quali-coding source code;
+   1. Opportunity: Complementing the materials by combining them with recordings of let's play videos or dev streaming;
+   2. Opportunity: Use for software studies, as it allows for quali-coding source code;
    3. Use for comparing analysis and quali-coding processes (by devs vs external team);
    4. Use in GaR research projects using MDM (or not using it)

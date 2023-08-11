@@ -1,3 +1,11 @@
+# Process journal
+
+## 2023-08-11 Work restart
+
+After dealing with some contract issues, I'm back on track.
+
+I created a boilerplate blank Electron project that creates a Windows app. I have then managed to bring in scripts from `archivistagd` to load Git commit date from a GitHub repo info (e.g. `usarname/reponame`). After a couple hours of work, I now have a basic pipeline working, generating a completely empty QDPX project file that could be imported on QualCoder. It is still very early on, but it is the base for a proof-of-concept functionality.
+
 ## 2023-08-02 REFI-QDA research and tool definition
 
 ### Project setup & paper ideas

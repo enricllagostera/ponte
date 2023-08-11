@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'" />
+    <title>Repo to QDA</title>
+
+    <script src="./src/renderer.js"></script>
+
+    <!-- <link rel="stylesheet" href="src/css/new.min.css" /> -->
+  </head>
+  <body>
+    <header>
+      <h1>Repo to QDA</h1>
+    </header>
+    <p id="gitData">
+      Fetching Git commit data for enricllagostera/sample_webgame_repo from
+      GitHub...
+    </p>
+
+    <table>
+      <tr>
+        <td id="inputData"></td>
+        <td id="outputData">Output data.</td>
+      </tr>
+    </table>
+  </body>
+</html>

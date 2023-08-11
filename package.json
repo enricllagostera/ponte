@@ -1,0 +1,46 @@
+{
+  "name": "repo-to-qda",
+  "version": "0.0.1",
+  "description": "A tool to create QDA projects from Git repositories.",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/enricllagostera/repo-to-qda.git"
+  },
+  "keywords": [
+    "qda",
+    "git",
+    "qualitative-analsysis"
+  ],
+  "author": "Enric Granzotto Llagostera",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/enricllagostera/repo-to-qda/issues"
+  },
+  "homepage": "https://github.com/enricllagostera/repo-to-qda#readme",
+  "devDependencies": {
+    "@electron-forge/cli": "^6.3.0",
+    "@electron-forge/maker-deb": "^6.3.0",
+    "@electron-forge/maker-rpm": "^6.3.0",
+    "@electron-forge/maker-squirrel": "^6.3.0",
+    "@electron-forge/maker-zip": "^6.3.0",
+    "@electron-forge/plugin-auto-unpack-natives": "^6.3.0",
+    "electron": "^25.5.0"
+  },
+  "dependencies": {
+    "@fabien0102/git2json": "^1.4.0",
+    "adm-zip": "^0.5.10",
+    "axios": "^1.4.0",
+    "electron-squirrel-startup": "^1.0.0",
+    "fast-xml-parser": "^4.2.7",
+    "luxon": "^3.4.0",
+    "simple-git": "^3.19.1",
+    "uuid": "^9.0.0"
+  }
+}
