@@ -3,14 +3,17 @@ const path = require("path");
 const fs = require("fs-extra");
 const { DateTime } = require("luxon");
 
+const { create } = require("xmlbuilder2");
+
 const { v4: uuidv4 } = require("uuid");
-const { XMLBuilder } = require("fast-xml-parser");
 const AdmZip = require("adm-zip");
 
 const GitLogLoader = require("./src/gitLogLoader");
 const loader = new GitLogLoader();
 
 let mainWindow;
+
+let guidDB = {};
 
 console.log(GitLogLoader);
 
@@ -64,41 +67,41 @@ const createProjectFile = async (commitsData) => {
     guid: uuidv4(),
     name: "DEFAULT",
   };
-  let variablesGuid = {
-    TimestampISO: uuidv4(),
-  };
+  guidDB.CommitAuthor = uuidv4();
+  guidDB.DefaultUser = defaultUser.guid;
+  guidDB.TimestampISO = uuidv4();
 
   let baseXmlForQdeFile = {
-    "?xml": {
-      "@_version": "1.0",
-      "@_encoding": "utf-8",
-      "@_standalone": "yes",
-      Project: {
-        "@_name": "enricllagostera-sample_webgame_repo.qda",
-        "@_xmlns:xsd": "http://www.w3.org/2001/XMLSchema",
-        "@_xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
-        "@_creatingUserGUID": defaultUser.guid,
-        "@_origin": "RepoToQDA",
-        "@_creationDateTime": DateTime.now().toString(),
-        "@_xmlns": "urn:QDA-XML:project:1.0",
-        Users: [
-          {
-            User: {
-              "@_guid": defaultUser.guid,
-              "@_name": defaultUser.name,
-            },
+    Project: {
+      "@name": "enricllagostera-sample_webgame_repo.qda",
+      "@xmlns:xsd": "http://www.w3.org/2001/XMLSchema",
+      "@xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+      "@creatingUserGUID": guidDB.DefaultUser,
+      "@origin": "RepoToQDA",
+      "@creationDateTime": DateTime.now().toString(),
+      "@xmlns": "urn:QDA-XML:project:1.0",
+      Users: [
+        {
+          User: {
+            "@guid": defaultUser.guid,
+            "@name": defaultUser.name,
           },
-        ],
-        Sources: [],
-        Description: {},
-        Cases: [],
-        Variables: [
+        },
+      ],
+      Sources: { TextSource: [] },
+      Description: {},
+      Cases: { Case: [] },
+      Variables: {
+        Variable: [
           {
-            Variable: {
-              "@_name": "TimestampISO",
-              "@_guid": variablesGuid.TimestampISO,
-              "@_typeOfVariable": "Text",
-            },
+            "@name": "TimestampISO",
+            "@guid": guidDB.TimestampISO,
+            "@typeOfVariable": "Text",
+          },
+          {
+            "@name": "CommitAuthor",
+            "@guid": guidDB.CommitAuthor,
+            "@typeOfVariable": "Text",
           },
         ],
       },
@@ -106,42 +109,54 @@ const createProjectFile = async (commitsData) => {
   };
   // Create cases from commits
   commitsData.forEach((commit) => {
+    createJSONFromCommit(baseXmlForQdeFile, commit, exportSourcesPath);
+    console.log(guidDB[`${commit.hashAbbrev}__raw_data`]);
     let newCase = {
-      Case: {
-        "@_name": commit.hashAbbrev + ": " + commit.subject,
-        "@_guid": uuidv4(),
-        Description:
+      "@name": commit.hashAbbrev + ": " + commit.subject,
+      "@guid": uuidv4(),
+      Description: {
+        "#":
           "Commit " +
           commit.hashAbbrev +
           ": " +
           commit.subject +
           " created on " +
           DateTime.fromMillis(commit.author.timestamp).toLocaleString(),
-        VariableValue: {
-          VariableRef: {
-            "@_targetGUID": variablesGuid.TimestampISO,
-          },
-          TextValue: DateTime.fromMillis(commit.author.timestamp).toISO(),
-        },
+      },
+      VariableValue: [],
+      SourceRef: {
+        "@targetGUID": guidDB[`${commit.hashAbbrev}__raw_data`],
       },
     };
-    baseXmlForQdeFile["?xml"].Project.Cases.push(newCase);
+    newCase.VariableValue.push(
+      createVariableValueText(
+        guidDB.TimestampISO,
+        DateTime.fromMillis(commit.author.timestamp).toISO()
+      )
+    );
+    newCase.VariableValue.push(
+      createVariableValueText(guidDB.CommitAuthor, commit.author.name)
+    );
+    baseXmlForQdeFile.Project.Cases.Case.push(newCase);
   });
-  console.log(baseXmlForQdeFile["?xml"].Project.Cases);
-  // Convert JS object to XML string
-  const builder = new XMLBuilder({
-    arrayNodeName: "commits",
-    ignoreAttributes: false,
-  });
-  const outputXml = builder.build(baseXmlForQdeFile);
-  console.log(outputXml);
+  //console.log("\n" + JSON.stringify(baseXmlForQdeFile));
 
+  // Convert JS object to XML string
+  let doc = {};
+  try {
+    doc = create(
+      { version: "1.0", encoding: "utf-8", standalone: "yes" },
+      baseXmlForQdeFile
+    );
+  } catch (error) {
+    console.log(error);
+  }
+  const outputXml = doc.end({ prettyPrint: true });
   fs.writeFileSync(path.join(exportPath, "project.qde"), outputXml);
   // Add export folder to ZIP, write it to disk as .QDPX file
   let zip = new AdmZip();
-  const qdpxPath = path.join(app.getPath("temp"), "qdpx");
+  const qdpxPath = path.join(app.getPath("temp"), "repo-to-qda/qdpx");
   fs.emptyDirSync(qdpxPath);
-  await zip.addLocalFolderPromise(exportPath, "");
   await zip.writeZipPromise(path.join(qdpxPath, `project.qdpx`));
   console.log("done qdpx zip packing");
 };
@@ -149,3 +164,46 @@ const createProjectFile = async (commitsData) => {
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") app.quit();
 });
+
+function createJSONFromCommit(baseXml, commit, sourcesPath) {
+  let ts = createTextSourceObject(
+    `commit_data_${commit.hashAbbrev}`,
+    `Raw commit data for ${
+      commit.hashAbbrev
+    }. Commit from ${DateTime.fromMillis(
+      commit.author.timestamp
+    ).toLocaleString()}.`
+  );
+  guidDB[commit.hashAbbrev + "__raw_data"] = ts["@guid"];
+  baseXml.Project.Sources.TextSource.push(ts);
+
+  fs.writeFileSync(
+    path.join(sourcesPath + `/${guidDB[commit.hashAbbrev + "__raw_data"]}.txt`),
+    JSON.stringify(commit, undefined, "\t")
+  );
+}
+
+function createTextSourceObject(sourceName, sourceDescription) {
+  const guid = uuidv4();
+  let textSource = {
+    "@guid": guid,
+    "@name": sourceName,
+    "@plainTextPath": `internal://${guid}.txt`,
+    "@creatingUser": guidDB.DefaultUser,
+    "@creationDateTime": DateTime.now().toString(),
+    Description: {
+      "#": sourceDescription,
+    },
+  };
+  return textSource;
+}
+
+function createVariableValueText(targetGUID, value) {
+  let vv = {
+    VariableRef: {
+      "@targetGUID": targetGUID,
+    },
+    TextValue: { "#": value },
+  };
+  return vv;
+}
