@@ -1,5 +1,9 @@
 # Process journal
 
+## 2023-08-12 Commits as cases
+
+I managed to create and successfully export commits as cases in a QDPX file. The cases also have variables attached to them, and I have started detailing more what data should be in the QDPX project and how to organzie it.
+
 ## 2023-08-11 Work restart
 
 After dealing with some contract issues, I'm back on track.

@@ -32,9 +32,7 @@ const processGitData = async (clonePath) => {
   );
   //console.log(result);
   mainWindow.webContents.send("gitlog", JSON.stringify(result));
-
-  createProjectFile();
-
+  createProjectFile(result);
   return result;
 };
 
@@ -51,12 +49,25 @@ const createWindow = () => {
   return win;
 };
 
-const createProjectFile = async () => {
+const createProjectFile = async (commitsData) => {
+  // Prepare temp export folder and subfolder for sources XML file as .QDE
+  const exportPath = path.join(app.getPath("temp"), "repo-to-qda/export");
+  const exportSourcesPath = path.join(
+    app.getPath("temp"),
+    "repo-to-qda/export/Sources"
+  );
+  fs.emptyDirSync(exportPath);
+  fs.mkdirSync(exportSourcesPath);
+  console.log(exportPath);
   //Prepare template JS object with XML header, elmenets and attributes
   let defaultUser = {
     guid: uuidv4(),
     name: "DEFAULT",
   };
+  let variablesGuid = {
+    TimestampISO: uuidv4(),
+  };
+
   let baseXmlForQdeFile = {
     "?xml": {
       "@_version": "1.0",
@@ -78,11 +89,45 @@ const createProjectFile = async () => {
             },
           },
         ],
-        Sources: {},
+        Sources: [],
         Description: {},
+        Cases: [],
+        Variables: [
+          {
+            Variable: {
+              "@_name": "TimestampISO",
+              "@_guid": variablesGuid.TimestampISO,
+              "@_typeOfVariable": "Text",
+            },
+          },
+        ],
       },
     },
   };
+  // Create cases from commits
+  commitsData.forEach((commit) => {
+    let newCase = {
+      Case: {
+        "@_name": commit.hashAbbrev + ": " + commit.subject,
+        "@_guid": uuidv4(),
+        Description:
+          "Commit " +
+          commit.hashAbbrev +
+          ": " +
+          commit.subject +
+          " created on " +
+          DateTime.fromMillis(commit.author.timestamp).toLocaleString(),
+        VariableValue: {
+          VariableRef: {
+            "@_targetGUID": variablesGuid.TimestampISO,
+          },
+          TextValue: DateTime.fromMillis(commit.author.timestamp).toISO(),
+        },
+      },
+    };
+    baseXmlForQdeFile["?xml"].Project.Cases.push(newCase);
+  });
+  console.log(baseXmlForQdeFile["?xml"].Project.Cases);
   // Convert JS object to XML string
   const builder = new XMLBuilder({
     arrayNodeName: "commits",
@@ -90,12 +135,7 @@ const createProjectFile = async () => {
   });
   const outputXml = builder.build(baseXmlForQdeFile);
   console.log(outputXml);
-  // Prepare temp export folder and save XML file as .QDE
-  const exportPath = path.join(app.getPath("temp"), "export");
-  const exportSourcesPath = path.join(app.getPath("temp"), "export/Sources");
-  console.log(exportPath);
-  fs.emptyDirSync(exportPath);
-  fs.mkdirSync(exportSourcesPath);
+
   fs.writeFileSync(path.join(exportPath, "project.qde"), outputXml);
   // Add export folder to ZIP, write it to disk as .QDPX file
   let zip = new AdmZip();
