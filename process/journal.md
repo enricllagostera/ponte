@@ -1,8 +1,16 @@
 # Process journal
 
+## 2023-08-14 Adding source files
+
+While I worked on creating commits from cases, I had some ideas about what sources to include in the QDPX project. As a test of the process, I'll include the raw JSON for each commit as a separate text file. (...) I managed to do that, but because of the limitations on the import/export functionalities of QualCoder, I don't have a proper CAQDAS software to double check my results. 
+
+I think the best move now would be to focus on creating the different source files and making sure they are readable. As soon as I get access to a CAQDAS tool, I'll go back to checking my import/export process and QDPX file.
+
+Hmmm, as soon as I started trying to add more variables to a case (to expose things like the commit's author), I found problems with the XML builder library I was using. So, I have decided to change for a better one. (...) great, found a better one and converted the code. The XML being exported is cleaner and the code is more readable.
+
 ## 2023-08-12 Commits as cases
 
-I managed to create and successfully export commits as cases in a QDPX file. The cases also have variables attached to them, and I have started detailing more what data should be in the QDPX project and how to organzie it.
+I managed to create and successfully export commits as cases in a QDPX file. The cases also have variables attached to them, and I have started detailing more what data should be in the QDPX project and how to organize it.
 
 ## 2023-08-11 Work restart
 

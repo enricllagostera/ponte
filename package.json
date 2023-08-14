@@ -38,9 +38,9 @@
     "adm-zip": "^0.5.10",
     "axios": "^1.4.0",
     "electron-squirrel-startup": "^1.0.0",
-    "fast-xml-parser": "^4.2.7",
     "luxon": "^3.4.0",
     "simple-git": "^3.19.1",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "xmlbuilder2": "^3.1.1"
   }
 }

@@ -1,14 +1,23 @@
-## 2023-08-11 Empty QDPX proof-of-concept
-
-Main language: JS.
+The projects main language (and ensuing tech stack) is Javascript for a desktop environment.
 
 The app uses Electron as the basis for cross-platform builds, ease of deployment and quick desktop GUI integration with Node. It uses NPM as package manager.
 
-The main functionality will be done via Node modules such as XML parsers, Git libraries, ZIP libraries and JSON manipulation. Other libraries involved are there mostly for dates, andfilesystem operations. Right now, an overview of them is:
+The main functionality will be done via Node modules such as XML parsers, Git libraries, ZIP libraries and JSON manipulation. Other libraries involved are there mostly for dates, and filesystem operations. Right now, an overview of them is:
 
 1. `simple-git` and `git2json` to get Git information from GitHub repos;
-2. `fast-xml-parser` for XML parsing and building;
+2. `xmlbuilder2` for XML parsing and building;
 3. `adm-zip` for compressing and extracting ZIP files (used in the QDPX format);
 4. `Luxon` for dates and `fs-extra` for filesystem I/O;
+5. (To be added) `gray-matter` for parsing YAML frontmatter in text files;
 
 In terms of operation, I'm doing most things from the `main.js` process. I hardcoded a repo (`enricllagostera/sample_webgame_repo`) for now and I'm mostly just sending data to the GUI for testing. There is no actual two-way communication for now.
+
+## Source files per commit
+
+1. [x] Raw log (source/text): a readable version of the full commit log data;
+2. [ ] Devlog (source/text): commit subject and body combined with any external note files added from commit footer (optional, e.g. `devlog: process/devlog/01_project_start.md`);
+3. [ ] Link to repo on GitHub for this commit (variable/text);
+4. [ ] Link to playable build as a GitHub link or folder location (variable/text);
+5. [ ] Process journal at this point in time (source/text): useful for context;
+6. Other curated files
+   1. [ ] Selected from glob rules and converted to either `txt` or `png/jpg`, as needed, according to user-defined rules;
