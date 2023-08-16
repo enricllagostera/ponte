@@ -1,21 +1,21 @@
+// Node and Electron modules
 const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
+
+// Vendor NPM modules
 const fs = require("fs-extra");
 const { DateTime } = require("luxon");
-
 const { create } = require("xmlbuilder2");
-
 const { v4: uuidv4 } = require("uuid");
 const AdmZip = require("adm-zip");
 
+// App modules
 const GitLogLoader = require("./src/gitLogLoader");
 const loader = new GitLogLoader();
 
 let mainWindow;
 
 let guidDB = {};
-
-console.log(GitLogLoader);
 
 app.whenReady().then(() => {
   mainWindow = createWindow();
@@ -26,6 +26,10 @@ app.whenReady().then(() => {
 
   const clonePath = path.join(app.getPath("temp"), "clone");
   const gitData = processGitData(clonePath);
+});
+
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") app.quit();
 });
 
 const processGitData = async (clonePath) => {
@@ -78,7 +82,7 @@ const createProjectFile = async (commitsData) => {
       "@xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
       "@creatingUserGUID": guidDB.DefaultUser,
       "@origin": "RepoToQDA",
-      "@creationDateTime": DateTime.now().toString(),
+      "@creationDateTime": formatDate(DateTime.now()),
       "@xmlns": "urn:QDA-XML:project:1.0",
       Users: [
         {
@@ -88,9 +92,6 @@ const createProjectFile = async (commitsData) => {
           },
         },
       ],
-      Sources: { TextSource: [] },
-      Description: {},
-      Cases: { Case: [] },
       Variables: {
         Variable: [
           {
@@ -105,6 +106,9 @@ const createProjectFile = async (commitsData) => {
           },
         ],
       },
+      Cases: { Case: [] },
+      Sources: { TextSource: [] },
+      Description: {},
     },
   };
   // Create cases from commits
@@ -121,7 +125,7 @@ const createProjectFile = async (commitsData) => {
           ": " +
           commit.subject +
           " created on " +
-          DateTime.fromMillis(commit.author.timestamp).toLocaleString(),
+          formatDate(DateTime.fromMillis(commit.author.timestamp)),
       },
       VariableValue: [],
       SourceRef: {
@@ -131,7 +135,7 @@ const createProjectFile = async (commitsData) => {
     newCase.VariableValue.push(
       createVariableValueText(
         guidDB.TimestampISO,
-        DateTime.fromMillis(commit.author.timestamp).toISO()
+        formatDate(DateTime.fromMillis(commit.author.timestamp))
       )
     );
     newCase.VariableValue.push(
@@ -139,7 +143,6 @@ const createProjectFile = async (commitsData) => {
     );
     baseXmlForQdeFile.Project.Cases.Case.push(newCase);
   });
-  //console.log("\n" + JSON.stringify(baseXmlForQdeFile));
 
   // Convert JS object to XML string
   let doc = {};
@@ -151,7 +154,7 @@ const createProjectFile = async (commitsData) => {
   } catch (error) {
     console.log(error);
   }
-  const outputXml = doc.end({ prettyPrint: true });
+  const outputXml = doc.end({ prettyPrint: true, allowEmptyTags: true });
   fs.writeFileSync(path.join(exportPath, "project.qde"), outputXml);
   // Add export folder to ZIP, write it to disk as .QDPX file
   let zip = new AdmZip();
@@ -161,39 +164,29 @@ const createProjectFile = async (commitsData) => {
   console.log("done qdpx zip packing");
 };
 
-app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") app.quit();
-});
-
 function createJSONFromCommit(baseXml, commit, sourcesPath) {
   let ts = createTextSourceObject(
     `commit_data_${commit.hashAbbrev}`,
-    `Raw commit data for ${
-      commit.hashAbbrev
-    }. Commit from ${DateTime.fromMillis(
-      commit.author.timestamp
-    ).toLocaleString()}.`
+    formatDate(DateTime.fromMillis(commit.author.timestamp))
   );
   guidDB[commit.hashAbbrev + "__raw_data"] = ts["@guid"];
   baseXml.Project.Sources.TextSource.push(ts);
-
   fs.writeFileSync(
     path.join(sourcesPath + `/${guidDB[commit.hashAbbrev + "__raw_data"]}.txt`),
     JSON.stringify(commit, undefined, "\t")
   );
 }
 
-function createTextSourceObject(sourceName, sourceDescription) {
+function createTextSourceObject(sourceName, sourceDateTime) {
   const guid = uuidv4();
   let textSource = {
     "@guid": guid,
     "@name": sourceName,
     "@plainTextPath": `internal://${guid}.txt`,
+    "@richTextPath": `internal://${guid}.txt`,
     "@creatingUser": guidDB.DefaultUser,
-    "@creationDateTime": DateTime.now().toString(),
-    Description: {
-      "#": sourceDescription,
-    },
+    "@creationDateTime": sourceDateTime,
+    "#": "",
   };
   return textSource;
 }
@@ -206,4 +199,8 @@ function createVariableValueText(targetGUID, value) {
     TextValue: { "#": value },
   };
   return vv;
+}
+
+function formatDate(dateTime) {
+  return dateTime.toUTC().toFormat("yyyy-LL-dd'T'hh:mm:ss'Z'");
 }

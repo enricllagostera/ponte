@@ -1,5 +1,11 @@
 # Process journal
 
+## 2023-08-15 Import / export shenanigans
+
+I worked on trying to get cases and source files to connect on my QDPX file when opened into QualCoder, without success. In the process, I started looking into what is and isn't supported by the tool and other CAQDAS. I got an Atlas.ti trial account for testing its importing/exporting functionality as well.
+
+In the process, I did a bunch of research into the different tool supports. Also became more familiar with XML and the particularities of the QDE and QDPX formats.
+
 ## 2023-08-14 Adding source files
 
 While I worked on creating commits from cases, I had some ideas about what sources to include in the QDPX project. As a test of the process, I'll include the raw JSON for each commit as a separate text file. (...) I managed to do that, but because of the limitations on the import/export functionalities of QualCoder, I don't have a proper CAQDAS software to double check my results. 
