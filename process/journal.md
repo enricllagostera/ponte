@@ -1,5 +1,9 @@
 # Process journal
 
+## 2023-08-16 Import & export in Atlas.ti
+
+I have moved on to use Atlas.ti as the tool for testing importing/exporting of QDPX projects. In terms of how to encode information, I'm using mostly codes, organized into code-subcode hierarchies. (...)  I was able to generate codes for each commit and associated them to a JSON/txt file with the raw commit log data (the code is added to the first character of the file). Using a hierarchical (1-deep) code structure seems to work well.
+
 ## 2023-08-15 Import / export shenanigans
 
 I worked on trying to get cases and source files to connect on my QDPX file when opened into QualCoder, without success. In the process, I started looking into what is and isn't supported by the tool and other CAQDAS. I got an Atlas.ti trial account for testing its importing/exporting functionality as well.

@@ -12,6 +12,11 @@ The main functionality will be done via Node modules such as XML parsers, Git li
 
 In terms of operation, I'm doing most things from the `main.js` process. I hardcoded a repo (`enricllagostera/sample_webgame_repo`) for now and I'm mostly just sending data to the GUI for testing. There is no actual two-way communication for now.
 
+## QDPX format notes
+
+- The order of elements in the XML file needs to follow the XSD schema.
+- GUIDs being lower or uppercase seems to be irrelevant.
+
 ## Source files per commit
 
 1. [x] Raw log (source/text): a readable version of the full commit log data;

@@ -2,3 +2,5 @@
 .obsidian/
 out/
 node_modules/
+process/ref_materials/samples/nvivo-export.qdpx
+process/ref_materials/samples/**/
