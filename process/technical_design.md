@@ -8,7 +8,8 @@ The main functionality will be done via Node modules such as XML parsers, Git li
 2. `xmlbuilder2` for XML parsing and building;
 3. `adm-zip` for compressing and extracting ZIP files (used in the QDPX format);
 4. `Luxon` for dates and `fs-extra` for filesystem I/O;
-5. (To be added) `gray-matter` for parsing YAML frontmatter in text files;
+5. `marked` and `html-to-docx` for file format conversions for text sources;
+6. (To be added) `gray-matter` for parsing YAML frontmatter in text files;
 
 In terms of operation, I'm doing most things from the `main.js` process. I hardcoded a repo (`enricllagostera/sample_webgame_repo`) for now and I'm mostly just sending data to the GUI for testing. There is no actual two-way communication for now.
 

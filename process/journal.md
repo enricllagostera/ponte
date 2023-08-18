@@ -1,16 +1,39 @@
 # Process journal
 
+## 2023-08-18 Meeting and next steps
+
+Today there will be a GaR meeting. I'll present what I have so far and show how that could be useful. The goal is also to get inputs (feedback, ideas, comments) to help decide on next actions.
+
+- What to prioritize next?
+  - Tool usability? Compilations/visualizations? Interoperability? Integration with `archivistagd`?
+- Is the feature set shown already useful? What is missing?
+
+(...) Some meeting notes:
+
+1. Pippin asked how brittle is the tool (in terms of requiring specific structures)?
+	1. Quite brittle, this would take a good UI to support the flexibility
+2. How to make it MDM agnostic?
+3. There is a strong linearity in these big complication materials: how to account for something less linear, so that it influences analysis differently?
+	1. Possible approach: Use of graphs and networks within the CAQDAS tool themselves
+4. Conversion wizard steps, connected to Rilla's comment on how to make the codes more usable and to increase the value for researchers in using this tool.
+	1. Idea: add codes to files according to glob patterns
+	2. Idea: add codes to commits according to patterns
+	3. Idea: select commits or files to add codes manually
+	4. Idea: filter out commits per subject pattern
+5. Pippin: how to preserve the mess of the creation process and not tell a story that is too tidied-up or sanitized (connects to comment on linearity).
+	1. Idea: find a way to capture / visualize the repo project structure at each commit (but this is slightly replicating the GitHub browse-at-commit function)
+
 ## 2023-08-17 Adding files from commit to QDPX
 
-My goal for today is to download and copy files from the cloned repo directly to the QDPXproject, tagging them with a commit code. So far, I have only added a file I generated, instead of dealing with all the downloads. I have that code from the `archivistagd`, and I hope re-using it will prove to be quick enough.
+My goal for today is to download and copy files from the cloned repo directly to the QDPX project, tagging them with a commit code. So far, I have only added a file I generated, instead of dealing with all the downloads. I have that code from the `archivistagd`, and I hope re-using it will prove to be quick enough.
 
-(...) Ok, I was able to do the reuse I wanted to. It seems to work fine. So, for now, I have created sources from raw data and Git commit messages. 
+(...) Ok, I was able to do the reuse I wanted to. It seems to work fine. So, for now, I have created sources from raw data and Git commit messages.
 
 Managed to get `docx` into the QDPX, by converting markdown into HTML and then to docx. It is a contrived effort, but it keeps images in context, which is great. For now, it converts local images (from the repo files at each commit) into base64 images (PNG only, so far) and saves them into the docx files. This took longer to setup than I expected and was quite fiddly, but it works now.
 
 ## 2023-08-16 Import & export in Atlas.ti
 
-I have moved on to use Atlas.ti as the tool for testing importing/exporting of QDPX projects. In terms of how to encode information, I'm using mostly codes, organized into code-subcode hierarchies. (...)  I was able to generate codes for each commit and associated them to a JSON/txt file with the raw commit log data (the code is added to the first character of the file). Using a hierarchical (1-deep) code structure seems to work well.
+I have moved on to use Atlas.ti as the tool for testing importing/exporting of QDPX projects. In terms of how to encode information, I'm using mostly codes, organized into code-subcode hierarchies. (...) I was able to generate codes for each commit and associated them to a JSON/txt file with the raw commit log data (the code is added to the first character of the file). Using a hierarchical (1-deep) code structure seems to work well.
 
 ## 2023-08-15 Import / export shenanigans
 
@@ -20,7 +43,7 @@ In the process, I did a bunch of research into the different tool supports. Also
 
 ## 2023-08-14 Adding source files
 
-While I worked on creating commits from cases, I had some ideas about what sources to include in the QDPX project. As a test of the process, I'll include the raw JSON for each commit as a separate text file. (...) I managed to do that, but because of the limitations on the import/export functionalities of QualCoder, I don't have a proper CAQDAS software to double check my results. 
+While I worked on creating commits from cases, I had some ideas about what sources to include in the QDPX project. As a test of the process, I'll include the raw JSON for each commit as a separate text file. (...) I managed to do that, but because of the limitations on the import/export functionalities of QualCoder, I don't have a proper CAQDAS software to double check my results.
 
 I think the best move now would be to focus on creating the different source files and making sure they are readable. As soon as I get access to a CAQDAS tool, I'll go back to checking my import/export process and QDPX file.
 
