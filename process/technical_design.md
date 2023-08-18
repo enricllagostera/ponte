@@ -20,9 +20,15 @@ In terms of operation, I'm doing most things from the `main.js` process. I hardc
 ## Source files per commit
 
 1. [x] Raw log (source/text): a readable version of the full commit log data;
-2. [ ] Devlog (source/text): commit subject and body combined with any external note files added from commit footer (optional, e.g. `devlog: process/devlog/01_project_start.md`);
-3. [ ] Link to repo on GitHub for this commit (variable/text);
-4. [ ] Link to playable build as a GitHub link or folder location (variable/text);
-5. [ ] Process journal at this point in time (source/text): useful for context;
+2. [x] Compilation of the whole process folder (journal, to-do, manifesto) journal at this point in time (source/text): useful for context;
+3. [x] Link to repo on GitHub for this commit (variable/text): included as a field in the devlog file and compilaiton;
+4. [/] Devlog (source/text): commit subject and body combined with any external note files added from commit footer (optional, e.g. `devlog: process/devlog/01_project_start.md`);
+	1. [ ] (optional) Add external notes to the devlog entry;
+5. [ ] Link to playable build as a GitHub link or folder location (variable/text);
 6. Other curated files
    1. [ ] Selected from glob rules and converted to either `txt` or `png/jpg`, as needed, according to user-defined rules;
+
+## Source files for whole repo
+
+1. Compilation of all devlogs (as found in the last commit) as a `text/docx` file;
+2. Compilation of all docs on `process` folder as a `text/docx` file;
