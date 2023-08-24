@@ -1,5 +1,9 @@
 # Process journal
 
+## 2023-08-22 Post meeting work
+
+After last meeting, I also talked to Rilla and we agreed on me implementing more of the UI and actual workflow of the tool, so that it can be deployed and tested by others soon. This also involves implementing some of the customization functionality that I outlined and ideated in previous posts.
+
 ## 2023-08-18 Meeting and next steps
 
 Today there will be a GaR meeting. I'll present what I have so far and show how that could be useful. The goal is also to get inputs (feedback, ideas, comments) to help decide on next actions.
