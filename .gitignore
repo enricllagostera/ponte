@@ -1,6 +1,8 @@
 .vscode/
 .obsidian/
-out/
-node_modules/
+node_modules
+dist
+out
 process/ref_materials/samples/nvivo-export.qdpx
 process/ref_materials/samples/**/
+*.log*

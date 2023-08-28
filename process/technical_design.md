@@ -2,9 +2,9 @@ The projects main language (and ensuing tech stack) is Javascript for a desktop 
 
 ## Tech stack
 
-The app uses Electron as the basis for cross-platform builds, ease of deployment and quick desktop GUI integration with Node. It uses NPM as package manager.
+The app uses Electron as the basis for cross-platform builds, ease of deployment and quick desktop GUI integration with Node. It uses NPM as package manager. Electron is supported via the template and CLI tool called Electron Vite. On the frontend side, I am using the framework Svelte to create modular, reactive UI. As for layouts and visual design, I'm using the Bootstrap library of component styles.
 
-The main functionality will be done via Node modules such as XML parsers, Git libraries, ZIP libraries and JSON manipulation. Other libraries involved are there mostly for dates, and filesystem operations. Right now, an overview of them is:
+The main functionality (i.e. data and file handling and processing) is done via Node modules such as XML parsers, Git libraries, ZIP libraries and JSON manipulation. Other libraries involved are there mostly for dates, and filesystem operations. Right now, an overview of them is:
 
 1. `simple-git` and `git2json` to get Git information from GitHub repos;
 2. `xmlbuilder2` for XML parsing and building;
@@ -14,21 +14,23 @@ The main functionality will be done via Node modules such as XML parsers, Git li
 6. `marked` and `html-to-docx` for file format conversions for text sources;
 7. (To be added) `gray-matter` for parsing YAML frontmatter in text files;
 
-In terms of operation, I'm doing most things from the `main.js` process. I hardcoded a repo (`enricllagostera/sample_webgame_repo`) for now and I'm mostly just sending data to the GUI for testing. There is no actual two-way communication for now.
+In terms of operation, I'm doing most things from the `main.js` process.
 
 ### UX/UI
 
-I'm going to organize the UI mostly by using Bootstrap as the main library for components. I'm looking into using `Alpine.js` to organize reactive aprts of the GUI. Both these tools are familiar from `archivistagd` dev.
+I'm going to organize the UI mostly by using Bootstrap as the main library for components. I'm using Svelte to implement reactive parts of the GUI. 
 
 ## Conversion actions
 
 #todo
 
 1. Loading
-	1. Commit loading
+	1. [x] Validate GitHub repository information
+	2. [x] Define repository via GUI
+	3. Commit loading
 		1. [ ] Ignore commits from commit list (hashes or hashAbbrev)
 		2. [ ] Ignore commits from subject (glob pattern)
-	2. File loading
+	4. File loading
 		1. [ ] Copy file as sources from filename (glob pattern)
 			1. Radio group: In all commits the file is found; Last existing commit; In specific commit(s);
 		2. [ ] Copy file as sources and encode from filename (glob pattern)
