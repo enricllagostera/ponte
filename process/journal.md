@@ -1,5 +1,13 @@
 # Process journal
 
+## 2023-08-25 Continuing on UI
+
+I'll work on integrating and creating the technical backbones for the GUI. (...) Ended up doing some unrelated clean-up, to remove some of the libraries that were giving security warnings. Those were related to the commit xips downloading and extracting.
+
+## 2023-08-24 Work on customization process
+
+I need to plan and better understand the flow of using the tool, to make sure that the UI will make sense / work well enough. My initial idea is to have something like a three-fold format with panes. The left-most pane is for the repo info and general project information. The middle column is for the rules, transformations and conversions that the tool will perform. The right pane is for a preview of the contents and their structure (e.g. sources, codes).
+
 ## 2023-08-22 Post meeting work
 
 After last meeting, I also talked to Rilla and we agreed on me implementing more of the UI and actual workflow of the tool, so that it can be deployed and tested by others soon. This also involves implementing some of the customization functionality that I outlined and ideated in previous posts.
