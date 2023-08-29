@@ -13,7 +13,11 @@ if (process.contextIsolated) {
     contextBridge.exposeInMainWorld('api', api)
     contextBridge.exposeInMainWorld('loader', {
       checkRepoInfo: (repoInfo) => ipcRenderer.invoke('checkRepoInfo', repoInfo),
-      loadRepoData: (repoInfo) => ipcRenderer.invoke('loadRepoData', repoInfo)
+      loadRepoData: (repoInfo) => ipcRenderer.invoke('loadRepoData', repoInfo),
+      getDevlogForCommit: (hashAbbrev, devlogConfig) =>
+        ipcRenderer.invoke('getDevlogForCommit', hashAbbrev, devlogConfig),
+      getDevlogCompilation: (devlogCompilationConfig) =>
+        ipcRenderer.invoke('getDevlogCompilation', devlogCompilationConfig)
     })
   } catch (error) {
     console.error(error)

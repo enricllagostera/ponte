@@ -2,9 +2,13 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import { DateTime } from 'luxon'
 
 import utils from './helpers'
 import DataInitializer from './dataInitializer'
+
+let initializer
+let allCommits
 
 function createWindow() {
   // Create the browser window.
@@ -46,10 +50,13 @@ function createWindow() {
   ipcMain.handle('loadRepoData', async (_event, repoInfo) => {
     const inputGitDataPath = join(app.getPath('temp'), 'repo-to-qda/inputGitData')
     const processedGitDataPath = join(app.getPath('temp'), 'repo-to-qda/processedGitData')
-    const initializer = new DataInitializer(repoInfo, inputGitDataPath, processedGitDataPath)
-    let allCommits = await initializer.loadCommitsFromGit()
+    initializer = new DataInitializer(repoInfo, inputGitDataPath, processedGitDataPath)
+    allCommits = await initializer.loadCommitsFromGit()
     return JSON.stringify(allCommits)
   })
+
+  ipcMain.handle('getDevlogForCommit', getDevlogForCommit)
+  ipcMain.handle('getDevlogCompilation', getDevlogCompilation)
 
   ipcMain.handle('ping', () => 'pong')
 
@@ -94,5 +101,40 @@ app.on('window-all-closed', () => {
   }
 })
 
+async function getDevlogForCommit(_event, commitHash, devlogConfig) {
+  const commitData = allCommits.filter((c) => c.hashAbbrev == commitHash)[0]
+  // basic devlog from commit message
+  const commitISODate = DateTime.fromMillis(commitData.author.timestamp).toISODate()
+  const devlog = {
+    hashAbbrev: commitData.hashAbbrev,
+    name: `Devlog for #${commitData.hashAbbrev} on ${commitISODate}`,
+    content: `${commitData.subject}\n\nCommit date: ${commitISODate}\n\nMessage:\n\n${
+      commitData.body || 'Empty commit message.'
+    }`
+  }
+  return devlog
+}
+
+async function getDevlogCompilation(_event, devlogCompilationConfig) {
+  let comp = '# Devlog compilation\n\n'
+  let selectedCommits = allCommits.filter(
+    (c) => devlogCompilationConfig.selectedCommits.indexOf(c.hashAbbrev) >= 0
+  )
+
+  for (let i = 0; i < selectedCommits.length; i++) {
+    const sc = selectedCommits[i]
+    const devlogContent = await getDevlogForCommit(null, sc.hashAbbrev)
+    comp += `## ${devlogContent.name}\n\n${devlogContent.content}\n\n---\n\n`
+  }
+
+  const devlog = {
+    parent: 'repository',
+    hashAbbrev: '',
+    name: `Devlog compilation`,
+    content: comp
+  }
+
+  return devlog
+}
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.

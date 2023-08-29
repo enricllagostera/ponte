@@ -47,9 +47,9 @@ I'm going to organize the UI mostly by using Bootstrap as the main library for c
 		2. [ ] Encode files from text content (glob pattern, aka auto-code)
 		3. [ ] Encode manually selected files
 3. Devlogs
-	1. [ ] Generate devlog compilation
+	1. [/] Generate devlog compilation
 		1. Checkboxes: Add commit logs; Add file from commit `devlog` footer; Add link to each build;
-	2. [ ] ==Generate a devlog for each commit==
+	2. [/] Generate a devlog for each commit
 		1. Checkboxes: Add commit logs; Add file from commit `devlog` footer; Add link to each build;
 4. Compilations
 	1. [ ] Generate a docx from a folder compilation (glob pattern)

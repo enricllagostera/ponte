@@ -1,5 +1,9 @@
 # Process journal
 
+## 2023-08-29 Work is picking up pace with new tech stack
+
+After the changes to the underlying libraries, I'm getting some more functionality into the app. I have implemented basic devlog generation (per commit and as a repo compilation). The process for adding features feels more straightforward now. I'll continue doing that for the next couple days.
+
 ## 2023-08-25 Continuing on UI
 
 I'll work on integrating and creating the technical backbones for the GUI. (...) Ended up doing some unrelated clean-up, to remove some of the libraries that were giving security warnings. Those were related to the commit xips downloading and extracting.
