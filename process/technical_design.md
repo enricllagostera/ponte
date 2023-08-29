@@ -30,6 +30,7 @@ I'm going to organize the UI mostly by using Bootstrap as the main library for c
 	3. Commit loading
 		1. [ ] Ignore commits from commit list (hashes or hashAbbrev)
 		2. [ ] Ignore commits from subject (glob pattern)
+		3. [x] Ignore commits from manual selection
 	4. File loading
 		1. [ ] Copy file as sources from filename (glob pattern)
 			1. Radio group: In all commits the file is found; Last existing commit; In specific commit(s);
@@ -48,7 +49,7 @@ I'm going to organize the UI mostly by using Bootstrap as the main library for c
 3. Devlogs
 	1. [ ] Generate devlog compilation
 		1. Checkboxes: Add commit logs; Add file from commit `devlog` footer; Add link to each build;
-	2. [ ] Generate a devlog for each commit
+	2. [ ] ==Generate a devlog for each commit==
 		1. Checkboxes: Add commit logs; Add file from commit `devlog` footer; Add link to each build;
 4. Compilations
 	1. [ ] Generate a docx from a folder compilation (glob pattern)
