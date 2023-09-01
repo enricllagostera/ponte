@@ -18,4 +18,4 @@ N/A.
 
 ## License
 
-The tool is MIT licensed. The documentation text and materials are licensed as CC-BY-SA, with the exception of materials used for research purposes ([more detail here](process/ref_materials/README.md)).
+The tool is MIT licensed. The documentation text and materials are licensed as CC-BY-SA, with the exception of materials used for research purposes ([more detail here](../process/ref_materials/README.md)).
