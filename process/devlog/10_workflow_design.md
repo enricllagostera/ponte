@@ -2,6 +2,8 @@
 date: 2023-08-24
 ---
 
+# 10 Workflow design
+
 Here is a draft of a general flow. It has a three-pane structure.
 
 ![](conversion_workflow.png)

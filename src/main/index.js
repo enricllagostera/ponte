@@ -58,8 +58,6 @@ function createWindow() {
   ipcMain.handle('getDevlogForCommit', getDevlogForCommit)
   ipcMain.handle('getDevlogCompilation', getDevlogCompilation)
 
-  ipcMain.handle('ping', () => 'pong')
-
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
@@ -101,16 +99,16 @@ app.on('window-all-closed', () => {
   }
 })
 
-async function getDevlogForCommit(_event, commitHash, devlogConfig) {
+async function getDevlogForCommit(_event, commitHash) {
   const commitData = allCommits.filter((c) => c.hashAbbrev == commitHash)[0]
   // basic devlog from commit message
   const commitISODate = DateTime.fromMillis(commitData.author.timestamp).toISODate()
   const devlog = {
     hashAbbrev: commitData.hashAbbrev,
     name: `Devlog for #${commitData.hashAbbrev} on ${commitISODate}`,
-    content: `${commitData.subject}\n\nCommit date: ${commitISODate}\n\nMessage:\n\n${
-      commitData.body || 'Empty commit message.'
-    }`
+    content: `${commitData.subject}\n\nCommit date: ${DateTime.fromMillis(
+      commitData.author.timestamp
+    ).toISO()}\n\nMessage:\n\n${commitData.body || 'Empty commit message.'}`
   }
   return devlog
 }

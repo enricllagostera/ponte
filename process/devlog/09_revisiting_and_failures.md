@@ -3,6 +3,8 @@ date: 2023-08-24
 title: "Revisiting the app's technical infrastructure (and failing)"
 ---
 
+# 09 Revisiting the app's technical infrastructure (and failing)
+
 Now that I'm moving to working on the GUI functionality, I want to make sure that the app stack will be maintainable and usable.
 
 Right now, everything is implemented in one place, just for testing out. As I refactor to better organzie things, I'm thinking of working two changes with an eye to a longer term dev workflow: creating a basic plugin system for functionality and changing the codebase to Typescript.
