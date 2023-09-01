@@ -1,11 +1,13 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron'
 import { join } from 'path'
+import * as fs from 'fs-extra'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { DateTime } from 'luxon'
 
 import utils from './helpers'
 import DataInitializer from './dataInitializer'
+import { options } from 'marked'
 
 let initializer
 let allCommits
@@ -57,6 +59,8 @@ function createWindow() {
 
   ipcMain.handle('getDevlogForCommit', getDevlogForCommit)
   ipcMain.handle('getDevlogCompilation', getDevlogCompilation)
+  ipcMain.handle('saveDialog', saveDialog, mainWindow)
+  ipcMain.handle('loadDialog', loadDialog, mainWindow)
 
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
@@ -98,6 +102,38 @@ app.on('window-all-closed', () => {
     app.quit()
   }
 })
+
+async function loadDialog(_event, loadOptions) {
+  let res
+  try {
+    res = await dialog.showOpenDialog(null, {
+      ...loadOptions,
+      filters: [{ name: 'Repo to QDA JSON', extensions: ['json'] }],
+      properties: ['openFile']
+    })
+    if (fs.existsSync(res.filePaths[0])) {
+      res = fs.readJSONSync(res.filePaths[0])
+    }
+    return res
+  } catch (error) {
+    res = undefined
+  }
+  return res
+}
+
+async function saveDialog(_event, saveOptions) {
+  let res
+  try {
+    res = await dialog.showSaveDialog(null, {
+      ...saveOptions,
+      filters: [{ name: 'Repo to QDA JSON', extensions: ['json'] }]
+    })
+  } catch (error) {
+    res = undefined
+  }
+  fs.ensureFileSync(res.filePath)
+  fs.writeJSONSync(res.filePath, saveOptions.data)
+}
 
 async function getDevlogForCommit(_event, commitHash) {
   const commitData = allCommits.filter((c) => c.hashAbbrev == commitHash)[0]

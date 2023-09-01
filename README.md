@@ -4,7 +4,7 @@ A tool to prepare game dev project repositories for analysis using QDA (qualitat
 
 This project is being developed by [Enric Granzotto Llagostera](https://enric.llagostera.com.br) as part of the [Games as Research](https://www.gamesasresearch.com/) project.
 
-See the [information page](info/README.md) for more detail.
+See the [information page](info/README.md) for more detail on the project.
 
 ## Installation
 

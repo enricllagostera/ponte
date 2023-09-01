@@ -9,11 +9,11 @@
   }
 </script>
 
-<div class="card rounded-0 m-1 flex-grow-1">
+<div class="card rounded-0 m-1 flex-grow-1" class:text-bg-secondary={!qdpxData.commits.length > 0}>
   <div class="card-header d-flex flex-grow-0 align-items-end">
     <h5>QDPX Preview</h5>
   </div>
-  <div class="card-body flexOverflow overflow-y-scroll">
+  <div class="card-body flexOverflow overflow-y-auto">
     <div class="text-primary">
       <h3><i class="bi bi-archive"></i> Sources</h3>
       <ul class=" list-unstyled my-2">

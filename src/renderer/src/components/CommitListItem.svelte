@@ -26,7 +26,7 @@
   <div class="card-body">
     <h6 class="card-title">{commit.subject}</h6>
     {#if commit.body != ''}
-      <div class="commitBody text-secondary">
+      <div class="commitBody text-body-secondary">
         <!-- eslint-disable-next-line svelte/no-at-html-tags -->
         {@html marked.parse(commit.body)}
       </div>

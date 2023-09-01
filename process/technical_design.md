@@ -22,7 +22,17 @@ In terms of operation, I'm doing most things from the `main.js` process.
 
 I'm going to organize the UI mostly by using Bootstrap as the main library for components. I'm using Svelte to implement reactive parts of the GUI. 
 
-## Conversion actions
+## Features
+
+#todo
+
+1. QDPX export
+2. Save and load configuration files
+	1. [x] Add a navbar GUI
+	2. [x] Save config file
+	3. [x] Load config file
+
+### Conversion actions
 
 #todo
 
@@ -42,16 +52,16 @@ I'm going to organize the UI mostly by using Bootstrap as the main library for c
 	1. Commit encoding
 		1. [x] Encode commits from subject (glob pattern)
 			1. Example: All commits with `docs**` on subject line are encoded with `documentation`.
-		2. [ ] Encode commits from text content (glob pattern)
-		3. [ ] Encode manually selected commits
+		2. [ ] Manually encode commits
+		3. [?] Encode commits from text content (glob pattern)
 	2. File encoding
 		1. [ ] Encode files from filename (glob patterns)
 		2. [ ] Encode files from text content (glob pattern, aka auto-code)
 		3. [ ] Encode manually selected files
 3. Devlogs
-	1. [x] Generate devlog compilation - basic
-	2. [ ] Generate devlog compilation with advanced options
+	1. [ ] Generate devlog compilation with advanced options
 		1. Checkboxes: Add commit logs; Add file from commit `devlog` footer; Add link to each build;
+	2. [x] Generate devlog compilation - basic
 	3. [x] Generate a separate devlog source for each commit
 		1. Checkboxes: Add commit logs; Add file from commit `devlog` footer; Add link to each build;
 4. Compilations

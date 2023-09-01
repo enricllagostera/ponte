@@ -1,20 +1,25 @@
 <script>
   import { v4 as uuid } from 'uuid'
 
+  import { repo } from './stores.js'
+
   import QdpxPreview from './components/QDPXPreview.svelte'
   import RepoLoader from './components/RepoLoader.svelte'
   import ActionListitem from './components/ActionListitem.svelte'
   import CommitListItem from './components/CommitListItem.svelte'
   import ActionApplyCodeCommitGlob from './components/ActionApplyCodeCommitGlob.svelte'
+  import StaticAlert from './components/StaticAlert.svelte'
 
   let repoInfoLoaded = false
   let userRepoInfo = ''
   let allInputCommits = []
   let allCommitsToProcess = []
   let allCodeOptions = []
-  let qdpx = { sources: [], codes: [], commits: [] }
 
-  let newActions = [
+  const defaultQdpx = { sources: [], codes: [], commits: [] }
+  let qdpx = { ...defaultQdpx }
+
+  const defaultActions = [
     {
       name: 'manualIgnoreCommits',
       guid: uuid(),
@@ -42,6 +47,8 @@
     }
   ]
 
+  let currentActions = [...defaultActions]
+
   function actionByName(actions, name) {
     return actions.filter((a) => a.name == name)[0]
   }
@@ -52,18 +59,19 @@
 
   function displayRepoData(event) {
     repoInfoLoaded = true
-    allInputCommits = JSON.parse(event.detail.commits)
-    userRepoInfo = event.detail.userRepoInfo
+    allInputCommits = $repo.commits
+    userRepoInfo = $repo.userRepoInfo
     allCommitsToProcess = [...allInputCommits]
     allCommitsToProcess.forEach(
-      (c) => (actionByName(newActions, 'manualIgnoreCommits').selectedCommits[c.hashAbbrev] = true)
+      (c) =>
+        (actionByName(currentActions, 'manualIgnoreCommits').selectedCommits[c.hashAbbrev] = true)
     )
     updateQdpxPreview()
   }
 
   function toggleIncludedCommit(event) {
     const hashAbbrev = event.detail.hashAbbrev
-    const actManualIgnore = actionByName(newActions, 'manualIgnoreCommits')
+    const actManualIgnore = actionByName(currentActions, 'manualIgnoreCommits')
     actManualIgnore.selectedCommits[hashAbbrev] = !actManualIgnore.selectedCommits[hashAbbrev]
     updateQdpxPreview()
   }
@@ -71,17 +79,17 @@
   async function updateQdpxPreview(_event) {
     console.log('updating QDPX')
     let sources = []
-    if (actionByName(newActions, 'manualIgnoreCommits').active) {
+    if (actionByName(currentActions, 'manualIgnoreCommits').active) {
       allCommitsToProcess = [
         ...allInputCommits.filter(
-          (v) => actionByName(newActions, 'manualIgnoreCommits').selectedCommits[v.hashAbbrev]
+          (v) => actionByName(currentActions, 'manualIgnoreCommits').selectedCommits[v.hashAbbrev]
         )
       ]
     } else {
       allCommitsToProcess = [...allInputCommits]
     }
 
-    if (actionByName(newActions, 'devlogCompilation').active) {
+    if (actionByName(currentActions, 'devlogCompilation').active) {
       const dScs = []
       allCommitsToProcess.forEach((commit) => {
         dScs.push(commit.hashAbbrev)
@@ -92,7 +100,7 @@
       sources.push(compilationSource)
     }
 
-    if (actionByName(newActions, 'individualCommitDevlog').active) {
+    if (actionByName(currentActions, 'individualCommitDevlog').active) {
       for (const commit of allCommitsToProcess) {
         sources.push(await window.loader.getDevlogForCommit(commit.hashAbbrev, {}))
       }
@@ -100,7 +108,7 @@
 
     const allCodesToApply = []
 
-    const allApplyCodeCommitByGlob = actionsByName(newActions, 'applyCodeCommitGlob')
+    const allApplyCodeCommitByGlob = actionsByName(currentActions, 'applyCodeCommitGlob')
     for (const act of allApplyCodeCommitByGlob) {
       if (act.active) {
         act.codesToApply.forEach((selectedCode) => {
@@ -131,15 +139,54 @@
         'Apply codes to commits based on their subject and body information (i.e. devlog).',
       selectedCommits: []
     }
-    newActions.push(adding)
-    newActions = [...newActions]
+    currentActions.push(adding)
+    currentActions = [...currentActions]
   }
 
   function removeApplyCodeCommitGlob(event) {
-    const actionToRemove = newActions.findIndex((a) => a.guid == event.detail.action.guid)
-    newActions.splice(actionToRemove, 1)
-    newActions = [...newActions]
+    const actionToRemove = currentActions.findIndex((a) => a.guid == event.detail.action.guid)
+    currentActions.splice(actionToRemove, 1)
+    currentActions = [...currentActions]
     updateQdpxPreview()
+  }
+
+  // This is used to reactively restart a component
+  let repoLoader = {}
+
+  function resetConfig(_event) {
+    $repo.userRepoInfo = ''
+    $repo.commits = []
+    repoLoader = {}
+    repoInfoLoaded = false
+    allInputCommits = []
+    allCommitsToProcess = []
+    allCodeOptions = []
+    currentActions = [...defaultActions]
+    qdpx = { ...defaultQdpx }
+  }
+
+  async function loadConfig(_event) {
+    resetConfig()
+    let loadOptions = {
+      title: `Load RepoToQDA config...`
+    }
+    let res = await window.loader.loadDialog(loadOptions)
+    $repo.userRepoInfo = res.userRepoInfo
+    $repo.commits = JSON.parse(await window.loader.loadRepoData($repo.userRepoInfo))
+    currentActions = [...res.actions]
+    displayRepoData()
+  }
+
+  async function saveConfig(_event) {
+    let saveOptions = {
+      title: `Save RepoToQDA config...`,
+      data: {
+        userRepoInfo: userRepoInfo,
+        actions: [...currentActions]
+      }
+    }
+    let res = await window.loader.saveDialog(saveOptions)
+    console.log(res)
   }
 </script>
 
@@ -151,11 +198,57 @@
 </svelte:head>
 
 <main class="container-fluid d-flex vh-100 max-vh100 flex-column">
+  <div class="row container-fluid vw-100 flex-grow-0">
+    <div class="col">
+      <nav class="navbar border-bottom border-body">
+        <form class="container-fluid justify-content-start">
+          <span class="navbar-brand"><h3>RepoToQDA</h3></span>
+          <button
+            class="btn btn-outline-primary ms-auto"
+            data-bs-toggle="modal"
+            data-bs-target="#newConfig"
+            type="button"
+          >
+            <i class="bi bi-file-plus-fill"></i> New config</button
+          >
+          <StaticAlert
+            dialog={{
+              id: 'newConfig',
+              title: 'Are you sure you want to start a new config?',
+              message: 'You will lose any unsaved changes.',
+              confirm: 'Start new config',
+              executeOnConfirm: resetConfig
+            }}
+          />
+          <button
+            class="btn btn-outline-primary ms-2"
+            data-bs-toggle="modal"
+            data-bs-target="#loadConfig"
+            type="button"><i class="bi bi-file-arrow-up-fill"></i> Load config</button
+          >
+          <StaticAlert
+            dialog={{
+              id: 'loadConfig',
+              title: 'Are you sure you want to load config from a file?',
+              message: 'You will lose any unsaved changes.',
+              confirm: 'Load config from a file',
+              executeOnConfirm: loadConfig
+            }}
+          />
+          <button class="btn btn-outline-primary ms-2" type="button" on:click={saveConfig}
+            ><i class="bi bi-file-arrow-down-fill"></i> Save config</button
+          >
+        </form>
+      </nav>
+    </div>
+  </div>
   <div class="row flex-grow-1 py-2 g-2">
     <div class="col d-flex flex-column">
       <div class="row">
         <div class="col">
-          <RepoLoader on:repoDataLoaded={displayRepoData} />
+          {#key repoLoader}
+            <RepoLoader on:repoDataLoaded={displayRepoData} />
+          {/key}
         </div>
       </div>
 
@@ -191,24 +284,24 @@
                 </div>
               </div>
 
-              <div class="card-body flexOverflow overflow-y-scroll" id="actionsTop">
+              <div class="card-body flexOverflow overflow-y-auto" id="actionsTop">
                 <div class="list-group">
                   <ActionListitem
-                    action={actionByName(newActions, 'manualIgnoreCommits')}
+                    action={actionByName(currentActions, 'manualIgnoreCommits')}
                     on:actionUpdated={updateQdpxPreview}
                   />
 
                   <ActionListitem
-                    action={actionByName(newActions, 'devlogCompilation')}
+                    action={actionByName(currentActions, 'devlogCompilation')}
                     on:actionUpdated={updateQdpxPreview}
                   />
 
                   <ActionListitem
-                    action={actionByName(newActions, 'individualCommitDevlog')}
+                    action={actionByName(currentActions, 'individualCommitDevlog')}
                     on:actionUpdated={updateQdpxPreview}
                   />
 
-                  {#each actionsByName(newActions, 'applyCodeCommitGlob') as action (action.guid)}
+                  {#each actionsByName(currentActions, 'applyCodeCommitGlob') as action (action.guid)}
                     <ActionApplyCodeCommitGlob
                       {action}
                       {allCodeOptions}
@@ -226,11 +319,11 @@
     </div>
 
     <div class="col d-flex overflow-hidden">
-      <div class="card rounded-0 m-1 flex-grow-1">
+      <div class="card rounded-0 m-1 flex-grow-1" class:text-bg-secondary={!repoInfoLoaded}>
         <div class="card-header d-flex flex-grow-0 align-items-end">
           <h5>Source commits</h5>
         </div>
-        <div class="card-body flexOverflow overflow-y-scroll">
+        <div class="card-body flexOverflow overflow-y-auto">
           {#if repoInfoLoaded}
             {#each allInputCommits as commit (commit.hashAbbrev)}
               <CommitListItem {commit} {userRepoInfo} on:toggleIncluded={toggleIncludedCommit} />

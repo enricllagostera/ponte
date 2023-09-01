@@ -1,4 +1,5 @@
 <script>
+  import { repo } from '../stores.js'
   import { createEventDispatcher } from 'svelte'
 
   const dispatch = createEventDispatcher()
@@ -10,27 +11,35 @@
   let loadResponse = ''
 
   async function checkRepoInfo() {
-    confirmPromise = window.loader.checkRepoInfo(repoInfoInput)
+    confirmPromise = window.loader.checkRepoInfo($repo.userRepoInfo)
     confirmedRepoInfo = await confirmPromise
   }
 
   async function loadRepo() {
-    loadPromise = window.loader.loadRepoData(repoInfoInput)
-    loadResponse = await loadPromise
+    loadPromise = window.loader.loadRepoData($repo.userRepoInfo)
+    $repo.commits = JSON.parse(await loadPromise)
 
     dispatch('repoDataLoaded', {
-      commits: loadResponse,
-      userRepoInfo: repoInfoInput
+      commits: $repo.commits,
+      userRepoInfo: $repo.userRepoInfo
     })
+  }
+
+  function reset() {
+    repoInfoInput = ''
+    confirmedRepoInfo = ''
+    confirmPromise = null
+    loadPromise = null
+    loadResponse = ''
   }
 </script>
 
-<div class="card rounded-0 m-1" class:bg-success-subtle={loadResponse != ''}>
+<div class="card rounded-0 m-1" class:bg-success-subtle={$repo.commits.length > 0}>
   <div class="card-header rounded-0">
     <h5>Repository setup</h5>
   </div>
   <div class="card-body">
-    {#if loadResponse == ''}
+    {#if $repo.commits.length == 0}
       <p>The tool will load commit information and files from the GitHub repository below.</p>
       <div class="input-group mb-3">
         <input
@@ -40,7 +49,7 @@
           aria-label="my username / my repo"
           aria-describedby="button-addon2"
           id="repoInfo"
-          bind:value={repoInfoInput}
+          bind:value={$repo.userRepoInfo}
           class:disabled={confirmedRepoInfo != ''}
           disabled={confirmedRepoInfo != ''}
         />
@@ -71,7 +80,7 @@
           >Write your GitHub repo information.</small
         >{/if}
     {:else}
-      <p>Information loaded for repository <strong>{repoInfoInput}</strong>.</p>
+      <p>Information loaded for repository <strong>{$repo.userRepoInfo}</strong>.</p>
     {/if}
   </div>
   {#if confirmPromise != null && confirmedRepoInfo == ''}
@@ -81,7 +90,7 @@
         Checking if repository is available...
       </div>
     </div>{/if}
-  {#if loadPromise != null && loadResponse == ''}
+  {#if loadPromise != null && $repo.commits.length == 0}
     <div class="card-footer">
       <div class="d-flex align-items-center">
         <div class="spinner-border me-2" role="status" aria-hidden="true"></div>

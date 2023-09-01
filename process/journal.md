@@ -1,5 +1,9 @@
 # Process journal
 
+## 2023-09-01 After meeting and re-implementing to exporting
+
+After my presentation at the GaR meeting, we talked about starting to test out the tool. I think the main features still needed before that is possible is to 1) save/load configurations (so they can easily be re-done if needed) and 2) to export the QDPX file itself. So, today I focused on implementing the save and loading. (...) OK, it works pretty well now. It basically saves the `userRepoInfo` and the actions that were setup. After it loads the config file, it fetches the commit log data from GitHub and runs the conversion actions again. It is not a very optimized system, but so far, so good. Later I'll have to think of ways to bypass / cache it to avoid repeated downloads.
+
 ## 2023-08-29 Work is picking up pace with new tech stack
 
 After the changes to the underlying libraries, I'm getting some more functionality into the app. I have implemented basic devlog generation (per commit and as a repo compilation). The process for adding features feels more straightforward now. I'll continue doing that for the next couple days.

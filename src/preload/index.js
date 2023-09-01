@@ -17,7 +17,9 @@ if (process.contextIsolated) {
       getDevlogForCommit: (hashAbbrev, devlogConfig) =>
         ipcRenderer.invoke('getDevlogForCommit', hashAbbrev, devlogConfig),
       getDevlogCompilation: (devlogCompilationConfig) =>
-        ipcRenderer.invoke('getDevlogCompilation', devlogCompilationConfig)
+        ipcRenderer.invoke('getDevlogCompilation', devlogCompilationConfig),
+      saveDialog: (saveOptions) => ipcRenderer.invoke('saveDialog', saveOptions),
+      loadDialog: (loadOptions) => ipcRenderer.invoke('loadDialog', loadOptions)
     })
   } catch (error) {
     console.error(error)
