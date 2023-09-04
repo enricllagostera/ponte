@@ -1,5 +1,7 @@
 import axios from 'axios'
 import * as fs from 'fs-extra'
+import { v4 as uuid } from 'uuid'
+import { DateTime } from 'luxon'
 
 class RepoError extends Error {}
 class BuildError extends Error {}
@@ -49,6 +51,15 @@ export default {
       writer.on('finish', resolve)
       writer.on('error', reject)
     })
+  },
+  guid: () => {
+    return uuid().toUpperCase()
+  },
+  formatDate: (dateTime) => {
+    return dateTime.toUTC().toFormat("yyyy-LL-dd'T'hh:mm:ss'Z'")
+  },
+  getNowDateTime: () => {
+    return DateTime.utc().toFormat("yyyy-LL-dd'T'hh:mm:ss'Z'")
   }
 }
 

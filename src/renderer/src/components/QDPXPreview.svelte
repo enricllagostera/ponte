@@ -7,11 +7,25 @@
     let res = qdpxData.sources.filter((s) => s.hashAbbrev == hashAbbrev)[0]
     return res
   }
+
+  async function exportQDPX(_event) {
+    await window.loader.exportQDPX(qdpxData)
+  }
 </script>
 
 <div class="card rounded-0 m-1 flex-grow-1" class:text-bg-secondary={!qdpxData.commits.length > 0}>
   <div class="card-header d-flex flex-grow-0 align-items-end">
-    <h5>QDPX Preview</h5>
+    <div class="mt-1">
+      <h5>QDPX Preview</h5>
+    </div>
+    <div class="ms-auto">
+      <button
+        class="btn btn-primary"
+        type="button"
+        disabled={!qdpxData.commits.length > 0}
+        on:click={exportQDPX}>Export QDPX</button
+      >
+    </div>
   </div>
   <div class="card-body flexOverflow overflow-y-auto">
     <div class="text-primary">

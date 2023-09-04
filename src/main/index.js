@@ -5,9 +5,9 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { DateTime } from 'luxon'
 
+import QdpxExporter from './qdpxExport'
 import utils from './helpers'
 import DataInitializer from './dataInitializer'
-import { options } from 'marked'
 
 let initializer
 let allCommits
@@ -61,6 +61,7 @@ function createWindow() {
   ipcMain.handle('getDevlogCompilation', getDevlogCompilation)
   ipcMain.handle('saveDialog', saveDialog, mainWindow)
   ipcMain.handle('loadDialog', loadDialog, mainWindow)
+  ipcMain.handle('exportQDPX', exportQDPX, mainWindow)
 
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
@@ -103,6 +104,52 @@ app.on('window-all-closed', () => {
   }
 })
 
+async function exportQDPX(_event, exportOptions) {
+  let exporter = new QdpxExporter()
+  const qdeFolder = join(app.getPath('temp'), 'repo-to-qda', 'qde')
+  const qdeSourcesFolder = join(app.getPath('temp'), 'repo-to-qda', 'qde', 'Sources')
+  let allTs = []
+  for (const source of exportOptions.sources) {
+    const new_ts = await exporter.createTextSourceFromTextData(
+      qdeSourcesFolder,
+      source.name,
+      source.content
+    )
+    new_ts.PlainTextSelection = []
+    allTs.push(new_ts)
+  }
+  for (const code of exportOptions.codes) {
+    let new_c = exporter.createCode(code.name)
+    let matchCount = 0
+    for (const commit of code.commits) {
+      allTs.forEach((ts, i) => {
+        const s = exportOptions.sources[i].content.indexOf(commit.hashAbbrev)
+        if (s >= 0) {
+          matchCount++
+          const pts = exporter.createPlainTextSelection(
+            `Match ${matchCount} of #${commit.hashAbbrev}`,
+            s,
+            s + commit.hashAbbrev.length
+          )
+          pts.Coding = exporter.createCoding(new_c['@guid'])
+          ts.PlainTextSelection.push(pts)
+        }
+      })
+    }
+    exporter.appendCode(new_c)
+  }
+
+  for (const ts of allTs) {
+    if (ts.PlainTextSelection.length == 0) {
+      delete ts.PlainTextSelection
+    }
+    exporter.appendTextSource(ts)
+  }
+
+  const exportFolder = join(app.getPath('temp'), 'repo-to-qda', 'qdpx')
+  await exporter.writeFile(qdeFolder, exportFolder, 'project.qdpx')
+}
+
 async function loadDialog(_event, loadOptions) {
   let res
   try {
@@ -142,9 +189,11 @@ async function getDevlogForCommit(_event, commitHash) {
   const devlog = {
     hashAbbrev: commitData.hashAbbrev,
     name: `Devlog for #${commitData.hashAbbrev} on ${commitISODate}`,
-    content: `${commitData.subject}\n\nCommit date: ${DateTime.fromMillis(
-      commitData.author.timestamp
-    ).toISO()}\n\nMessage:\n\n${commitData.body || 'Empty commit message.'}`
+    content: `[Devlog] #${commitData.hashAbbrev} : ${
+      commitData.subject
+    }\n\nCommit date: ${DateTime.fromMillis(commitData.author.timestamp).toISO()}\n\nMessage:\n\n${
+      commitData.body || 'Empty commit message.'
+    }`
   }
   return devlog
 }
