@@ -1,15 +1,23 @@
 <script>
-  import { createEventDispatcher } from 'svelte'
-  import Svelecte from 'svelecte'
+  import { createEventDispatcher, onMount } from 'svelte'
   import { minimatch } from 'minimatch'
+  import { codeOptions } from '../stores'
+  import CodeSelect from './CodeSelect.svelte'
 
   export let action
   export let commitsToProcess
-  export let allCodeOptions
+  // export let allCodeOptions
 
   const dispatch = createEventDispatcher()
 
-  function onChanged() {
+  onMount(() => {
+    action.codesToApply = action.codesToApply || []
+    action.selectedCommits = action.selectedCommits || []
+  })
+
+  function onChanged(event) {
+    // action.codesToApply = [...codesToApply]
+
     dispatch('actionUpdated', {
       action: action
     })
@@ -21,9 +29,22 @@
     })
   }
 
-  action.options = []
-  action.selectedCommits = []
-  action.codesToApply = []
+  function updateCodes(codes, options) {
+    for (const code of options) {
+      let previousOptions = $codeOptions.filter((o) => o.value != code.value)
+      $codeOptions = [...previousOptions, ...options]
+    }
+    action.codesToApply = [...codes]
+  }
+
+  function codesChanged(event) {
+    console.log(event.detail)
+    console.log('old', $codeOptions)
+    updateCodes(event.detail.codes, event.detail.options)
+    dispatch('actionUpdated', {
+      action: action
+    })
+  }
 
   function matchCommitBySubjectAndBody(event) {
     if (event.target.value.length >= 0) {
@@ -36,7 +57,11 @@
           })
         }
       })
+      action.searchPattern = event.target.value
       action.selectedCommits = subjectAndBodyArray
+      dispatch('actionUpdated', {
+        action: action
+      })
     }
   }
 
@@ -80,29 +105,23 @@
       <div class="input-group-text"><i class="bi bi-git"></i></div>
       <input
         type="text"
-        name="selectionGlob"
-        id="tagCommitsByGlob-selectionGlob"
+        id="{`${action.name}-${action.guid}`}-selectionGlob"
+        name="{`${action.name}-${action.guid}`}-selectionGlob"
         on:change={matchCommitBySubjectAndBody}
         on:input={matchCommitBySubjectAndBody}
+        value={action.searchPattern}
         class="form-control"
         placeholder="Type pattern to select commits (e.g. fix)"
       />
     </div>
 
     <!-- <label for="tags">Codes to apply</label> -->
-    <div class="input-group mb-3">
-      <div class="input-group-text"><i class="bi bi-tags"></i></div>
-      <Svelecte
-        options={allCodeOptions}
-        creatable
-        keepCreated
-        multiple
-        allowEditing="true"
-        inputId="tagCommitByGlob"
-        bind:readSelection={action.codesToApply}
-        placeholder="Type or click to add or select codes"
-      ></Svelecte>
-    </div>
+    <CodeSelect
+      id="{`${action.name}-${action.guid}`}-codeSelect"
+      initialOptions={$codeOptions}
+      initialValues={action.codesToApply}
+      on:codesChanged={codesChanged}
+    />
 
     <div class="card text-bg-secondary-subtle">
       <div class="card-header">
@@ -117,13 +136,13 @@
         <h6>Codes to apply ({action.codesToApply.length})</h6>
       </div>
       <ul class="list-group list-group-flush">
-        {#each action.codesToApply as code}
+        {#each action.codesToApply as code (code.value)}
           <li class="list-group-item">{code.value}</li>
         {/each}
       </ul>
     </div>
 
-    {#if action.selectedCommits.length > 0 && action.codesToApply.length > 0}
+    <!-- {#if action.selectedCommits.length > 0 && action.codesToApply.length > 0}
       <div class="card-body">
         <div class="d-grid gap-2">
           <button
@@ -134,7 +153,7 @@
           >
         </div>
       </div>
-    {/if}
+    {/if} -->
   </div>
 </div>
 

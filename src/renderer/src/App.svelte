@@ -1,7 +1,7 @@
 <script>
   import { v4 as uuid } from 'uuid'
 
-  import { repo } from './stores.js'
+  import { repo, codeOptions } from './stores.js'
 
   import QdpxPreview from './components/QDPXPreview.svelte'
   import RepoLoader from './components/RepoLoader.svelte'
@@ -14,7 +14,6 @@
   let userRepoInfo = ''
   let allInputCommits = []
   let allCommitsToProcess = []
-  let allCodeOptions = []
 
   const defaultQdpx = { sources: [], codes: [], commits: [] }
   let qdpx = { ...defaultQdpx }
@@ -45,6 +44,15 @@
       description: 'Adds a separate text source with devlog information for each commit.',
       selectedCommits: []
     }
+    // {
+    //   name: 'applyCodesCommit',
+    //   guid: uuid(),
+    //   active: false,
+    //   title: 'Generate one devlog per commit',
+    //   description: 'Adds a separate text source with devlog information for each commit.',
+    //   selectedCommits: []
+    //   searchPattern: ''
+    // },
   ]
 
   let currentActions = [...defaultActions]
@@ -66,7 +74,7 @@
       (c) =>
         (actionByName(currentActions, 'manualIgnoreCommits').selectedCommits[c.hashAbbrev] = true)
     )
-    updateQdpxPreview()
+    //updateQdpxPreview()
   }
 
   function toggleIncludedCommit(event) {
@@ -76,7 +84,7 @@
     updateQdpxPreview()
   }
 
-  async function updateQdpxPreview(_event) {
+  async function updateQdpxPreview(event) {
     console.log('updating QDPX')
     let sources = []
     if (actionByName(currentActions, 'manualIgnoreCommits').active) {
@@ -106,26 +114,34 @@
       }
     }
 
-    const allCodesToApply = []
+    const allCodesToSendToQDPXExport = []
+    // [{name: string, commits: [...hash]}]
 
     const allApplyCodeCommitByGlob = actionsByName(currentActions, 'applyCodeCommitGlob')
     for (const act of allApplyCodeCommitByGlob) {
       if (act.active) {
-        act.codesToApply.forEach((selectedCode) => {
-          const getCode = allCodesToApply.filter((c) => c.code == selectedCode.value)
-          if (getCode.length == 1) {
-            getCode.commits = getCode.commits.concat(selectedCode.selectedCommits)
+        for (const selectedCode of act.codesToApply) {
+          const getCodeOnExportList = allCodesToSendToQDPXExport.filter(
+            (c) => c.name == selectedCode.value
+          )
+          if (getCodeOnExportList.length == 1) {
+            getCodeOnExportList.commits = getCodeOnExportList.commits.concat(
+              selectedCode.selectedCommits
+            )
           } else {
-            allCodesToApply.push({ name: selectedCode.value, commits: act.selectedCommits })
+            allCodesToSendToQDPXExport.push({
+              name: selectedCode.value,
+              commits: act.selectedCommits
+            })
           }
-        })
+        }
       }
     }
     console.log(qdpx.codes)
     qdpx = {
       commits: [...allCommitsToProcess],
       sources: [...sources],
-      codes: [...allCodesToApply]
+      codes: [...allCodesToSendToQDPXExport]
     }
   }
 
@@ -137,7 +153,11 @@
       title: 'Apply codes to commits by pattern',
       description:
         'Apply codes to commits based on their subject and body information (i.e. devlog).',
-      selectedCommits: []
+      selectedCommits: [],
+      // selectedCommits: [ hash0, hash1 ]
+      codesToApply: [],
+      // codesToApply: [{ value, label }]
+      searchPattern: ''
     }
     currentActions.push(adding)
     currentActions = [...currentActions]
@@ -160,7 +180,6 @@
     repoInfoLoaded = false
     allInputCommits = []
     allCommitsToProcess = []
-    allCodeOptions = []
     currentActions = [...defaultActions]
     qdpx = { ...defaultQdpx }
   }
@@ -174,7 +193,12 @@
     $repo.userRepoInfo = res.userRepoInfo
     $repo.commits = JSON.parse(await window.loader.loadRepoData($repo.userRepoInfo))
     currentActions = [...res.actions]
+    const allApplyCodeCommitByGlob = actionsByName(currentActions, 'applyCodeCommitGlob')
+    for (const act of allApplyCodeCommitByGlob) {
+      $codeOptions = [...$codeOptions, ...act.codesToApply]
+    }
     displayRepoData()
+    updateQdpxPreview()
   }
 
   async function saveConfig(_event) {
@@ -304,7 +328,6 @@
                   {#each actionsByName(currentActions, 'applyCodeCommitGlob') as action (action.guid)}
                     <ActionApplyCodeCommitGlob
                       {action}
-                      {allCodeOptions}
                       commitsToProcess={allCommitsToProcess}
                       on:actionUpdated={updateQdpxPreview}
                       on:actionDeleted={removeApplyCodeCommitGlob}

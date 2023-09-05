@@ -1,5 +1,9 @@
 # Process journal
 
+## 2023-09-05 Encoding actions bug fixing and changes of component
+
+Started bug-fixing the loading of the coding action and it's not working at all. I really will  need to re-think this more slowly. (....) I had an idea to chenge the implementation from the *Svelecte* component to the same JS library (*Choices.js*) that I used in *archivistagd*. I'm more familiar with it and it seems to have enough low-level configuration that I can wire it to Svelte without much issues. (...) And that didn't work. After mor fiddling around, now I'm trying out one called [*svelte-select*](https://github.com/rob-balfre/svelte-select). It is a bit better documented and used, so there's that, but still very messy to use. I'll have to continue work on this later. Amazing how fragile these libraries can be. (...) OK, finally. After a lot of tweaking to finally understand the lifecycle of information I have the save/loading of quali codes working well enough with the encoding by pattern action. So annoying.
+
 ## 2023-09-04 Re-implementing exporting to QDPX
 
 I'm basically pasting back the export code from the proof-of-concept version, with some refactoring to make it separated and more modular. This might make it easier to maintain and keep extending it. (...) Happy to say that I managed to export both codes and text sources successfully. In doing so, I also figured out a way to deal with encoding commits: for now, I attach the codes defines in actions to any occurrences of the commit's `hashAbbrev` in the generated text sources. This way, it is possible to navigate directly to that coding when reading a longer source, instead of attaching it to a header. 
