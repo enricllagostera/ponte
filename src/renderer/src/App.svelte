@@ -65,7 +65,7 @@
     return actions.filter((a) => a.name == name)
   }
 
-  function displayRepoData(event) {
+  function displayRepoData(_event) {
     repoInfoLoaded = true
     allInputCommits = $repo.commits
     userRepoInfo = $repo.userRepoInfo
@@ -74,7 +74,7 @@
       (c) =>
         (actionByName(currentActions, 'manualIgnoreCommits').selectedCommits[c.hashAbbrev] = true)
     )
-    //updateQdpxPreview()
+    updateQdpxPreview()
   }
 
   function toggleIncludedCommit(event) {

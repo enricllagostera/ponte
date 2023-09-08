@@ -207,7 +207,7 @@ async function getDevlogCompilation(_event, devlogCompilationConfig) {
   for (let i = 0; i < selectedCommits.length; i++) {
     const sc = selectedCommits[i]
     const devlogContent = await getDevlogForCommit(null, sc.hashAbbrev)
-    comp += `## ${devlogContent.name}\n\n${devlogContent.content}\n\n---\n\n`
+    comp += `## ${devlogContent.content}\n\n---\n\n`
   }
 
   const devlog = {

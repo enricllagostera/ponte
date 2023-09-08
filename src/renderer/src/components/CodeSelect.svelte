@@ -59,22 +59,37 @@
 </script>
 
 <div class="input-group mb-3">
-  <div class="input-group-prepend"><i class="bi bi-tags"></i></div>
-  <Select
-    on:change={handleChange}
-    multiple
-    on:filter={handleFilter}
-    on:clear={handleClear}
-    bind:filterText
-    bind:value
-    {items}
-    clearable
-    multiFullItemClearable
-    class="form-control"
-  >
-    <div slot="item" let:item>
-      {item.created ? 'Add new: ' : ''}
-      {item.label}
-    </div>
-  </Select>
+  <div class="input-group-text"><i class="bi bi-tags"></i></div>
+  <div class="form-control fc-select">
+    <Select
+      on:change={handleChange}
+      multiple
+      on:filter={handleFilter}
+      on:clear={handleClear}
+      bind:filterText
+      bind:value
+      {items}
+      clearable
+      multiFullItemClearable
+      --border-radius="0px"
+      --border="0"
+      --border-hover="0"
+      --padding="0"
+    >
+      <div slot="item" let:item>
+        {item.created ? 'Add new: ' : ''}
+        {item.label}
+      </div>
+    </Select>
+  </div>
 </div>
+
+<style>
+  /* .form-control :global(.svelte-select) {
+    border: 0;
+  } */
+
+  .form-control.fc-select {
+    padding: 0;
+  }
+</style>

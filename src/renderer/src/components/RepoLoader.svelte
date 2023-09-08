@@ -4,7 +4,7 @@
 
   const dispatch = createEventDispatcher()
 
-  let repoInfoInput = ''
+  // let repoInfoInput = ''
   let confirmedRepoInfo = ''
   let confirmPromise = null
   let loadPromise = null
@@ -26,7 +26,7 @@
   }
 
   function reset() {
-    repoInfoInput = ''
+    // repoInfoInput = ''
     confirmedRepoInfo = ''
     confirmPromise = null
     loadPromise = null
