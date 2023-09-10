@@ -3,7 +3,7 @@
 </script>
 
 <div
-  class="modal fade"
+  class="modal"
   id={dialog.id}
   data-bs-backdrop="static"
   data-bs-keyboard="false"
@@ -22,12 +22,23 @@
       <div class="modal-body">{dialog.message}</div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button
-          type="button"
-          class="btn btn-danger"
-          data-bs-dismiss="modal"
-          on:click={dialog.executeOnConfirm}>{dialog.confirm}</button
-        >
+
+        {#if dialog.showNextModalWithId != ''}
+          <button
+            type="button"
+            class="btn btn-danger"
+            data-bs-toggle="modal"
+            data-bs-target={`#${dialog.showNextModalWithId}`}
+            on:click={dialog.executeOnConfirm}>{dialog.confirm}</button
+          >
+        {:else}
+          <button
+            type="button"
+            class="btn btn-danger"
+            data-bs-dismiss="modal"
+            on:click={dialog.executeOnConfirm}>{dialog.confirm}</button
+          >
+        {/if}
       </div>
     </div>
   </div>

@@ -104,12 +104,24 @@ app.on('window-all-closed', () => {
   }
 })
 
-async function exportQDPX(_event, exportOptions) {
+async function exportQDPX(_event, exportData, exportOptions) {
+  let res
+  try {
+    res = await dialog.showSaveDialog(null, {
+      ...exportOptions,
+      filters: [{ name: 'QDPX file', extensions: ['qdpx'] }]
+    })
+    if (res.canceled) {
+      return
+    }
+  } catch (error) {
+    return
+  }
   let exporter = new QdpxExporter()
   const qdeFolder = join(app.getPath('temp'), 'repo-to-qda', 'qde')
   const qdeSourcesFolder = join(app.getPath('temp'), 'repo-to-qda', 'qde', 'Sources')
   let allTs = []
-  for (const source of exportOptions.sources) {
+  for (const source of exportData.sources) {
     const new_ts = await exporter.createTextSourceFromTextData(
       qdeSourcesFolder,
       source.name,
@@ -118,12 +130,12 @@ async function exportQDPX(_event, exportOptions) {
     new_ts.PlainTextSelection = []
     allTs.push(new_ts)
   }
-  for (const code of exportOptions.codes) {
+  for (const code of exportData.codes) {
     let new_c = exporter.createCode(code.name)
     let matchCount = 0
     for (const commit of code.commits) {
       allTs.forEach((ts, i) => {
-        const s = exportOptions.sources[i].content.indexOf(commit.hashAbbrev)
+        const s = exportData.sources[i].content.indexOf(commit.hashAbbrev)
         if (s >= 0) {
           matchCount++
           const pts = exporter.createPlainTextSelection(
@@ -146,8 +158,7 @@ async function exportQDPX(_event, exportOptions) {
     exporter.appendTextSource(ts)
   }
 
-  const exportFolder = join(app.getPath('temp'), 'repo-to-qda', 'qdpx')
-  await exporter.writeFile(qdeFolder, exportFolder, 'project.qdpx')
+  await exporter.writeFile(qdeFolder, res.filePath)
 }
 
 async function loadDialog(_event, loadOptions) {
@@ -158,6 +169,9 @@ async function loadDialog(_event, loadOptions) {
       filters: [{ name: 'Repo to QDA JSON', extensions: ['json'] }],
       properties: ['openFile']
     })
+    if (res.canceled) {
+      return
+    }
     if (fs.existsSync(res.filePaths[0])) {
       res = fs.readJSONSync(res.filePaths[0])
     }
@@ -177,6 +191,9 @@ async function saveDialog(_event, saveOptions) {
     })
   } catch (error) {
     res = undefined
+  }
+  if (res.filePath == undefined) {
+    return
   }
   fs.ensureFileSync(res.filePath)
   fs.writeJSONSync(res.filePath, saveOptions.data)

@@ -9,7 +9,10 @@
   }
 
   async function exportQDPX(_event) {
-    await window.loader.exportQDPX(qdpxData)
+    let qdpxExportOptions = {
+      title: `Save QDPX file...`
+    }
+    await window.loader.exportQDPX(qdpxData, qdpxExportOptions)
   }
 </script>
 

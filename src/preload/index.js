@@ -20,7 +20,8 @@ if (process.contextIsolated) {
         ipcRenderer.invoke('getDevlogCompilation', devlogCompilationConfig),
       saveDialog: (saveOptions) => ipcRenderer.invoke('saveDialog', saveOptions),
       loadDialog: (loadOptions) => ipcRenderer.invoke('loadDialog', loadOptions),
-      exportQDPX: (exportOptions) => ipcRenderer.invoke('exportQDPX', exportOptions)
+      exportQDPX: (exportData, exportOptions) =>
+        ipcRenderer.invoke('exportQDPX', exportData, exportOptions)
     })
   } catch (error) {
     console.error(error)

@@ -27,6 +27,7 @@ I'm going to organize the UI mostly by using Bootstrap as the main library for c
 #todo
 
 1. QDPX export
+	1. [x] Add save file dialog for QDPX file
 2. Save and load configuration files
 	1. [x] Add a navbar GUI
 	2. [x] Save config file
@@ -53,7 +54,7 @@ I'm going to organize the UI mostly by using Bootstrap as the main library for c
 		1. [x] Encode commits from subject (glob pattern)
 			1. Example: All commits with `docs**` on subject line are encoded with `documentation`.
 		2. [ ] Manually encode commits
-		3. [?] Encode commits from text content (glob pattern)
+		3. [?] Encode commits from full text content (glob pattern)
 	2. File encoding
 		1. [ ] Encode files from filename (glob patterns)
 		2. [ ] Encode files from text content (glob pattern, aka auto-code)
@@ -68,8 +69,8 @@ I'm going to organize the UI mostly by using Bootstrap as the main library for c
 	1. [ ] Generate a docx from a folder compilation (glob pattern)
 		1. Radio group: In all commits the folder is found; Last existing commit; In specific commit(s);
 5. Visualizations
-	1. [ ] Generate a chronological timeline of commits that shows passage of time between commits
-	2. [ ] Generate a topological timeline of commits that shows a linear ordered sequence of commits
+	1. [ ] Generate a chronological timeline of commits that shows passage of time between commits;
+	2. [ ] Generate a topological timeline of commits that shows a linear ordered sequence of commits;
 
 ## QDPX format notes
 

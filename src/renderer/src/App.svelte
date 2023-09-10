@@ -1,6 +1,8 @@
 <script>
   import { v4 as uuid } from 'uuid'
 
+  import { Modal } from 'bootstrap'
+
   import { repo, codeOptions } from './stores.js'
 
   import QdpxPreview from './components/QDPXPreview.svelte'
@@ -9,6 +11,7 @@
   import CommitListItem from './components/CommitListItem.svelte'
   import ActionApplyCodeCommitGlob from './components/ActionApplyCodeCommitGlob.svelte'
   import StaticAlert from './components/StaticAlert.svelte'
+  import WaitingModal from './components/WaitingModal.svelte'
 
   let repoInfoLoaded = false
   let userRepoInfo = ''
@@ -190,6 +193,7 @@
       title: `Load RepoToQDA config...`
     }
     let res = await window.loader.loadDialog(loadOptions)
+    const waitingModal = Modal.getInstance('#waitingLoadData')
     $repo.userRepoInfo = res.userRepoInfo
     $repo.commits = JSON.parse(await window.loader.loadRepoData($repo.userRepoInfo))
     currentActions = [...res.actions]
@@ -197,6 +201,7 @@
     for (const act of allApplyCodeCommitByGlob) {
       $codeOptions = [...$codeOptions, ...act.codesToApply]
     }
+    waitingModal.toggle()
     displayRepoData()
     updateQdpxPreview()
   }
@@ -256,7 +261,15 @@
               title: 'Are you sure you want to load config from a file?',
               message: 'You will lose any unsaved changes.',
               confirm: 'Load config from a file',
+              showNextModalWithId: 'waitingLoadData',
               executeOnConfirm: loadConfig
+            }}
+          />
+          <WaitingModal
+            dialog={{
+              id: 'waitingLoadData',
+              title: 'Loading repository data...',
+              message: 'Please wait, downloading commit information can take a few minutes...'
             }}
           />
           <button class="btn btn-outline-primary ms-2" type="button" on:click={saveConfig}

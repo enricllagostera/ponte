@@ -113,7 +113,7 @@ class QdpxExporter {
     return ts
   }
 
-  async writeFile(sourceExportPath, qdpxFolderPath, exportQdpxFilename) {
+  async writeFile(sourceExportPath, exportQdpxFilename) {
     let doc = {}
     try {
       doc = xmlCreate({ version: '1.0', encoding: 'utf-8' }, this.xml)
@@ -126,9 +126,9 @@ class QdpxExporter {
     // Add export folder to ZIP, write it to disk as .QDPX file
     let zip = new AdmZip()
     zip.addLocalFolder(sourceExportPath)
-    fs.emptyDirSync(qdpxFolderPath)
-    await zip.writeZipPromise(path.join(qdpxFolderPath, exportQdpxFilename))
-    console.log('done qdpx zip packing, file at ' + path.join(qdpxFolderPath, exportQdpxFilename))
+    fs.ensureFileSync(exportQdpxFilename)
+    await zip.writeZipPromise(exportQdpxFilename)
+    console.log('done qdpx zip packing, file at ' + exportQdpxFilename)
   }
 }
 
