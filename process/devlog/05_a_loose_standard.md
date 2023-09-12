@@ -4,7 +4,7 @@ date: 2023-08-15
 
 # 05 A loose standard
 
-As I worked on creating the QDPX file and trying to import and export it from QualCoder I realized that the way that different tools used the format is too different. While all of the large proprietary tools have worked together in the consortium that created the shared REFI-QDA format, all of them represent different concepts through different encodings. Each of them also has very particular limitations in how they import and export materials. 
+As I worked on creating the QDPX file and trying to import and export it from QualCoder I realized that the way that different tools used the format is too different. While all of the large proprietary tools have worked together in the consortium that created the shared REFI-QDA format, all of them represent different concepts through different encodings. Each of them also has very particular limitations in how they import and export materials.
 
 List of import/exporting info pages:
 

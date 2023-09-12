@@ -3,28 +3,28 @@
 ## 2023-09-08 GaR meeting
 
 1. Meeting notes
-	1. What is the tool (internal/external) ecosystem you use in the process?
-		1. When? For what purposes and limitations?
+   1. What is the tool (internal/external) ecosystem you use in the process?
+      1. When? For what purposes and limitations?
 2. Repo to QDA work
-	1. What work to prioritize (in the 10h remaining)?
-		1. Usability: Building, running and testing in diff machines %% OK, focus on this. %%
-		2. Features: File-copying
-		3. Features: Encoding
-	2. How to make this public?
-		1. License for code: MIT; license for written content: copyright;
-			1. Shahrom's idea: have a front-facing repo only with the code.
-		2. How to deal with notes that might be the basis for unpublished paper? %% Discussion for later. Probably define a protocol for the whole GaR or maybe prepare a paper on it?  %% 
-			1. What could a writing embargo look like?
-	3. Joseph will work with the UX of the tools for the GaR project: **repo-to-qda**, archivistagd. %% Focus will be on repo-to-qda work. %%
-		1. [ ] Write a note for Joseph on the UX and references for the repo-to-qda app and tag him on the repo #todo
+   1. What work to prioritize (in the 10h remaining)?
+      1. Usability: Building, running and testing in diff machines %% OK, focus on this. %%
+      2. Features: File-copying
+      3. Features: Encoding
+   2. How to make this public?
+      1. License for code: MIT; license for written content: copyright;
+         1. Shahrom's idea: have a front-facing repo only with the code.
+      2. How to deal with notes that might be the basis for unpublished paper? %% Discussion for later. Probably define a protocol for the whole GaR or maybe prepare a paper on it? %%
+         1. What could a writing embargo look like?
+   3. Joseph will work with the UX of the tools for the GaR project: **repo-to-qda**, archivistagd. %% Focus will be on repo-to-qda work. %%
+      1. [ ] Write a note for Joseph on the UX and references for the repo-to-qda app and tag him on the repo #todo
 
 ## 2023-09-05 Encoding actions bug fixing and changes of component
 
-Started bug-fixing the loading of the coding action and it's not working at all. I really will  need to re-think this more slowly. (....) I had an idea to chenge the implementation from the *Svelecte* component to the same JS library (*Choices.js*) that I used in *archivistagd*. I'm more familiar with it and it seems to have enough low-level configuration that I can wire it to Svelte without much issues. (...) And that didn't work. After more fiddling around, now I'm trying out one called [*svelte-select*](https://github.com/rob-balfre/svelte-select). It is a bit better documented and used, so there's that, but still very messy to use. I'll have to continue work on this later. Amazing how fragile these libraries can be. (...) OK, finally. After a lot of tweaking to finally understand the lifecycle of information I have the save/loading of quali codes working well enough with the encoding by pattern action. So annoying.
+Started bug-fixing the loading of the coding action and it's not working at all. I really will need to re-think this more slowly. (....) I had an idea to chenge the implementation from the _Svelecte_ component to the same JS library (_Choices.js_) that I used in _archivistagd_. I'm more familiar with it and it seems to have enough low-level configuration that I can wire it to Svelte without much issues. (...) And that didn't work. After more fiddling around, now I'm trying out one called [_svelte-select_](https://github.com/rob-balfre/svelte-select). It is a bit better documented and used, so there's that, but still very messy to use. I'll have to continue work on this later. Amazing how fragile these libraries can be. (...) OK, finally. After a lot of tweaking to finally understand the lifecycle of information I have the save/loading of quali codes working well enough with the encoding by pattern action. So annoying.
 
 ## 2023-09-04 Re-implementing exporting to QDPX
 
-I'm basically pasting back the export code from the proof-of-concept version, with some refactoring to make it separated and more modular. This might make it easier to maintain and keep extending it. (...) Happy to say that I managed to export both codes and text sources successfully. In doing so, I also figured out a way to deal with encoding commits: for now, I attach the codes defines in actions to any occurrences of the commit's `hashAbbrev` in the generated text sources. This way, it is possible to navigate directly to that coding when reading a longer source, instead of attaching it to a header. 
+I'm basically pasting back the export code from the proof-of-concept version, with some refactoring to make it separated and more modular. This might make it easier to maintain and keep extending it. (...) Happy to say that I managed to export both codes and text sources successfully. In doing so, I also figured out a way to deal with encoding commits: for now, I attach the codes defines in actions to any occurrences of the commit's `hashAbbrev` in the generated text sources. This way, it is possible to navigate directly to that coding when reading a longer source, instead of attaching it to a header.
 
 ## 2023-09-01 After meeting and re-implementing to exporting
 
@@ -57,17 +57,17 @@ Today there will be a GaR meeting. I'll present what I have so far and show how 
 (...) Some meeting notes:
 
 1. Pippin asked how brittle is the tool (in terms of requiring specific structures)?
-	1. Quite brittle, this would take a good UI to support the flexibility
+   1. Quite brittle, this would take a good UI to support the flexibility
 2. How to make it MDM agnostic?
 3. There is a strong linearity in these big complication materials: how to account for something less linear, so that it influences analysis differently?
-	1. Possible approach: Use of graphs and networks within the CAQDAS tool themselves
+   1. Possible approach: Use of graphs and networks within the CAQDAS tool themselves
 4. Conversion wizard steps, connected to Rilla's comment on how to make the codes more usable and to increase the value for researchers in using this tool.
-	1. Idea: add codes to files according to glob patterns
-	2. Idea: add codes to commits according to patterns
-	3. Idea: select commits or files to add codes manually
-	4. Idea: filter out commits per subject pattern
+   1. Idea: add codes to files according to glob patterns
+   2. Idea: add codes to commits according to patterns
+   3. Idea: select commits or files to add codes manually
+   4. Idea: filter out commits per subject pattern
 5. Pippin: how to preserve the mess of the creation process and not tell a story that is too tidied-up or sanitized (connects to comment on linearity).
-	1. Idea: find a way to capture / visualize the repo project structure at each commit (but this is slightly replicating the GitHub browse-at-commit function)
+   1. Idea: find a way to capture / visualize the repo project structure at each commit (but this is slightly replicating the GitHub browse-at-commit function)
 
 ## 2023-08-17 Adding files from commit to QDPX
 

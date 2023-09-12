@@ -4,7 +4,7 @@ Tools like NVivo, Atlas.ti, MAXQDA, QualCoder. Most of these are proprietary and
 
 ## QDA, or Qualitative Data Analysis
 
-This activity can take a variety of methodologies, such as thematic analysis, grounded theory, and others. 
+This activity can take a variety of methodologies, such as thematic analysis, grounded theory, and others.
 
 ## QDPX
 

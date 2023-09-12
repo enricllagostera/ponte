@@ -4,7 +4,7 @@ date: 2023-08-28
 
 # 11 On changing a tech stack
 
-OK, so this weekend I managed to make some key changes to the tech of the app. 
+OK, so this weekend I managed to make some key changes to the tech of the app.
 
 I had been bothered for a while with how it was organized, as it was getting hard and very brittle to both add backend functionality (NPM module based file handling and creation) and to make a GUI that was responsive, reactive and well organized. I had tried to convert the project to Typescript to try to improve the brittleness, but I failed.
 

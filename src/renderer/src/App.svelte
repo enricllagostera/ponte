@@ -13,6 +13,11 @@
   import StaticAlert from './components/StaticAlert.svelte'
   import WaitingModal from './components/WaitingModal.svelte'
 
+  import { clickOutside } from './clickOutside.js'
+
+  let actionDropdown = false
+  let newConfigModalOpen = false
+
   let repoInfoLoaded = false
   let userRepoInfo = ''
   let allInputCommits = []
@@ -148,6 +153,13 @@
     }
   }
 
+  function dismissAddActionsDropdown(event) {
+    console.log(event)
+    if (actionDropdown && event.detail.target.id != 'addActionDropdownBtn') {
+      actionDropdown = false
+    }
+  }
+
   function addApplyCodeCommitGlob() {
     const adding = {
       name: 'applyCodeCommitGlob',
@@ -164,6 +176,7 @@
     }
     currentActions.push(adding)
     currentActions = [...currentActions]
+    actionDropdown = false
   }
 
   function removeApplyCodeCommitGlob(event) {
@@ -227,28 +240,30 @@
 </svelte:head>
 
 <main class="container-fluid d-flex vh-100 max-vh100 flex-column">
+  <StaticAlert
+    open={newConfigModalOpen}
+    dialog={{
+      id: 'newConfig',
+      title: 'Are you sure you want to start a new config?',
+      message: 'You will lose any unsaved changes.',
+      confirm: 'Start new config',
+      executeOnConfirm: resetConfig
+    }}
+  />
   <div class="row container-fluid vw-100 flex-grow-0">
     <div class="col">
       <nav class="navbar border-bottom border-body">
         <form class="container-fluid justify-content-start">
           <span class="navbar-brand"><h3>RepoToQDA</h3></span>
           <button
-            class="btn btn-outline-primary ms-auto"
             data-bs-toggle="modal"
             data-bs-target="#newConfig"
+            class="btn btn-outline-primary ms-auto"
             type="button"
-          >
-            <i class="bi bi-file-plus-fill"></i> New config</button
-          >
-          <StaticAlert
-            dialog={{
-              id: 'newConfig',
-              title: 'Are you sure you want to start a new config?',
-              message: 'You will lose any unsaved changes.',
-              confirm: 'Start new config',
-              executeOnConfirm: resetConfig
-            }}
-          />
+            on:click={() => (newConfigModalOpen = true)}
+            ><i class="bi bi-file-plus-fill"></i> New config
+          </button>
+
           <button
             class="btn btn-outline-primary ms-2"
             data-bs-toggle="modal"
@@ -300,14 +315,23 @@
                 <div class="ms-auto">
                   <div class="dropdown">
                     <button
+                      id="addActionDropdownBtn"
                       class="btn btn-primary dropdown-toggle"
                       type="button"
-                      data-bs-toggle="dropdown"
-                      aria-expanded="false"
+                      aria-expanded={actionDropdown}
+                      on:click={() => {
+                        actionDropdown = !actionDropdown
+                      }}
                     >
+                      <!-- aria-expanded="false" -->
                       <i class="bi bi-plus-circle"></i> Add action
                     </button>
-                    <ul class="dropdown-menu">
+                    <ul
+                      class="dropdown-menu"
+                      use:clickOutside
+                      on:click_outside={dismissAddActionsDropdown}
+                      class:show={actionDropdown}
+                    >
                       <li>
                         <button
                           class="dropdown-item"

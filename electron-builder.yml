@@ -1,5 +1,5 @@
 appId: com.electron.app
-productName: vite-electron-svelte
+productName: RepoToQDA
 directories:
   buildResources: build
 files:
@@ -11,7 +11,7 @@ files:
 asarUnpack:
   - resources/**
 win:
-  executableName: vite-electron-svelte
+  executableName: repo-to-qda
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}

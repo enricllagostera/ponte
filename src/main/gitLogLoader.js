@@ -1,5 +1,5 @@
 import simpleGit from 'simple-git'
-import { run } from '@fabien0102/git2json'
+import { run as gitLogFormat } from '@fabien0102/git2json'
 import { emptyDirSync } from 'fs-extra'
 import utils from './helpers'
 
@@ -9,9 +9,15 @@ import utils from './helpers'
  * @class GitLogLoader
  */
 class GitLogLoader {
-  async loadFrom(userRepoInfo, clonePath) {
+  /**
+   *
+   * @param {string} userRepoInfo Formatted as username/repo_name
+   * @param {string} clonePath Path to where the Git repo will be cloned to.
+   * @returns An object with repository data.
+   */
+  async loadFrom(userRepoInfo = '', clonePath = '') {
     await cloneRepo(userRepoInfo, clonePath)
-    return await run({ path: clonePath })
+    return await gitLogFormat({ path: clonePath })
   }
 }
 

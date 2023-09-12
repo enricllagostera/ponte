@@ -2,7 +2,7 @@ The projects main language (and ensuing tech stack) is Javascript for a desktop 
 
 ## Tech stack
 
-The app uses Electron as the basis for cross-platform builds, ease of deployment and quick desktop GUI integration with Node. It uses NPM as package manager. Electron is supported via the template and CLI tool called Electron Vite. 
+The app uses Electron as the basis for cross-platform builds, ease of deployment and quick desktop GUI integration with Node. It uses NPM as package manager. Electron is supported via the template and CLI tool called Electron Vite.
 
 On the frontend side, I am using the framework Svelte to create modular, reactive UI. As for layouts and visual design, I'm using the Bootstrap library of component styles and the Bootstrap Icons for graphics. Some components are off-the-shelf, like the Svelecte library for selects (used for tagging).
 
@@ -20,57 +20,57 @@ In terms of operation, I'm doing most things from the `main.js` process.
 
 ### UX/UI
 
-I'm going to organize the UI mostly by using Bootstrap as the main library for components. I'm using Svelte to implement reactive parts of the GUI. 
+I'm going to organize the UI mostly by using Bootstrap as the main library for components. I'm using Svelte to implement reactive parts of the GUI.
 
 ## Features
 
 #todo
 
 1. QDPX export
-	1. [x] Add save file dialog for QDPX file
+   1. [x] Add save file dialog for QDPX file
 2. Save and load configuration files
-	1. [x] Add a navbar GUI
-	2. [x] Save config file
-	3. [x] Load config file
+   1. [x] Add a navbar GUI
+   2. [x] Save config file
+   3. [x] Load config file
 
 ### Conversion actions
 
 #todo
 
 1. Loading
-	1. [x] Validate GitHub repository information
-	2. [x] Define repository via GUI
-	3. Commit loading
-		1. [ ] Ignore commits from commit list (hashes or hashAbbrev)
-		2. [ ] Ignore commits from subject (glob pattern)
-		3. [x] Ignore commits from manual selection
-	4. File loading
-		1. [ ] Copy file as sources from filename (glob pattern)
-			1. Radio group: In all commits the file is found; Last existing commit; In specific commit(s);
-		2. [ ] Copy file as sources and encode from filename (glob pattern)
-			1. Radio group: In all commits the file is found; Last existing commit; In specific commit(s);
+   1. [x] Validate GitHub repository information
+   2. [x] Define repository via GUI
+   3. Commit loading
+      1. [ ] Ignore commits from commit list (hashes or hashAbbrev)
+      2. [ ] Ignore commits from subject (glob pattern)
+      3. [x] Ignore commits from manual selection
+   4. File loading
+      1. [ ] Copy file as sources from filename (glob pattern)
+         1. Radio group: In all commits the file is found; Last existing commit; In specific commit(s);
+      2. [ ] Copy file as sources and encode from filename (glob pattern)
+         1. Radio group: In all commits the file is found; Last existing commit; In specific commit(s);
 2. Coding
-	1. Commit encoding
-		1. [x] Encode commits from subject (glob pattern)
-			1. Example: All commits with `docs**` on subject line are encoded with `documentation`.
-		2. [ ] Manually encode commits
-		3. [?] Encode commits from full text content (glob pattern)
-	2. File encoding
-		1. [ ] Encode files from filename (glob patterns)
-		2. [ ] Encode files from text content (glob pattern, aka auto-code)
-		3. [ ] Encode manually selected files
+   1. Commit encoding
+      1. [x] Encode commits from subject (glob pattern)
+         1. Example: All commits with `docs**` on subject line are encoded with `documentation`.
+      2. [ ] Manually encode commits
+      3. [?] Encode commits from full text content (glob pattern)
+   2. File encoding
+      1. [ ] Encode files from filename (glob patterns)
+      2. [ ] Encode files from text content (glob pattern, aka auto-code)
+      3. [ ] Encode manually selected files
 3. Devlogs
-	1. [ ] Generate devlog compilation with advanced options
-		1. Checkboxes: Add commit logs; Add file from commit `devlog` footer; Add link to each build;
-	2. [x] Generate devlog compilation - basic
-	3. [x] Generate a separate devlog source for each commit
-		1. Checkboxes: Add commit logs; Add file from commit `devlog` footer; Add link to each build;
+   1. [ ] Generate devlog compilation with advanced options
+      1. Checkboxes: Add commit logs; Add file from commit `devlog` footer; Add link to each build;
+   2. [x] Generate devlog compilation - basic
+   3. [x] Generate a separate devlog source for each commit
+      1. Checkboxes: Add commit logs; Add file from commit `devlog` footer; Add link to each build;
 4. Compilations
-	1. [ ] Generate a docx from a folder compilation (glob pattern)
-		1. Radio group: In all commits the folder is found; Last existing commit; In specific commit(s);
+   1. [ ] Generate a docx from a folder compilation (glob pattern)
+      1. Radio group: In all commits the folder is found; Last existing commit; In specific commit(s);
 5. Visualizations
-	1. [ ] Generate a chronological timeline of commits that shows passage of time between commits;
-	2. [ ] Generate a topological timeline of commits that shows a linear ordered sequence of commits;
+   1. [ ] Generate a chronological timeline of commits that shows passage of time between commits;
+   2. [ ] Generate a topological timeline of commits that shows a linear ordered sequence of commits;
 
 ## QDPX format notes
 

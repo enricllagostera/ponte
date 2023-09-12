@@ -2,7 +2,6 @@
   import { createEventDispatcher, onMount } from 'svelte'
   import Select from 'svelte-select'
 
-  export let id
   export let initialOptions
   export let initialValues
 
