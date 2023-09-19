@@ -21,7 +21,8 @@ if (process.contextIsolated) {
       saveDialog: (saveOptions) => ipcRenderer.invoke('saveDialog', saveOptions),
       loadDialog: (loadOptions) => ipcRenderer.invoke('loadDialog', loadOptions),
       exportQDPX: (exportData, exportOptions) =>
-        ipcRenderer.invoke('exportQDPX', exportData, exportOptions)
+        ipcRenderer.invoke('exportQDPX', exportData, exportOptions),
+      onDownloadInProgress: (callback) => ipcRenderer.on('commitDownloadInProgress', callback)
     })
   } catch (error) {
     console.error(error)

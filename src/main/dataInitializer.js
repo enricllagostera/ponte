@@ -30,14 +30,45 @@ class DataInitializer {
     return res
   }
 
-  async downloadZip(commitHash) {
+  async downloadZip(commitHash, onProgressCb) {
     const zipUrl = utils.getGithubUrl(this.repoInfo) + '/archive/' + commitHash + '.zip'
-    const localZipsTarget = join(this.tempPath, 'zips')
+    const localZipsTarget = join(this.inputPath, 'zips')
     fs.emptyDirSync(localZipsTarget)
     const localFile = join(localZipsTarget, `${commitHash}.zip`)
-    await utils.fetch(zipUrl, localFile)
+    await utils.fetch(zipUrl, localFile, onProgressCb)
     const zip = new AdmZip(localFile)
     zip.extractAllTo(localZipsTarget)
+  }
+
+  async startDownloadZip(commitHash, onProgressCb) {
+    const zipUrl = utils.getGithubUrl(this.repoInfo) + '/archive/' + commitHash + '.zip'
+    const localZipsTarget = join(this.inputPath, 'zips')
+    // fs.emptyDirSync(localZipsTarget)
+    const localFile = join(localZipsTarget, `${commitHash}.zip`)
+    return utils.fetch(zipUrl, localFile, onProgressCb)
+  }
+
+  extractAllZips(allCommitHashes) {
+    const localZipsTarget = join(this.inputPath, 'zips')
+    let promises = []
+
+    for (const commitHash of allCommitHashes) {
+      const localFile = join(localZipsTarget, `${commitHash}.zip`)
+      const zip = new AdmZip(localFile)
+      promises.push(
+        new Promise((resolve, reject) => {
+          try {
+            zip.extractAllToAsync(localZipsTarget, true, true, () => {
+              // console.log('extracted ', commitHash)
+              resolve(commitHash)
+            })
+          } catch (error) {
+            reject(error)
+          }
+        })
+      )
+    }
+    return promises
   }
 }
 

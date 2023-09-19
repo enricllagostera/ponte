@@ -36,13 +36,17 @@ export default {
     }
     return false
   },
-  fetch: async (url, path) => {
+  fetch: async (url, path, onProgressCb) => {
     fs.ensureFileSync(path)
     const writer = fs.createWriteStream(path)
     const response = await axios({
       url,
       method: 'GET',
-      responseType: 'stream'
+      responseType: 'stream',
+      onDownloadProgress: (progressEvent) => {
+        const dataChunk = progressEvent
+        onProgressCb(dataChunk)
+      }
     })
 
     response.data.pipe(writer)

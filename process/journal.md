@@ -1,5 +1,19 @@
 # Process journal
 
+## 2023-09-18, 19 Dowloading files
+
+I'm preparing to add back the functionality to download and extract commit files, so as to enable copying files as sources in the QDPX bundle. (...) For now I'm downloading all the commits and unpacking them in the `temp` folder. I know this is far from optimal, but it will work well enough for now.
+
+Also ended up making some improvements to user feedback in the UI.
+
+## 2023-09-15 GaR meeting
+
+- [ ] Prepare a Mac build of version 0.0.1 #todo
+
+After I talked about how design is more of a distributed process than just the integration on one folder/tool, and that this might need a combination of methodologies for analysis, Danny mentioned that even though automating some of that would be beneficial, it was important to not lose sight of the process, and that journaling / practices like that could support that. I sent the message below on Zoom as a clarification.
+
+![](20230915115024.png)
+
 ## 2023-09-08 GaR meeting
 
 1. Meeting notes
@@ -16,11 +30,11 @@
       2. How to deal with notes that might be the basis for unpublished paper? %% Discussion for later. Probably define a protocol for the whole GaR or maybe prepare a paper on it? %%
          1. What could a writing embargo look like?
    3. Joseph will work with the UX of the tools for the GaR project: **repo-to-qda**, archivistagd. %% Focus will be on repo-to-qda work. %%
-      1. [ ] Write a note for Joseph on the UX and references for the repo-to-qda app and tag him on the repo #todo
+      1. [ ] Write a note to Joseph on the UX and references for the repo-to-qda app and tag him on the repo #todo
 
 ## 2023-09-05 Encoding actions bug fixing and changes of component
 
-Started bug-fixing the loading of the coding action and it's not working at all. I really will need to re-think this more slowly. (....) I had an idea to chenge the implementation from the _Svelecte_ component to the same JS library (_Choices.js_) that I used in _archivistagd_. I'm more familiar with it and it seems to have enough low-level configuration that I can wire it to Svelte without much issues. (...) And that didn't work. After more fiddling around, now I'm trying out one called [_svelte-select_](https://github.com/rob-balfre/svelte-select). It is a bit better documented and used, so there's that, but still very messy to use. I'll have to continue work on this later. Amazing how fragile these libraries can be. (...) OK, finally. After a lot of tweaking to finally understand the lifecycle of information I have the save/loading of quali codes working well enough with the encoding by pattern action. So annoying.
+Started bug-fixing the loading of the coding action and it's not working at all. I really will need to re-think this more slowly. (....) I had an idea to change the implementation from the _Svelecte_ component to the same JS library (_Choices.js_) that I used in _archivistagd_. I'm more familiar with it and it seems to have enough low-level configuration that I can wire it to Svelte without much issues. (...) And that didn't work. After more fiddling around, now I'm trying out one called [_svelte-select_](https://github.com/rob-balfre/svelte-select). It is a bit better documented and used, so there's that, but still very messy to use. I'll have to continue work on this later. Amazing how fragile these libraries can be. (...) OK, finally. After a lot of tweaking to finally understand the lifecycle of information I have the save/loading of quali codes working well enough with the encoding by pattern action. So annoying.
 
 ## 2023-09-04 Re-implementing exporting to QDPX
 

@@ -15,8 +15,8 @@ let allCommits
 function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 900,
-    height: 670,
+    width: 1440,
+    height: 900,
     show: false,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
@@ -53,7 +53,44 @@ function createWindow() {
     const inputGitDataPath = join(app.getPath('temp'), 'repo-to-qda/inputGitData')
     const processedGitDataPath = join(app.getPath('temp'), 'repo-to-qda/processedGitData')
     initializer = new DataInitializer(repoInfo, inputGitDataPath, processedGitDataPath)
+    mainWindow.webContents.send('commitDownloadInProgress', {
+      message: 'Cloning repository...'
+    })
     allCommits = await initializer.loadCommitsFromGit()
+
+    let downloadPromises = []
+    for (const commit of allCommits) {
+      downloadPromises.push(
+        initializer
+          .startDownloadZip(commit.hash, (info) => {
+            // console.log(info)
+            mainWindow.webContents.send('commitDownloadInProgress', {
+              hash: commit.hash,
+              progress: info,
+              message: ''
+            })
+          })
+          .then((value) => {
+            mainWindow.webContents.send('commitDownloadInProgress', {
+              hash: commit.hash,
+              progress: { total: -1 },
+              message: ''
+            })
+          })
+      )
+    }
+
+    await Promise.allSettled(downloadPromises)
+    console.log('finished downloading all')
+    const allExtractions = initializer.extractAllZips(allCommits.map((c) => c.hash))
+    mainWindow.webContents.send('commitDownloadInProgress', {
+      message: 'Extracting ZIPs. This might take a while...'
+    })
+    await Promise.allSettled(allExtractions)
+    mainWindow.webContents.send('commitDownloadInProgress', {
+      message: ''
+    })
+    console.log('finished extracting all')
     return JSON.stringify(allCommits)
   })
 

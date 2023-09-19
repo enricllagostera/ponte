@@ -14,6 +14,7 @@
   import WaitingModal from './components/WaitingModal.svelte'
 
   import { clickOutside } from './clickOutside.js'
+  import Pane from './components/Pane.svelte'
 
   let actionDropdown = false
   let newConfigModalOpen = false
@@ -22,9 +23,11 @@
   let userRepoInfo = ''
   let allInputCommits = []
   let allCommitsToProcess = []
-
+  let downloadingCommits = []
   const defaultQdpx = { sources: [], codes: [], commits: [] }
   let qdpx = { ...defaultQdpx }
+
+  let footerMessage = ''
 
   const defaultActions = [
     {
@@ -154,7 +157,7 @@
   }
 
   function dismissAddActionsDropdown(event) {
-    console.log(event)
+    //console.log(event)
     if (actionDropdown && event.detail.target.id != 'addActionDropdownBtn') {
       actionDropdown = false
     }
@@ -230,6 +233,30 @@
     let res = await window.loader.saveDialog(saveOptions)
     console.log(res)
   }
+
+  function notifications() {
+    let progressPerCommit = new Map()
+    window.loader.onDownloadInProgress((event, data) => {
+      // console.log(data)
+      if (data.message != '') {
+        // if there is a message, just forward it to the footer
+        footerMessage = data.message
+        return
+      } else if (!data.progress) {
+        // no message and no data means that message should be cleared
+        footerMessage = ''
+        return
+      }
+      // has the download completed?
+      if (data.progress.total < 0) {
+        progressPerCommit.delete(data.hash)
+      } else {
+        progressPerCommit.set(data.hash, data)
+      }
+      downloadingCommits = Array.from(progressPerCommit)
+      footerMessage = `Downloading ${downloadingCommits.length} commits...`
+    })
+  }
 </script>
 
 <svelte:head>
@@ -239,7 +266,9 @@
   />
 </svelte:head>
 
-<main class="container-fluid d-flex vh-100 max-vh100 flex-column">
+<!-- Main app structure -->
+<main class="container-fluid d-flex vh-100 max-vh100 flex-column" style="max-height: 100vh">
+  <!-- Modals -->
   <StaticAlert
     open={newConfigModalOpen}
     dialog={{
@@ -250,10 +279,13 @@
       executeOnConfirm: resetConfig
     }}
   />
+
+  <!-- Navbar row -->
   <div class="row container-fluid vw-100 flex-grow-0">
+    <!-- Navbar col -->
     <div class="col">
       <nav class="navbar border-bottom border-body">
-        <form class="container-fluid justify-content-start">
+        <div class="container-fluid justify-content-start">
           <span class="navbar-brand"><h3>RepoToQDA</h3></span>
           <button
             data-bs-toggle="modal"
@@ -287,36 +319,41 @@
               message: 'Please wait, downloading commit information can take a few minutes...'
             }}
           />
+
           <button class="btn btn-outline-primary ms-2" type="button" on:click={saveConfig}
             ><i class="bi bi-file-arrow-down-fill"></i> Save config</button
           >
-        </form>
+        </div>
       </nav>
     </div>
   </div>
+  <!-- Main content row -->
   <div class="row flex-grow-1 py-2 g-2">
+    <!-- Left col -->
     <div class="col d-flex flex-column">
-      <div class="row">
-        <div class="col">
+      <!-- Top left row+col -->
+      <div class="row" style:height={repoInfoLoaded ? '23%' : '35%'}>
+        <div class="col d-flex">
           {#key repoLoader}
-            <RepoLoader on:repoDataLoaded={displayRepoData} />
+            <RepoLoader on:repoDataLoaded={displayRepoData} on:startLoading={notifications} />
           {/key}
         </div>
       </div>
 
+      <!-- Bottom left row+col -->
       {#if repoInfoLoaded}
         <div class="row flex-grow-1">
           <div class="col d-flex">
-            <div class="card rounded-0 m-1 flex-grow-1">
-              <div class="card-header d-flex flex-grow-0 align-items-end">
+            <Pane>
+              <div slot="header" class="d-flex flex-grow-0 align-items-center w-100">
                 <div class="mt-1">
-                  <h5>Actions</h5>
+                  <b>Actions</b>
                 </div>
                 <div class="ms-auto">
                   <div class="dropdown">
                     <button
                       id="addActionDropdownBtn"
-                      class="btn btn-primary dropdown-toggle"
+                      class="btn btn-primary btn-sm dropdown-toggle"
                       type="button"
                       aria-expanded={actionDropdown}
                       on:click={() => {
@@ -344,8 +381,7 @@
                   </div>
                 </div>
               </div>
-
-              <div class="card-body flexOverflow overflow-y-auto" id="actionsTop">
+              <div slot="body">
                 <div class="list-group">
                   <ActionListitem
                     action={actionByName(currentActions, 'manualIgnoreCommits')}
@@ -372,18 +408,17 @@
                   {/each}
                 </div>
               </div>
-            </div>
+            </Pane>
           </div>
         </div>
       {/if}
     </div>
 
+    <!-- Center col -->
     <div class="col d-flex overflow-hidden">
-      <div class="card rounded-0 m-1 flex-grow-1" class:text-bg-secondary={!repoInfoLoaded}>
-        <div class="card-header d-flex flex-grow-0 align-items-end">
-          <h5>Source commits</h5>
-        </div>
-        <div class="card-body flexOverflow overflow-y-auto">
+      <Pane>
+        <div slot="header"><b>Source commits</b></div>
+        <div slot="body">
           {#if repoInfoLoaded}
             {#each allInputCommits as commit (commit.hashAbbrev)}
               <CommitListItem {commit} {userRepoInfo} on:toggleIncluded={toggleIncludedCommit} />
@@ -392,23 +427,28 @@
             <p id="gitData">Waiting for repo data.</p>
           {/if}
         </div>
-        <!-- <div class="card-footer flex-grow-0 text-muted">Footer</div> -->
-      </div>
+      </Pane>
     </div>
+
+    <!-- Right col -->
     <div class="col d-flex flex-column">
       <QdpxPreview qdpxData={qdpx} />
     </div>
   </div>
+
+  <!-- Footer row: notifications area -->
+  <div
+    class="row container-fluid vw-100 flex-grow-0 p-2"
+    class:text-bg-secondary={footerMessage == ''}
+    class:text-bg-warning={footerMessage != ''}
+  >
+    <div class="col">
+      {#if footerMessage != ''}
+        <div class="spinner-border" role="status" aria-hidden="true"></div>
+        {footerMessage}
+      {:else}
+        Footer
+      {/if}
+    </div>
+  </div>
 </main>
-
-<style>
-  .max-vh100 {
-    max-height: 100vh;
-  }
-
-  :global(.flexOverflow) {
-    flex: 1 1 1px;
-    min-width: 0;
-    min-height: 0;
-  }
-</style>

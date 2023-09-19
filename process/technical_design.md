@@ -1,12 +1,12 @@
-The projects main language (and ensuing tech stack) is Javascript for a desktop environment.
+The project's main language (and ensuing tech stack) is Javascript, running on a local-first desktop environment.
 
 ## Tech stack
 
 The app uses Electron as the basis for cross-platform builds, ease of deployment and quick desktop GUI integration with Node. It uses NPM as package manager. Electron is supported via the template and CLI tool called Electron Vite.
 
-On the frontend side, I am using the framework Svelte to create modular, reactive UI. As for layouts and visual design, I'm using the Bootstrap library of component styles and the Bootstrap Icons for graphics. Some components are off-the-shelf, like the Svelecte library for selects (used for tagging).
+On the frontend side, I am using the framework Svelte to create modular, reactive UI. As for layouts and visual design, I'm using the Bootstrap library of component styles and the Bootstrap Icons for graphics. Some components are off-the-shelf, like the one for selects (used for tagging).
 
-The main functionality (i.e. data and file handling and processing) is done via Node modules such as XML parsers, Git libraries, ZIP libraries and JSON manipulation. Other libraries involved are there mostly for dates, and filesystem operations. Right now, an overview of them is:
+The main functionality (i.e. data and file handling and processing) is done via Node modules such as XML parsers, Git libraries, ZIP and JSON manipulation. Other libraries involved are there mostly for dates, and filesystem operations. Right now, an overview of them is:
 
 1. `simple-git` and `git2json` to get Git information from GitHub repos;
 2. `xmlbuilder2` for XML parsing and building;
@@ -45,9 +45,10 @@ I'm going to organize the UI mostly by using Bootstrap as the main library for c
       2. [ ] Ignore commits from subject (glob pattern)
       3. [x] Ignore commits from manual selection
    4. File loading
-      1. [ ] Copy file as sources from filename (glob pattern)
+      1. [x] Download commit files
+      2. [ ] Copy file as sources from filename (glob pattern)
          1. Radio group: In all commits the file is found; Last existing commit; In specific commit(s);
-      2. [ ] Copy file as sources and encode from filename (glob pattern)
+      3. [ ] Copy file as sources and encode from filename (glob pattern)
          1. Radio group: In all commits the file is found; Last existing commit; In specific commit(s);
 2. Coding
    1. Commit encoding

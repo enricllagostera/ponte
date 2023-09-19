@@ -1,5 +1,6 @@
 <script>
   import TextSourcePreview from './TextSourcePreview.svelte'
+  import Pane from './Pane.svelte'
 
   export let qdpxData
 
@@ -16,21 +17,22 @@
   }
 </script>
 
-<div class="card rounded-0 m-1 flex-grow-1" class:text-bg-secondary={!qdpxData.commits.length > 0}>
-  <div class="card-header d-flex flex-grow-0 align-items-end">
+<Pane>
+  <div slot="header" class="d-flex flex-grow-0 align-items-center w-100">
     <div class="mt-1">
-      <h5>QDPX Preview</h5>
+      <b>QDPX Preview</b>
     </div>
     <div class="ms-auto">
       <button
-        class="btn btn-primary"
+        class="btn btn-primary btn-sm"
         type="button"
         disabled={!qdpxData.commits.length > 0}
         on:click={exportQDPX}>Export QDPX</button
       >
     </div>
   </div>
-  <div class="card-body flexOverflow overflow-y-auto">
+
+  <div slot="body">
     <div class="text-primary">
       <h3><i class="bi bi-archive"></i> Sources</h3>
       <ul class=" list-unstyled my-2">
@@ -72,5 +74,4 @@
       </ul>
     </div>
   </div>
-  <!-- <div class="card-footer flex-grow-0 text-muted">Footer</div> -->
-</div>
+</Pane>
