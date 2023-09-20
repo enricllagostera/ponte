@@ -1,5 +1,11 @@
 # Process journal
 
+## 2023-09-20 Copying text files into QDPX bundle
+
+I can finally move on to the actual copying of files, now that I have them available and their path data sent to the GUI. (...)
+
+OK, for now this took the shape of a very rough interface that takes glob patterns and copies files as text sources, reading whatever opening them as `utf-8` gives out. There are some issues yet, but saving / loading of config and the QDPX export seem to be working alright, so I'll commit as-is. This is already enough to bring in script files or notes both in a cross-repo form or from the latest commit. Hmm, maybe this could be changed to an automatically determined most recent version?
+
 ## 2023-09-18, 19, 20 Dowloading files
 
 I'm preparing to add back the functionality to download and extract commit files, so as to enable copying files as sources in the QDPX bundle. (...) For now I'm downloading all the commits and unpacking them in the `temp` folder. I know this is far from optimal, but it will work well enough for now.

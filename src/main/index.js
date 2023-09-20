@@ -70,7 +70,7 @@ function createWindow() {
               message: ''
             })
           })
-          .then((value) => {
+          .then(() => {
             mainWindow.webContents.send('commitDownloadInProgress', {
               hash: commit.hash,
               progress: { total: -1 },
@@ -95,14 +95,15 @@ function createWindow() {
     let fileStructurePromises = []
     for (const commit of allCommits) {
       fileStructurePromises.push(
-        getFileStructure(initializer.getExtractedZipPathForCommit(commit.hash)).then((info) => {
-          commit.files = info
-        })
+        files
+          .getFileStructure(initializer.getExtractedZipPathForCommit(commit.hash))
+          .then((info) => {
+            commit.files = info
+          })
       )
     }
 
-    const allFolderInfos = await Promise.allSettled(fileStructurePromises)
-    console.log(allFolderInfos)
+    await Promise.allSettled(fileStructurePromises)
     mainWindow.webContents.send('commitDownloadInProgress', {
       message: ''
     })
@@ -115,6 +116,8 @@ function createWindow() {
   ipcMain.handle('saveDialog', saveDialog, mainWindow)
   ipcMain.handle('loadDialog', loadDialog, mainWindow)
   ipcMain.handle('exportQDPX', exportQDPX, mainWindow)
+  ipcMain.handle('runGlobOnCommit', runGlobOnCommit)
+  ipcMain.handle('readFileAtCommit', readFileAtCommit)
 
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
@@ -156,6 +159,14 @@ app.on('window-all-closed', () => {
     app.quit()
   }
 })
+
+async function readFileAtCommit(_event, filePath, commitHash) {
+  return await initializer.readFileAtCommit(filePath, commitHash)
+}
+
+async function runGlobOnCommit(_event, pattern, commitHash) {
+  return await initializer.runGlobOnCommit(pattern, commitHash)
+}
 
 async function exportQDPX(_event, exportData, exportOptions) {
   let res
@@ -290,25 +301,5 @@ async function getDevlogCompilation(_event, devlogCompilationConfig) {
   return devlog
 }
 
-async function getFileStructure(folderPath) {
-  let result = []
-  const getDirectories = await fs.readdir(folderPath, { withFileTypes: true })
-
-  const fileNames = getDirectories
-    .filter((dirent) => !dirent.isDirectory())
-    .map((dirent) => normalize(join(folderPath, dirent.name)))
-
-  result.push(...fileNames)
-
-  const folderNames = getDirectories
-    .filter((dirent) => dirent.isDirectory())
-    .map((dirent) => dirent.name)
-
-  for (const folder of folderNames) {
-    result.push(...(await getFileStructure(join(folderPath, folder))))
-  }
-
-  return result
-}
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.

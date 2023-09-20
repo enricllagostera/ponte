@@ -25,7 +25,7 @@
     "bootstrap": "^5.3.1",
     "bootstrap-icons": "^1.10.5",
     "fs-extra": "^11.1.1",
-    "glob": "^10.3.3",
+    "glob": "^10.3.4",
     "luxon": "^3.4.2",
     "marked": "^7.0.5",
     "minimatch": "^9.0.3",

@@ -10,6 +10,7 @@
   import ActionListitem from './components/ActionListitem.svelte'
   import CommitListItem from './components/CommitListItem.svelte'
   import ActionApplyCodeCommitGlob from './components/ActionApplyCodeCommitGlob.svelte'
+  import ActionImportFilesByGlob from './components/ActionImportFilesByGlob.svelte'
   import StaticAlert from './components/StaticAlert.svelte'
   import WaitingModal from './components/WaitingModal.svelte'
 
@@ -148,6 +149,21 @@
         }
       }
     }
+
+    const allImportFilesByGlob = actionsByName(currentActions, 'importFilesByGlob')
+    for (const act of allImportFilesByGlob) {
+      if (act.active) {
+        for (const file of act.selectedFiles) {
+          const content = await window.files.readFileAtCommit(file.file, file.commit)
+          sources.push({
+            parent: 'copyTextSource',
+            content: content,
+            name: `${file.file} @ ${file.commit.substring(0, 7)}`
+          })
+        }
+      }
+    }
+
     console.log(qdpx.codes)
     qdpx = {
       commits: [...allCommitsToProcess],
@@ -182,10 +198,33 @@
     actionDropdown = false
   }
 
+  function addImportFilesByGlob() {
+    const adding = {
+      name: 'importFilesByGlob',
+      guid: uuid(),
+      active: true,
+      title: 'Import files by pattern',
+      description:
+        'Import files from the repository that match the following pattern. They will be copied and added as sources in the QDPX export.',
+      selectedCommits: [],
+      selectedFiles: [],
+      searchPattern: '',
+      inputCommitOption: 'latest'
+    }
+    currentActions.push(adding)
+    currentActions = [...currentActions]
+    actionDropdown = false
+  }
+
   function removeApplyCodeCommitGlob(event) {
     const actionToRemove = currentActions.findIndex((a) => a.guid == event.detail.action.guid)
     currentActions.splice(actionToRemove, 1)
     currentActions = [...currentActions]
+    updateQdpxPreview()
+  }
+
+  function removeImportFilesByGlob(event) {
+    currentActions = [...currentActions.filter((a) => a.guid != event.detail.action.guid)]
     updateQdpxPreview()
   }
 
@@ -377,6 +416,11 @@
                           >Apply codes to commits by pattern</button
                         >
                       </li>
+                      <li>
+                        <button class="dropdown-item" type="button" on:click={addImportFilesByGlob}
+                          >Import files by glob pattern</button
+                        >
+                      </li>
                     </ul>
                   </div>
                 </div>
@@ -404,6 +448,15 @@
                       commitsToProcess={allCommitsToProcess}
                       on:actionUpdated={updateQdpxPreview}
                       on:actionDeleted={removeApplyCodeCommitGlob}
+                    />
+                  {/each}
+
+                  {#each actionsByName(currentActions, 'importFilesByGlob') as action (action.guid)}
+                    <ActionImportFilesByGlob
+                      {action}
+                      commitsToProcess={allCommitsToProcess}
+                      on:actionUpdated={updateQdpxPreview}
+                      on:actionDeleted={removeImportFilesByGlob}
                     />
                   {/each}
                 </div>

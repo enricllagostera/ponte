@@ -5,6 +5,7 @@ import * as files from './fileSystemHandling'
 import * as fs from 'fs-extra'
 import { join } from 'path'
 import AdmZip from 'adm-zip'
+import { glob } from 'glob'
 
 class DataInitializer {
   /**
@@ -32,15 +33,6 @@ class DataInitializer {
     return res
   }
 
-  // async downloadZip(commitHash, onProgressCb) {
-  //   const zipUrl = utils.getGithubUrl(this.repoInfo) + '/archive/' + commitHash + '.zip'
-  //   fs.emptyDirSync(this.zipsPath)
-  //   const localFile = join(this.zipsPath, `${commitHash}.zip`)
-  //   await utils.fetch(zipUrl, localFile, onProgressCb)
-  //   const zip = new AdmZip(localFile)
-  //   zip.extractAllTo(this.zipsPath)
-  // }
-
   async startDownloadZip(commitHash, onProgressCb) {
     const zipUrl = utils.getGithubUrl(this.repoInfo) + '/archive/' + commitHash + '.zip'
     const localFile = join(this.zipsPath, `${commitHash}.zip`)
@@ -58,10 +50,8 @@ class DataInitializer {
             const pathToCommit = files.getPathForCommit(this.userName, this.repoName, commitHash)
             fs.removeSync(pathToCommit)
             zip.extractAllToAsync(this.zipsPath, true, false, () => {
-              // console.log('extracted ', commitHash)
               const extractedZip = join(this.zipsPath, `${this.repoName}-${commitHash}`)
               fs.moveSync(extractedZip, pathToCommit)
-              //fs.renameSync(extractedZip, pathToCommit)
               resolve(commitHash)
             })
           } catch (error) {
@@ -76,6 +66,21 @@ class DataInitializer {
   getExtractedZipPathForCommit(commitHash) {
     const localZipFolder = files.getPathForCommit(this.userName, this.repoName, commitHash)
     return localZipFolder
+  }
+
+  async runGlobOnCommit(pattern, commitHash) {
+    const g = await glob(pattern, {
+      cwd: files.getPathForCommit(this.userName, this.repoName, commitHash)
+    })
+    return g
+  }
+
+  async readFileAtCommit(filePath, commitHash) {
+    const fullPathAtCommit = join(
+      files.getPathForCommit(this.userName, this.repoName, commitHash),
+      filePath
+    )
+    return await fs.readFile(fullPathAtCommit, 'utf-8')
   }
 }
 

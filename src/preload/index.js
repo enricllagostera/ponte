@@ -24,6 +24,12 @@ if (process.contextIsolated) {
         ipcRenderer.invoke('exportQDPX', exportData, exportOptions),
       onDownloadInProgress: (callback) => ipcRenderer.on('commitDownloadInProgress', callback)
     })
+    contextBridge.exposeInMainWorld('files', {
+      runGlobOnCommit: (pattern, commitHash) =>
+        ipcRenderer.invoke('runGlobOnCommit', pattern, commitHash),
+      readFileAtCommit: (filePath, commitHash) =>
+        ipcRenderer.invoke('readFileAtCommit', filePath, commitHash)
+    })
   } catch (error) {
     console.error(error)
   }

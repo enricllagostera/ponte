@@ -37,7 +37,7 @@
       <h3><i class="bi bi-archive"></i> Sources</h3>
       <ul class=" list-unstyled my-2">
         {#each qdpxData.sources as source}
-          {#if source.parent == 'repository'}
+          {#if source.parent == 'repository' || source.parent == 'copyTextSource'}
             <li class="ms-2"><TextSourcePreview {source} /></li>
           {/if}
         {/each}
