@@ -1,10 +1,11 @@
 import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron'
-import { join } from 'path'
+import { join, normalize } from 'path'
 import * as fs from 'fs-extra'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { DateTime } from 'luxon'
 
+import * as files from './fileSystemHandling'
 import QdpxExporter from './qdpxExport'
 import utils from './helpers'
 import DataInitializer from './dataInitializer'
@@ -50,9 +51,8 @@ function createWindow() {
   })
 
   ipcMain.handle('loadRepoData', async (_event, repoInfo) => {
-    const inputGitDataPath = join(app.getPath('temp'), 'repo-to-qda/inputGitData')
-    const processedGitDataPath = join(app.getPath('temp'), 'repo-to-qda/processedGitData')
-    initializer = new DataInitializer(repoInfo, inputGitDataPath, processedGitDataPath)
+    const inputGitDataPath = files.getAppGitDataPath()
+    initializer = new DataInitializer(repoInfo, inputGitDataPath)
     mainWindow.webContents.send('commitDownloadInProgress', {
       message: 'Cloning repository...'
     })
@@ -88,9 +88,25 @@ function createWindow() {
     })
     await Promise.allSettled(allExtractions)
     mainWindow.webContents.send('commitDownloadInProgress', {
-      message: ''
+      message: 'Getting file structure for each commit...'
     })
     console.log('finished extracting all')
+
+    let fileStructurePromises = []
+    for (const commit of allCommits) {
+      fileStructurePromises.push(
+        getFileStructure(initializer.getExtractedZipPathForCommit(commit.hash)).then((info) => {
+          commit.files = info
+        })
+      )
+    }
+
+    const allFolderInfos = await Promise.allSettled(fileStructurePromises)
+    console.log(allFolderInfos)
+    mainWindow.webContents.send('commitDownloadInProgress', {
+      message: ''
+    })
+
     return JSON.stringify(allCommits)
   })
 
@@ -272,6 +288,27 @@ async function getDevlogCompilation(_event, devlogCompilationConfig) {
   }
 
   return devlog
+}
+
+async function getFileStructure(folderPath) {
+  let result = []
+  const getDirectories = await fs.readdir(folderPath, { withFileTypes: true })
+
+  const fileNames = getDirectories
+    .filter((dirent) => !dirent.isDirectory())
+    .map((dirent) => normalize(join(folderPath, dirent.name)))
+
+  result.push(...fileNames)
+
+  const folderNames = getDirectories
+    .filter((dirent) => dirent.isDirectory())
+    .map((dirent) => dirent.name)
+
+  for (const folder of folderNames) {
+    result.push(...(await getFileStructure(join(folderPath, folder))))
+  }
+
+  return result
 }
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.

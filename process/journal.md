@@ -1,10 +1,12 @@
 # Process journal
 
-## 2023-09-18, 19 Dowloading files
+## 2023-09-18, 19, 20 Dowloading files
 
 I'm preparing to add back the functionality to download and extract commit files, so as to enable copying files as sources in the QDPX bundle. (...) For now I'm downloading all the commits and unpacking them in the `temp` folder. I know this is far from optimal, but it will work well enough for now.
 
-Also ended up making some improvements to user feedback in the UI.
+Also ended up making some improvements to user feedback in the UI. (...)
+
+I finally finished doing this, downloading things to a better organized temp folder and also preparing an array with the absolute paths to each file in each commit.
 
 ## 2023-09-15 GaR meeting
 
