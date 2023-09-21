@@ -26,7 +26,7 @@ export function getPathForCommit(user, repo, commitHash) {
   return path.join(repoBasePath, 'commits', commitHash)
 }
 
-export async function getFileStructure(folderPath) {
+export async function getFileList(folderPath) {
   let result = []
   const getDirectories = await fs.readdir(folderPath, { withFileTypes: true })
   const fileNames = getDirectories
@@ -40,8 +40,47 @@ export async function getFileStructure(folderPath) {
     .map((dirent) => dirent.name)
 
   for (const folder of folderNames) {
-    result.push(...(await getFileStructure(path.join(folderPath, folder))))
+    result.push(...(await getFileList(path.join(folderPath, folder))))
   }
+
+  return result
+}
+
+export async function getFileTree(folderPath, baseFolder, commitHash) {
+  let result = []
+  const getDirectories = await fs.readdir(folderPath, { withFileTypes: true })
+
+  const folderNames = getDirectories
+    .filter((dirent) => dirent.isDirectory())
+    .map((dirent) => dirent.name)
+
+  for (const folder of folderNames) {
+    // ...(await getFileList(path.join(folderPath, folder)))
+    let newFolder = {
+      name: folder,
+      abs: path.join(folderPath, folder),
+      rel: path.relative(folderPath, path.join(folderPath, folder))
+    }
+    newFolder.children = [
+      ...(await getFileTree(path.join(folderPath, folder), baseFolder, commitHash))
+    ]
+    if (newFolder.children.length == 0) delete newFolder.children
+    result.push(newFolder)
+  }
+
+  const fileNames = getDirectories
+    .filter((dirent) => !dirent.isDirectory())
+    .map((dirent) => {
+      return {
+        name: dirent.name,
+        abs: path.join(folderPath, dirent.name),
+        rel: path.relative(baseFolder, path.join(folderPath, dirent.name)),
+        selected: false,
+        commitHash: commitHash
+      }
+    })
+
+  result.push(...fileNames)
 
   return result
 }

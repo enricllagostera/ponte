@@ -17,6 +17,8 @@
   import { clickOutside } from './clickOutside.js'
   import Pane from './components/Pane.svelte'
 
+  const supportedTextExts = ['md', 'txt', 'js', 'css', 'html']
+
   let actionDropdown = false
   let newConfigModalOpen = false
 
@@ -38,6 +40,14 @@
       title: 'Manually ignore commits',
       description: 'Removes the selected commits from QDPX processing.',
       selectedCommits: []
+    },
+    {
+      name: 'manualImportFiles',
+      guid: uuid(),
+      active: true,
+      title: 'Manually import files as sources commits',
+      description: 'Includes selected files on QDPX processing.',
+      selectedFiles: []
     },
     {
       name: 'devlogCompilation',
@@ -105,6 +115,27 @@
           (v) => actionByName(currentActions, 'manualIgnoreCommits').selectedCommits[v.hashAbbrev]
         )
       ]
+    } else {
+      allCommitsToProcess = [...allInputCommits]
+    }
+
+    if (actionByName(currentActions, 'manualImportFiles').active) {
+      const act = actionByName(currentActions, 'manualImportFiles')
+      act.selectedFiles = []
+      for (const commit of allCommitsToProcess) {
+        for (const file of getAllSelectedFiles(commit.fileTree)) {
+          act.selectedFiles.push(file)
+          const ext = file.name.split('.')[file.name.split('.').length - 1]
+          if (supportedTextExts.indexOf(ext) >= 0) {
+            const content = await window.files.readFileAtCommit(file.rel, commit.hash)
+            sources.push({
+              parent: 'copyTextSource',
+              content: content,
+              name: `${file.rel} @ ${commit.hash.substring(0, 7)}`
+            })
+          }
+        }
+      }
     } else {
       allCommitsToProcess = [...allInputCommits]
     }
@@ -203,9 +234,9 @@
       name: 'importFilesByGlob',
       guid: uuid(),
       active: true,
-      title: 'Import files by pattern',
+      title: 'Import files as text sources',
       description:
-        'Import files from the repository that match the following pattern. They will be copied and added as sources in the QDPX export.',
+        'Import files from the repository that match the following pattern. They will be read and added as text sources in the QDPX export.',
       selectedCommits: [],
       selectedFiles: [],
       searchPattern: '',
@@ -226,6 +257,34 @@
   function removeImportFilesByGlob(event) {
     currentActions = [...currentActions.filter((a) => a.guid != event.detail.action.guid)]
     updateQdpxPreview()
+  }
+
+  function getAllSelectedFiles(directory) {
+    let selected = []
+    for (const dirent of directory) {
+      if (dirent.children?.length > 0) {
+        // is folder
+        selected.push(...getAllSelectedFiles(dirent.children))
+      } else if (!dirent.children) {
+        // is file
+        if (dirent.selected) {
+          selected.push(dirent)
+        }
+      }
+    }
+    return selected
+  }
+
+  function findInTreeAndToggleSelected(abs, directory, value) {
+    for (const dirent of directory) {
+      if (dirent.children?.length > 0) {
+        // is folder
+        findInTreeAndToggleSelected(abs, dirent.children, value)
+      } else if (!dirent.children && dirent.abs == abs) {
+        dirent.selected = value
+        return
+      }
+    }
   }
 
   // This is used to reactively restart a component
@@ -252,6 +311,15 @@
     $repo.userRepoInfo = res.userRepoInfo
     $repo.commits = JSON.parse(await window.loader.loadRepoData($repo.userRepoInfo))
     currentActions = [...res.actions]
+    const manualImportFiles = actionsByName(currentActions, 'manualImportFiles')
+    for (const file of manualImportFiles[0].selectedFiles) {
+      findInTreeAndToggleSelected(
+        file.abs,
+        $repo.commits.find((c) => c.hash == file.commitHash).fileTree,
+        true
+      )
+    }
+    $repo.commits = [...$repo.commits]
     const allApplyCodeCommitByGlob = actionsByName(currentActions, 'applyCodeCommitGlob')
     for (const act of allApplyCodeCommitByGlob) {
       $codeOptions = [...$codeOptions, ...act.codesToApply]
@@ -433,6 +501,11 @@
                   />
 
                   <ActionListitem
+                    action={actionByName(currentActions, 'manualImportFiles')}
+                    on:actionUpdated={updateQdpxPreview}
+                  />
+
+                  <ActionListitem
                     action={actionByName(currentActions, 'devlogCompilation')}
                     on:actionUpdated={updateQdpxPreview}
                   />
@@ -474,7 +547,12 @@
         <div slot="body">
           {#if repoInfoLoaded}
             {#each allInputCommits as commit (commit.hashAbbrev)}
-              <CommitListItem {commit} {userRepoInfo} on:toggleIncluded={toggleIncludedCommit} />
+              <CommitListItem
+                {commit}
+                {userRepoInfo}
+                on:toggleIncluded={toggleIncludedCommit}
+                on:fileToggled={updateQdpxPreview}
+              />
             {/each}
           {:else}
             <p id="gitData">Waiting for repo data.</p>

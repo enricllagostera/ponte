@@ -96,9 +96,15 @@ function createWindow() {
     for (const commit of allCommits) {
       fileStructurePromises.push(
         files
-          .getFileStructure(initializer.getExtractedZipPathForCommit(commit.hash))
-          .then((info) => {
-            commit.files = info
+          .getFileTree(
+            initializer.getExtractedZipPathForCommit(commit.hash),
+            initializer.getExtractedZipPathForCommit(commit.hash),
+            commit.hash
+          )
+          .then(async (info) => {
+            commit.fileTree = info
+            // commit.fileTree = await files.getFileTree(
+            // initializer.getExtractedZipPathForCommit(commit.hash)
           })
       )
     }
@@ -118,6 +124,7 @@ function createWindow() {
   ipcMain.handle('exportQDPX', exportQDPX, mainWindow)
   ipcMain.handle('runGlobOnCommit', runGlobOnCommit)
   ipcMain.handle('readFileAtCommit', readFileAtCommit)
+  ipcMain.handle('showInExplorer', showInExplorer)
 
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
@@ -159,6 +166,10 @@ app.on('window-all-closed', () => {
     app.quit()
   }
 })
+
+async function showInExplorer(_event, filePath) {
+  return shell.showItemInFolder(filePath)
+}
 
 async function readFileAtCommit(_event, filePath, commitHash) {
   return await initializer.readFileAtCommit(filePath, commitHash)

@@ -3,7 +3,7 @@ import utils from './helpers'
 import * as files from './fileSystemHandling'
 
 import * as fs from 'fs-extra'
-import { join } from 'path'
+import { join, resolve } from 'path'
 import AdmZip from 'adm-zip'
 import { glob } from 'glob'
 
@@ -81,6 +81,15 @@ class DataInitializer {
       filePath
     )
     return await fs.readFile(fullPathAtCommit, 'utf-8')
+  }
+
+  showFilesAsTree(files, commitHash) {
+    let tree = []
+    for (const file of files) {
+      const name = resolve(files.getPathForCommit(this.userName, this.repoName, commitHash), file)
+    }
+
+    return tree
   }
 }
 

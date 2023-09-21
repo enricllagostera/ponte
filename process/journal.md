@@ -1,5 +1,9 @@
 # Process journal
 
+## 2023-09-21 File visualizations
+
+As I tried to improve the copying of files, I thought that actually showing more info about the files at each commit within the interface would make sense, so that the researcher can have an idea of what to include when browsing the commits. I added a simple file tree, which I think I'll add a "Include as Text" or "Include as image" checkbox, to make it quick to hand pick files to include. (...) OK, it is mostly working. Some weird bugs when adding from both patterns and manually, but that's OK for now. There should also be a way to quickly exclude sources too, so that user don't have to keep searching for the checkbox to exclude a hand-picked file.
+
 ## 2023-09-20 Copying text files into QDPX bundle
 
 I can finally move on to the actual copying of files, now that I have them available and their path data sent to the GUI. (...)

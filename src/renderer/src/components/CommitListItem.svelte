@@ -3,16 +3,34 @@
   import { DateTime } from 'luxon'
   import { marked } from 'marked'
 
+  import Tree from 'svelte-tree'
+
   export let commit
   export let userRepoInfo
 
   let active = true
+  let showFileTree = false
 
   const dispatch = createEventDispatcher()
   function onToggleIncluded(hashAbbrev) {
     dispatch('toggleIncluded', {
       hashAbbrev: hashAbbrev
     })
+  }
+
+  function getExt(filename) {
+    const ext = filename.split('.')[filename.split('.').length - 1]
+    return ext
+  }
+
+  function toggleFile(event, node) {
+    // console.log(event)
+    node.selected = event.target.checked
+
+    console.log(node)
+    console.log(commit.fileTree)
+
+    dispatch('fileToggled')
   }
 </script>
 
@@ -32,6 +50,56 @@
       </div>
     {/if}
   </div>
+  <div class="card-body">
+    <details
+      class:border-end={showFileTree}
+      class:border-2={showFileTree}
+      class:border-primary={showFileTree}
+      class="pe-2"
+      bind:open={showFileTree}
+    >
+      <summary class="mb-2 btn btn-outline-primary"
+        ><i class="bi bi-eye"></i> Preview files in this commit</summary
+      >
+      <Tree tree={commit.fileTree} let:node>
+        <div
+          class="d-flex align-items-center p-1 rounded-1"
+          style:background-color={['md', 'css', 'js', 'txt', 'html'].indexOf(getExt(node.name)) < 0
+            ? 'transparent'
+            : '#eeeeff'}
+        >
+          {#if node.children}
+            <i class="bi bi-folder"></i> {node.name}
+          {:else}
+            <input
+              type="checkbox"
+              name="selected"
+              class="form-check-input"
+              id=""
+              disabled={['md', 'css', 'js', 'txt', 'html'].indexOf(getExt(node.name)) < 0}
+              on:change={(e) => toggleFile(e, node)}
+              checked={node.selected}
+            />
+            <i class="bi bi-file me-1"></i>
+            {node.name}
+            <button class="btn btn-link" on:click={window.files.showInExplorer(node.abs)}
+              ><i class="bi bi-folder2-open"></i></button
+            >
+
+            <a
+              name=""
+              id=""
+              href={`https://github.com/${userRepoInfo}/tree/${commit.hash}/${node.rel}`}
+              target="_blank"
+            >
+              <i class="bi bi-github"></i>
+            </a>
+          {/if}
+        </div>
+      </Tree>
+    </details>
+  </div>
+
   <div class="card-footer d-flex d-flex flex-grow-0 align-items-center">
     <div class="mt-1">
       <div class="form-check form-switch">

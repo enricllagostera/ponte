@@ -1,11 +1,8 @@
 <script>
   import { createEventDispatcher, onMount } from 'svelte'
   import { repo } from './../stores'
-  import { minimatch } from 'minimatch'
 
   export let action
-  export let commitsToProcess
-  // export let allCodeOptions
 
   const dispatch = createEventDispatcher()
 
@@ -15,9 +12,7 @@
     action.inputCommitOption = action.inputCommitOption || 'latest'
   })
 
-  function onChanged(event) {
-    //matchFilesByPattern()
-
+  function onChanged(_event) {
     dispatch('actionUpdated', {
       action: action
     })
@@ -29,8 +24,7 @@
     })
   }
 
-  function onCommitOptionChanged(event) {
-    console.log(action.inputCommitOption)
+  function onCommitOptionChanged(_event) {
     matchFilesByPattern()
   }
 
@@ -39,8 +33,7 @@
     matchFilesByPattern()
   }
 
-  async function matchFilesByPattern(event) {
-    // action.searchPattern = event.detail.target.value
+  async function matchFilesByPattern() {
     action.selectedFiles = []
     let results = []
     if (action.inputCommitOption == 'latest') {
@@ -53,9 +46,7 @@
       }
     }
     action.selectedFiles = [...results]
-    dispatch('actionUpdated', {
-      action: action
-    })
+    onChanged()
   }
 
   function scrollToNewAction(node) {
@@ -143,6 +134,3 @@
     </div>
   </div>
 </div>
-
-<style>
-</style>

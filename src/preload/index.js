@@ -28,7 +28,8 @@ if (process.contextIsolated) {
       runGlobOnCommit: (pattern, commitHash) =>
         ipcRenderer.invoke('runGlobOnCommit', pattern, commitHash),
       readFileAtCommit: (filePath, commitHash) =>
-        ipcRenderer.invoke('readFileAtCommit', filePath, commitHash)
+        ipcRenderer.invoke('readFileAtCommit', filePath, commitHash),
+      showInExplorer: (filePath) => ipcRenderer.invoke('showInExplorer', filePath)
     })
   } catch (error) {
     console.error(error)
