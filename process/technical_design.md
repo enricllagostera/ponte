@@ -72,6 +72,8 @@ I'm going to organize the UI mostly by using Bootstrap as the main library for c
 5. Visualizations
    1. [ ] Generate a chronological timeline of commits that shows passage of time between commits;
    2. [ ] Generate a topological timeline of commits that shows a linear ordered sequence of commits;
+6. [ ] Playable builds
+	1. [ ] Create a URI handler (see Electron Deep Link feature) that will open a specific version of the app that can run web builds from the local commits or show a list of build folders, one for each commit.
 
 ## QDPX format notes
 

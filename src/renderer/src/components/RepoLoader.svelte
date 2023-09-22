@@ -80,11 +80,11 @@
   </div>
   <div slot="footer">
     {#if confirmPromise != null && confirmedRepoInfo == ''}
-      <div class="spinner-border me-2" role="status" aria-hidden="true"></div>
+      <div class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></div>
       Checking if repository is available...
     {/if}
     {#if loadPromise != null && $repo.commits.length == 0}
-      <div class="spinner-border me-2" role="status" aria-hidden="true"></div>
+      <div class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></div>
       Preparing repository data...
     {/if}
   </div>

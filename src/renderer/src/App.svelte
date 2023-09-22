@@ -16,6 +16,7 @@
 
   import { clickOutside } from './clickOutside.js'
   import Pane from './components/Pane.svelte'
+  import { onMount } from 'svelte'
 
   const supportedTextExts = ['md', 'txt', 'js', 'css', 'html']
 
@@ -24,7 +25,6 @@
 
   let repoInfoLoaded = false
   let userRepoInfo = ''
-  let allInputCommits = []
   let allCommitsToProcess = []
   let downloadingCommits = []
   const defaultQdpx = { sources: [], codes: [], commits: [] }
@@ -39,7 +39,7 @@
       active: true,
       title: 'Manually ignore commits',
       description: 'Removes the selected commits from QDPX processing.',
-      selectedCommits: []
+      ignoredCommits: []
     },
     {
       name: 'manualImportFiles',
@@ -66,15 +66,6 @@
       description: 'Adds a separate text source with devlog information for each commit.',
       selectedCommits: []
     }
-    // {
-    //   name: 'applyCodesCommit',
-    //   guid: uuid(),
-    //   active: false,
-    //   title: 'Generate one devlog per commit',
-    //   description: 'Adds a separate text source with devlog information for each commit.',
-    //   selectedCommits: []
-    //   searchPattern: ''
-    // },
   ]
 
   let currentActions = [...defaultActions]
@@ -89,34 +80,38 @@
 
   function displayRepoData(_event) {
     repoInfoLoaded = true
-    allInputCommits = $repo.commits
     userRepoInfo = $repo.userRepoInfo
-    allCommitsToProcess = [...allInputCommits]
-    allCommitsToProcess.forEach(
-      (c) =>
-        (actionByName(currentActions, 'manualIgnoreCommits').selectedCommits[c.hashAbbrev] = true)
-    )
+    allCommitsToProcess = [...$repo.commits]
+    // actionByName(currentActions, 'manualIgnoreCommits').selectedCommits = allCommitsToProcess.map(
+    //   (c) => c.hashAbbrev
+    // )
     updateQdpxPreview()
   }
 
   function toggleIncludedCommit(event) {
     const hashAbbrev = event.detail.hashAbbrev
+    const checked = event.detail.checked
     const actManualIgnore = actionByName(currentActions, 'manualIgnoreCommits')
-    actManualIgnore.selectedCommits[hashAbbrev] = !actManualIgnore.selectedCommits[hashAbbrev]
+    if (!checked) {
+      actManualIgnore.ignoredCommits = [...actManualIgnore.ignoredCommits, hashAbbrev]
+    } else {
+      actManualIgnore.ignoredCommits = [
+        ...actManualIgnore.ignoredCommits.filter((h) => h != hashAbbrev)
+      ]
+    }
     updateQdpxPreview()
   }
 
   async function updateQdpxPreview(event) {
     console.log('updating QDPX')
     let sources = []
-    if (actionByName(currentActions, 'manualIgnoreCommits').active) {
+    let manualIgnoreCommit = actionByName(currentActions, 'manualIgnoreCommits')
+    if (manualIgnoreCommit.active) {
       allCommitsToProcess = [
-        ...allInputCommits.filter(
-          (v) => actionByName(currentActions, 'manualIgnoreCommits').selectedCommits[v.hashAbbrev]
-        )
+        ...$repo.commits.filter((v) => manualIgnoreCommit.ignoredCommits.indexOf(v.hashAbbrev) < 0)
       ]
     } else {
-      allCommitsToProcess = [...allInputCommits]
+      allCommitsToProcess = [...$repo.commits]
     }
 
     if (actionByName(currentActions, 'manualImportFiles').active) {
@@ -137,7 +132,7 @@
         }
       }
     } else {
-      allCommitsToProcess = [...allInputCommits]
+      allCommitsToProcess = [...$repo.commits]
     }
 
     if (actionByName(currentActions, 'devlogCompilation').active) {
@@ -295,13 +290,14 @@
     $repo.commits = []
     repoLoader = {}
     repoInfoLoaded = false
-    allInputCommits = []
     allCommitsToProcess = []
     currentActions = [...defaultActions]
+    const manualIgnoreCommits = actionsByName(currentActions, 'manualIgnoreCommits')[0]
+    manualIgnoreCommits.ignoredCommits = $repo.commits.map((i) => i.hashAbbrev)
     qdpx = { ...defaultQdpx }
   }
 
-  async function loadConfig(_event) {
+  async function loadConfig(e) {
     resetConfig()
     let loadOptions = {
       title: `Load RepoToQDA config...`
@@ -364,6 +360,16 @@
       footerMessage = `Downloading ${downloadingCommits.length} commits...`
     })
   }
+
+  function checkIfActiveAtStart(hashAbbrev) {
+    const manualIgnoreCommits = actionsByName(currentActions, 'manualIgnoreCommits')[0]
+    return manualIgnoreCommits.ignoredCommits.indexOf(hashAbbrev) < 0
+  }
+
+  onMount(() => {
+    console.log('Starting app...')
+    // resetConfig()
+  })
 </script>
 
 <svelte:head>
@@ -546,12 +552,14 @@
         <div slot="header"><b>Source commits</b></div>
         <div slot="body">
           {#if repoInfoLoaded}
-            {#each allInputCommits as commit (commit.hashAbbrev)}
+            {#each $repo.commits as commit (commit.hashAbbrev)}
               <CommitListItem
                 {commit}
                 {userRepoInfo}
+                activeAtStart={checkIfActiveAtStart(commit.hashAbbrev)}
                 on:toggleIncluded={toggleIncludedCommit}
                 on:fileToggled={updateQdpxPreview}
+                manualIgnoreAction={actionsByName(currentActions, 'manualIgnoreCommits')[0]}
               />
             {/each}
           {:else}
@@ -575,7 +583,7 @@
   >
     <div class="col">
       {#if footerMessage != ''}
-        <div class="spinner-border" role="status" aria-hidden="true"></div>
+        <div class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></div>
         {footerMessage}
       {:else}
         Footer

@@ -5,16 +5,19 @@
 
   import Tree from 'svelte-tree'
 
+  export let activeAtStart = true
   export let commit
   export let userRepoInfo
+  let active = activeAtStart
 
-  let active = true
   let showFileTree = false
 
   const dispatch = createEventDispatcher()
-  function onToggleIncluded(hashAbbrev) {
+
+  function onToggleIncluded(event) {
     dispatch('toggleIncluded', {
-      hashAbbrev: hashAbbrev
+      checked: event.target.checked,
+      hashAbbrev: commit.hashAbbrev
     })
   }
 
@@ -108,7 +111,7 @@
           type="checkbox"
           role="switch"
           bind:checked={active}
-          on:change={onToggleIncluded(commit.hashAbbrev)}
+          on:change={onToggleIncluded}
           id="includeCheckbox_{commit.hashAbbrev}"
         />
         <label for="includeCheckbox_{commit.hashAbbrev}">Include in QDPX</label>
