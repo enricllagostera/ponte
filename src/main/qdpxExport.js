@@ -94,11 +94,12 @@ class QdpxExporter {
   ) {
     const guid_txt = utils.guid()
     const guid_ext = utils.guid()
+    const base_ts_guid = utils.guid()
     let ts = {
-      '@guid': utils.guid(),
+      '@guid': base_ts_guid,
       '@name': name,
-      '@plainTextPath': `internal://${guid_txt}.txt`,
-      '@richTextPath': `internal://${guid_ext}.${ext}`,
+      '@plainTextPath': `internal://${base_ts_guid}.txt`,
+      '@richTextPath': `internal://${base_ts_guid}.${ext}`,
       '@creatingUser': this.userGuid,
       '@creationDateTime': dateTime,
       '#': ''
@@ -106,10 +107,10 @@ class QdpxExporter {
 
     // Create file for rich text/ original ext version
     if (richTextData != '') {
-      await fs.outputFile(path.join(qdpxSourcesPath, `/${guid_ext}.${ext}`), richTextData)
+      await fs.outputFile(path.join(qdpxSourcesPath, `/${base_ts_guid}.${ext}`), richTextData)
     }
     // Create file for plain text version
-    await fs.outputFile(path.join(qdpxSourcesPath, `/${guid_txt}.txt`), plainTextData)
+    await fs.outputFile(path.join(qdpxSourcesPath, `/${base_ts_guid}.txt`), plainTextData)
     return ts
   }
 

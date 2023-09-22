@@ -2,7 +2,9 @@
 
 ## 2023-09-22 Pre-meeting fixes
 
-I added a first version of the [related_work](related_work.md) notes. Also, I fixed some bugs with the saving and loading of the config file (it was generating a 40MB JSON before for some reason). Now that works OK, together with manually ignoring commits.
+I added a first version of the [related_work](related_work.md) notes. Also, I fixed some bugs with the saving and loading of the config file (it was generating a 40MB JSON before for some reason). Now that works OK, together with manually ignoring commits. Made a small change to improve the import of text sources in NVivo, should be working fine now, both with text sources and codes.
+
+![Video update](20230922-repo-to-qda.mp4)
 
 ## 2023-09-21 File visualizations
 

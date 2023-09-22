@@ -67,23 +67,36 @@
       <Tree tree={commit.fileTree} let:node>
         <div
           class="d-flex align-items-center p-1 rounded-1"
-          style:background-color={['md', 'css', 'js', 'txt', 'html'].indexOf(getExt(node.name)) < 0
-            ? 'transparent'
-            : '#eeeeff'}
+          class:text-secondary={['md', 'css', 'js', 'txt', 'html'].indexOf(getExt(node.name)) < 0 &&
+            !node.children}
+          class:my-1={['md', 'css', 'js', 'txt', 'html'].indexOf(getExt(node.name)) < 0 &&
+            !node.children}
+          style:margin-left={['md', 'css', 'js', 'txt', 'html'].indexOf(getExt(node.name)) < 0 &&
+          !node.children
+            ? '-1em'
+            : ''}
+          style:background-color={['md', 'css', 'js', 'txt', 'html'].indexOf(getExt(node.name)) <
+            0 && !node.children
+            ? '#f0f0f0'
+            : 'transparent'}
         >
           {#if node.children}
-            <i class="bi bi-folder"></i> {node.name}
+            <i class="bi bi-folder me-1"></i> {node.name}
           {:else}
-            <input
-              type="checkbox"
-              name="selected"
-              class="form-check-input"
-              id=""
-              disabled={['md', 'css', 'js', 'txt', 'html'].indexOf(getExt(node.name)) < 0}
-              on:change={(e) => toggleFile(e, node)}
-              checked={node.selected}
-            />
-            <i class="bi bi-file me-1"></i>
+            {#if ['md', 'css', 'js', 'txt', 'html'].indexOf(getExt(node.name)) >= 0}
+              <div class="form-check form-switch">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  role="switch"
+                  id="flexSwitchCheckDefault"
+                  disabled={['md', 'css', 'js', 'txt', 'html'].indexOf(getExt(node.name)) < 0}
+                  on:change={(e) => toggleFile(e, node)}
+                  checked={node.selected}
+                />
+              </div>
+              <i class="bi bi-file-text-fill me-1"></i>
+            {/if}
             {node.name}
             <button class="btn btn-link" on:click={window.files.showInExplorer(node.abs)}
               ><i class="bi bi-folder2-open"></i></button

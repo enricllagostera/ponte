@@ -559,7 +559,6 @@
                 activeAtStart={checkIfActiveAtStart(commit.hashAbbrev)}
                 on:toggleIncluded={toggleIncludedCommit}
                 on:fileToggled={updateQdpxPreview}
-                manualIgnoreAction={actionsByName(currentActions, 'manualIgnoreCommits')[0]}
               />
             {/each}
           {:else}
