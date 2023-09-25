@@ -1,9 +1,6 @@
 <script>
-  import { v4 as uuid } from 'uuid'
-
+  import { onMount } from 'svelte'
   import { Modal } from 'bootstrap'
-
-  import { repo, codeOptions } from './stores.js'
 
   import QdpxPreview from './components/QDPXPreview.svelte'
   import RepoLoader from './components/RepoLoader.svelte'
@@ -13,113 +10,72 @@
   import ActionImportFilesByGlob from './components/ActionImportFilesByGlob.svelte'
   import StaticAlert from './components/StaticAlert.svelte'
   import WaitingModal from './components/WaitingModal.svelte'
+  import Pane from './components/Pane.svelte'
 
   import { clickOutside } from './clickOutside.js'
-  import Pane from './components/Pane.svelte'
-  import { onMount } from 'svelte'
+  import { ActionDB } from './actions.js'
+  import { repo, codeOptions } from './stores.js'
+  import NotificationFooter from './components/NotificationFooter.svelte'
 
   const supportedTextExts = ['md', 'txt', 'js', 'css', 'html']
+  const defaultQdpx = { sources: [], codes: [], commits: [] }
 
   let actionDropdown = false
+  let commitsToProcess = []
+  let actions = new ActionDB()
   let newConfigModalOpen = false
-
-  let repoInfoLoaded = false
-  let userRepoInfo = ''
-  let allCommitsToProcess = []
-  let downloadingCommits = []
-  const defaultQdpx = { sources: [], codes: [], commits: [] }
   let qdpx = { ...defaultQdpx }
+  let repoInfoReady = false
+  let repoLoader = {}
+  let userRepoInfo = ''
+  let footer
 
-  let footerMessage = ''
-
-  const defaultActions = [
-    {
-      name: 'manualIgnoreCommits',
-      guid: uuid(),
-      active: true,
-      title: 'Manually ignore commits',
-      description: 'Removes the selected commits from QDPX processing.',
-      ignoredCommits: []
-    },
-    {
-      name: 'manualImportFiles',
-      guid: uuid(),
-      active: true,
-      title: 'Manually import files as sources commits',
-      description: 'Includes selected files on QDPX processing.',
-      selectedFiles: []
-    },
-    {
-      name: 'devlogCompilation',
-      guid: uuid(),
-      active: true,
-      title: 'Generate devlog compilation',
-      description:
-        'Generates a single source with the contents of the devlogs for all processed commits.',
-      selectedCommits: []
-    },
-    {
-      name: 'individualCommitDevlog',
-      guid: uuid(),
-      active: false,
-      title: 'Generate one devlog per commit',
-      description: 'Adds a separate text source with devlog information for each commit.',
-      selectedCommits: []
-    }
-  ]
-
-  let currentActions = [...defaultActions]
-
-  function actionByName(actions, name) {
-    return actions.filter((a) => a.name == name)[0]
+  function onLoadedRepoData() {
+    // called when repo data is loaded via the repo loader gui
+    actions = new ActionDB()
+    repoDataIsReady()
   }
 
-  function actionsByName(actions, name) {
-    return actions.filter((a) => a.name == name)
-  }
-
-  function displayRepoData(_event) {
-    repoInfoLoaded = true
+  function repoDataIsReady() {
     userRepoInfo = $repo.userRepoInfo
-    allCommitsToProcess = [...$repo.commits]
-    // actionByName(currentActions, 'manualIgnoreCommits').selectedCommits = allCommitsToProcess.map(
-    //   (c) => c.hashAbbrev
-    // )
-    updateQdpxPreview()
+    commitsToProcess = [...$repo.commits]
+    repoInfoReady = true
+    updateQdpx()
   }
 
   function toggleIncludedCommit(event) {
-    const hashAbbrev = event.detail.hashAbbrev
+    const hash = event.detail.hash
     const checked = event.detail.checked
-    const actManualIgnore = actionByName(currentActions, 'manualIgnoreCommits')
     if (!checked) {
-      actManualIgnore.ignoredCommits = [...actManualIgnore.ignoredCommits, hashAbbrev]
+      actions.manualIgnoreCommits.ignoredCommits = [
+        ...actions.manualIgnoreCommits.ignoredCommits,
+        hash
+      ]
     } else {
-      actManualIgnore.ignoredCommits = [
-        ...actManualIgnore.ignoredCommits.filter((h) => h != hashAbbrev)
+      actions.manualIgnoreCommits.ignoredCommits = [
+        ...actions.manualIgnoreCommits.ignoredCommits.filter((h) => h != hash)
       ]
     }
-    updateQdpxPreview()
+    updateQdpx()
   }
 
-  async function updateQdpxPreview(event) {
-    console.log('updating QDPX')
+  async function updateQdpx() {
     let sources = []
-    let manualIgnoreCommit = actionByName(currentActions, 'manualIgnoreCommits')
-    if (manualIgnoreCommit.active) {
-      allCommitsToProcess = [
-        ...$repo.commits.filter((v) => manualIgnoreCommit.ignoredCommits.indexOf(v.hashAbbrev) < 0)
+    if (actions.manualIgnoreCommits.active) {
+      commitsToProcess = [
+        ...$repo.commits.filter(
+          (v) => actions.manualIgnoreCommits.ignoredCommits.indexOf(v.hash) < 0
+        )
       ]
     } else {
-      allCommitsToProcess = [...$repo.commits]
+      commitsToProcess = [...$repo.commits]
     }
 
-    if (actionByName(currentActions, 'manualImportFiles').active) {
-      const act = actionByName(currentActions, 'manualImportFiles')
-      act.selectedFiles = []
-      for (const commit of allCommitsToProcess) {
+    if (actions.manualImportFiles.active) {
+      actions.manualImportFiles.selectedFiles = []
+      for (const commit of commitsToProcess) {
         for (const file of getAllSelectedFiles(commit.fileTree)) {
-          act.selectedFiles.push(file)
+          actions.manualImportFiles.selectedFiles.push(file)
           const ext = file.name.split('.')[file.name.split('.').length - 1]
           if (supportedTextExts.indexOf(ext) >= 0) {
             const content = await window.files.readFileAtCommit(file.rel, commit.hash)
@@ -132,30 +88,28 @@
         }
       }
     } else {
-      allCommitsToProcess = [...$repo.commits]
+      commitsToProcess = [...$repo.commits]
     }
 
-    if (actionByName(currentActions, 'devlogCompilation').active) {
-      const dScs = []
-      allCommitsToProcess.forEach((commit) => {
-        dScs.push(commit.hashAbbrev)
-      })
+    if (actions.devlogCompilation.active) {
+      const dScs = commitsToProcess.map((commit) => commit.hash)
       const compilationSource = await window.loader.getDevlogCompilation({
         selectedCommits: [...dScs]
       })
       sources.push(compilationSource)
     }
 
-    if (actionByName(currentActions, 'individualCommitDevlog').active) {
-      for (const commit of allCommitsToProcess) {
-        sources.push(await window.loader.getDevlogForCommit(commit.hashAbbrev, {}))
+    if (actions.individualCommitDevlog.active) {
+      for (const commit of commitsToProcess) {
+        const newSource = await window.loader.getDevlogForCommit(commit.hash, {})
+        newSource.parent = 'devlog'
+        sources.push(newSource)
       }
     }
 
     const allCodesToSendToQDPXExport = []
-    // [{name: string, commits: [...hash]}]
 
-    const allApplyCodeCommitByGlob = actionsByName(currentActions, 'applyCodeCommitGlob')
+    const allApplyCodeCommitByGlob = actions.getAll('applyCodeCommitGlob')
     for (const act of allApplyCodeCommitByGlob) {
       if (act.active) {
         for (const selectedCode of act.codesToApply) {
@@ -176,7 +130,7 @@
       }
     }
 
-    const allImportFilesByGlob = actionsByName(currentActions, 'importFilesByGlob')
+    const allImportFilesByGlob = actions.getAll('importFilesByGlob')
     for (const act of allImportFilesByGlob) {
       if (act.active) {
         for (const file of act.selectedFiles) {
@@ -189,10 +143,8 @@
         }
       }
     }
-
-    console.log(qdpx.codes)
     qdpx = {
-      commits: [...allCommitsToProcess],
+      commits: [...commitsToProcess],
       sources: [...sources],
       codes: [...allCodesToSendToQDPXExport]
     }
@@ -203,55 +155,6 @@
     if (actionDropdown && event.detail.target.id != 'addActionDropdownBtn') {
       actionDropdown = false
     }
-  }
-
-  function addApplyCodeCommitGlob() {
-    const adding = {
-      name: 'applyCodeCommitGlob',
-      guid: uuid(),
-      active: true,
-      title: 'Apply codes to commits by pattern',
-      description:
-        'Apply codes to commits based on their subject and body information (i.e. devlog).',
-      selectedCommits: [],
-      // selectedCommits: [ hash0, hash1 ]
-      codesToApply: [],
-      // codesToApply: [{ value, label }]
-      searchPattern: ''
-    }
-    currentActions.push(adding)
-    currentActions = [...currentActions]
-    actionDropdown = false
-  }
-
-  function addImportFilesByGlob() {
-    const adding = {
-      name: 'importFilesByGlob',
-      guid: uuid(),
-      active: true,
-      title: 'Import files as text sources',
-      description:
-        'Import files from the repository that match the following pattern. They will be read and added as text sources in the QDPX export.',
-      selectedCommits: [],
-      selectedFiles: [],
-      searchPattern: '',
-      inputCommitOption: 'latest'
-    }
-    currentActions.push(adding)
-    currentActions = [...currentActions]
-    actionDropdown = false
-  }
-
-  function removeApplyCodeCommitGlob(event) {
-    const actionToRemove = currentActions.findIndex((a) => a.guid == event.detail.action.guid)
-    currentActions.splice(actionToRemove, 1)
-    currentActions = [...currentActions]
-    updateQdpxPreview()
-  }
-
-  function removeImportFilesByGlob(event) {
-    currentActions = [...currentActions.filter((a) => a.guid != event.detail.action.guid)]
-    updateQdpxPreview()
   }
 
   function getAllSelectedFiles(directory) {
@@ -282,33 +185,31 @@
     }
   }
 
-  // This is used to reactively restart a component
-  let repoLoader = {}
-
-  function resetConfig(_event) {
+  function resetConfig() {
     $repo.userRepoInfo = ''
     $repo.commits = []
     repoLoader = {}
-    repoInfoLoaded = false
-    allCommitsToProcess = []
-    currentActions = [...defaultActions]
-    const manualIgnoreCommits = actionsByName(currentActions, 'manualIgnoreCommits')[0]
-    manualIgnoreCommits.ignoredCommits = $repo.commits.map((i) => i.hashAbbrev)
+    repoInfoReady = false
+    commitsToProcess = []
+    actions = new ActionDB()
     qdpx = { ...defaultQdpx }
   }
 
-  async function loadConfig(e) {
-    resetConfig()
+  async function loadConfig() {
     let loadOptions = {
       title: `Load RepoToQDA config...`
     }
     let res = await window.loader.loadDialog(loadOptions)
     const waitingModal = Modal.getInstance('#waitingLoadData')
+    if (!res) {
+      waitingModal.toggle()
+      return
+    }
+    resetConfig()
     $repo.userRepoInfo = res.userRepoInfo
     $repo.commits = JSON.parse(await window.loader.loadRepoData($repo.userRepoInfo))
-    currentActions = [...res.actions]
-    const manualImportFiles = actionsByName(currentActions, 'manualImportFiles')
-    for (const file of manualImportFiles[0].selectedFiles) {
+    actions.current = [...res.actions]
+    for (const file of actions.manualImportFiles.selectedFiles) {
       findInTreeAndToggleSelected(
         file.abs,
         $repo.commits.find((c) => c.hash == file.commitHash).fileTree,
@@ -316,59 +217,37 @@
       )
     }
     $repo.commits = [...$repo.commits]
-    const allApplyCodeCommitByGlob = actionsByName(currentActions, 'applyCodeCommitGlob')
+    const allApplyCodeCommitByGlob = actions.getAll('applyCodeCommitGlob')
     for (const act of allApplyCodeCommitByGlob) {
       $codeOptions = [...$codeOptions, ...act.codesToApply]
     }
     waitingModal.toggle()
-    displayRepoData()
-    updateQdpxPreview()
+    repoDataIsReady()
+    updateQdpx()
   }
 
-  async function saveConfig(_event) {
+  async function saveConfig() {
     let saveOptions = {
       title: `Save RepoToQDA config...`,
       data: {
         userRepoInfo: userRepoInfo,
-        actions: [...currentActions]
+        actions: [...actions.current]
       }
     }
-    let res = await window.loader.saveDialog(saveOptions)
-    console.log(res)
+    await window.loader.saveDialog(saveOptions)
   }
 
-  function notifications() {
-    let progressPerCommit = new Map()
-    window.loader.onDownloadInProgress((event, data) => {
-      // console.log(data)
-      if (data.message != '') {
-        // if there is a message, just forward it to the footer
-        footerMessage = data.message
-        return
-      } else if (!data.progress) {
-        // no message and no data means that message should be cleared
-        footerMessage = ''
-        return
-      }
-      // has the download completed?
-      if (data.progress.total < 0) {
-        progressPerCommit.delete(data.hash)
-      } else {
-        progressPerCommit.set(data.hash, data)
-      }
-      downloadingCommits = Array.from(progressPerCommit)
-      footerMessage = `Downloading ${downloadingCommits.length} commits...`
-    })
+  function deleteActionFromList(action) {
+    actions.current = actions.removeFrom(action)
+    updateQdpx()
   }
 
-  function checkIfActiveAtStart(hashAbbrev) {
-    const manualIgnoreCommits = actionsByName(currentActions, 'manualIgnoreCommits')[0]
-    return manualIgnoreCommits.ignoredCommits.indexOf(hashAbbrev) < 0
+  function checkIfActiveAtStart(hash) {
+    return actions.manualIgnoreCommits.ignoredCommits.indexOf(hash) < 0
   }
 
   onMount(() => {
     console.log('Starting app...')
-    // resetConfig()
   })
 </script>
 
@@ -390,6 +269,23 @@
       message: 'You will lose any unsaved changes.',
       confirm: 'Start new config',
       executeOnConfirm: resetConfig
+    }}
+  />
+  <StaticAlert
+    dialog={{
+      id: 'loadConfig',
+      title: 'Are you sure you want to load config from a file?',
+      message: 'You will lose any unsaved changes.',
+      confirm: 'Load config from a file',
+      showNextModalWithId: 'waitingLoadData',
+      executeOnConfirm: loadConfig
+    }}
+  />
+  <WaitingModal
+    dialog={{
+      id: 'waitingLoadData',
+      title: 'Loading repository data...',
+      message: 'Please wait, downloading commit information can take a few minutes...'
     }}
   />
 
@@ -415,23 +311,6 @@
             data-bs-target="#loadConfig"
             type="button"><i class="bi bi-file-arrow-up-fill"></i> Load config</button
           >
-          <StaticAlert
-            dialog={{
-              id: 'loadConfig',
-              title: 'Are you sure you want to load config from a file?',
-              message: 'You will lose any unsaved changes.',
-              confirm: 'Load config from a file',
-              showNextModalWithId: 'waitingLoadData',
-              executeOnConfirm: loadConfig
-            }}
-          />
-          <WaitingModal
-            dialog={{
-              id: 'waitingLoadData',
-              title: 'Loading repository data...',
-              message: 'Please wait, downloading commit information can take a few minutes...'
-            }}
-          />
 
           <button class="btn btn-outline-primary ms-2" type="button" on:click={saveConfig}
             ><i class="bi bi-file-arrow-down-fill"></i> Save config</button
@@ -445,16 +324,16 @@
     <!-- Left col -->
     <div class="col d-flex flex-column">
       <!-- Top left row+col -->
-      <div class="row" style:height={repoInfoLoaded ? '23%' : '35%'}>
+      <div class="row" style:height={repoInfoReady ? '23%' : '35%'}>
         <div class="col d-flex">
           {#key repoLoader}
-            <RepoLoader on:repoDataLoaded={displayRepoData} on:startLoading={notifications} />
+            <RepoLoader on:repoDataLoaded={onLoadedRepoData} on:startLoading={footer.setup} />
           {/key}
         </div>
       </div>
 
       <!-- Bottom left row+col -->
-      {#if repoInfoLoaded}
+      {#if repoInfoReady}
         <div class="row flex-grow-1">
           <div class="col d-flex">
             <Pane>
@@ -473,7 +352,6 @@
                         actionDropdown = !actionDropdown
                       }}
                     >
-                      <!-- aria-expanded="false" -->
                       <i class="bi bi-plus-circle"></i> Add action
                     </button>
                     <ul
@@ -486,13 +364,20 @@
                         <button
                           class="dropdown-item"
                           type="button"
-                          on:click={addApplyCodeCommitGlob}
-                          >Apply codes to commits by pattern</button
+                          on:click={() => {
+                            actions.current = actions.addApplyCodeCommitGlobTo()
+                            actionDropdown = false
+                          }}>Apply codes to commits by pattern</button
                         >
                       </li>
                       <li>
-                        <button class="dropdown-item" type="button" on:click={addImportFilesByGlob}
-                          >Import files by glob pattern</button
+                        <button
+                          class="dropdown-item"
+                          type="button"
+                          on:click={() => {
+                            actions.current = actions.addImportFilesByGlobTo()
+                            actionDropdown = false
+                          }}>Import files by glob pattern</button
                         >
                       </li>
                     </ul>
@@ -501,41 +386,25 @@
               </div>
               <div slot="body">
                 <div class="list-group">
-                  <ActionListitem
-                    action={actionByName(currentActions, 'manualIgnoreCommits')}
-                    on:actionUpdated={updateQdpxPreview}
-                  />
+                  {#each [actions.manualIgnoreCommits, actions.manualImportFiles, actions.devlogCompilation, actions.individualCommitDevlog] as action (action.guid)}
+                    <ActionListitem {action} on:actionUpdated={updateQdpx} />
+                  {/each}
 
-                  <ActionListitem
-                    action={actionByName(currentActions, 'manualImportFiles')}
-                    on:actionUpdated={updateQdpxPreview}
-                  />
-
-                  <ActionListitem
-                    action={actionByName(currentActions, 'devlogCompilation')}
-                    on:actionUpdated={updateQdpxPreview}
-                  />
-
-                  <ActionListitem
-                    action={actionByName(currentActions, 'individualCommitDevlog')}
-                    on:actionUpdated={updateQdpxPreview}
-                  />
-
-                  {#each actionsByName(currentActions, 'applyCodeCommitGlob') as action (action.guid)}
+                  {#each actions.getAll('applyCodeCommitGlob') as action (action.guid)}
                     <ActionApplyCodeCommitGlob
                       {action}
-                      commitsToProcess={allCommitsToProcess}
-                      on:actionUpdated={updateQdpxPreview}
-                      on:actionDeleted={removeApplyCodeCommitGlob}
+                      {commitsToProcess}
+                      on:actionUpdated={updateQdpx}
+                      on:actionDeleted={(e) => deleteActionFromList(e.detail.action)}
                     />
                   {/each}
 
-                  {#each actionsByName(currentActions, 'importFilesByGlob') as action (action.guid)}
+                  {#each actions.getAll('importFilesByGlob') as action (action.guid)}
                     <ActionImportFilesByGlob
                       {action}
-                      commitsToProcess={allCommitsToProcess}
-                      on:actionUpdated={updateQdpxPreview}
-                      on:actionDeleted={removeImportFilesByGlob}
+                      {commitsToProcess}
+                      on:actionUpdated={updateQdpx}
+                      on:actionDeleted={(e) => deleteActionFromList(e.detail.action)}
                     />
                   {/each}
                 </div>
@@ -551,14 +420,14 @@
       <Pane>
         <div slot="header"><b>Source commits</b></div>
         <div slot="body">
-          {#if repoInfoLoaded}
-            {#each $repo.commits as commit (commit.hashAbbrev)}
+          {#if repoInfoReady}
+            {#each $repo.commits as commit (commit.hash)}
               <CommitListItem
                 {commit}
                 {userRepoInfo}
-                activeAtStart={checkIfActiveAtStart(commit.hashAbbrev)}
+                activeAtStart={checkIfActiveAtStart(commit.hash)}
                 on:toggleIncluded={toggleIncludedCommit}
-                on:fileToggled={updateQdpxPreview}
+                on:fileToggled={updateQdpx}
               />
             {/each}
           {:else}
@@ -575,18 +444,5 @@
   </div>
 
   <!-- Footer row: notifications area -->
-  <div
-    class="row container-fluid vw-100 flex-grow-0 p-2"
-    class:text-bg-secondary={footerMessage == ''}
-    class:text-bg-warning={footerMessage != ''}
-  >
-    <div class="col">
-      {#if footerMessage != ''}
-        <div class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></div>
-        {footerMessage}
-      {:else}
-        Footer
-      {/if}
-    </div>
-  </div>
+  <NotificationFooter bind:this={footer} />
 </main>

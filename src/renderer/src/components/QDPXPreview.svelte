@@ -4,12 +4,12 @@
 
   export let qdpxData
 
-  function findDevlogForCommit(hashAbbrev) {
-    let res = qdpxData.sources.filter((s) => s.hashAbbrev == hashAbbrev)[0]
+  function findDevlogForCommit(hash) {
+    let res = qdpxData.sources.filter((s) => s.hash == hash)[0]
     return res
   }
 
-  async function exportQDPX(_event) {
+  async function exportQDPX() {
     let qdpxExportOptions = {
       title: `Save QDPX file...`
     }
@@ -37,16 +37,16 @@
       <h3><i class="bi bi-archive"></i> Sources</h3>
       <ul class=" list-unstyled my-2">
         {#each qdpxData.sources as source}
-          {#if source.parent == 'repository' || source.parent == 'copyTextSource'}
+          {#if source.parent == 'repository' || source.parent == 'copyTextSource' || source.parent == 'devlog'}
             <li class="ms-2"><TextSourcePreview {source} /></li>
           {/if}
         {/each}
         {#if qdpxData.commits}
-          {#each qdpxData.commits as commit (commit.hashAbbrev)}
-            {#if findDevlogForCommit(commit.hashAbbrev) != null}
+          {#each qdpxData.commits as commit (commit.hash)}
+            {#if findDevlogForCommit(commit.hash) != null}
               <li><i class="bi bi-git"></i> #{commit.hashAbbrev}</li>
               <ul class="list-unstyled ps-1">
-                {#each [findDevlogForCommit(commit.hashAbbrev)] as source}
+                {#each [findDevlogForCommit(commit.hash)] as source}
                   <li><TextSourcePreview {source} /></li>
                 {/each}
               </ul>

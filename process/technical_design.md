@@ -41,14 +41,15 @@ I'm going to organize the UI mostly by using Bootstrap as the main library for c
    1. [x] Validate GitHub repository information
    2. [x] Define repository via GUI
    3. Commit loading
-      1. [ ] Ignore commits from commit list (hashes or hashAbbrev)
-      2. [ ] Ignore commits from subject (glob pattern)
+      1. [-] Ignore commits from commit list (hashes or hashAbbrev)
+      2. [ ] Ignore commits from subject (simple string pattern)
       3. [x] Ignore commits from manual selection
    4. File loading
       1. [x] Download commit files
-      2. [ ] Copy file as sources from filename (glob pattern)
+      2. [x] Manually import files from commits
+      3. [x] Copy file as sources from filename (glob pattern)
          1. Radio group: In all commits the file is found; Last existing commit; In specific commit(s);
-      3. [ ] Copy file as sources and encode from filename (glob pattern)
+      4. [ ] Copy file as sources and encode from filename (glob pattern)
          1. Radio group: In all commits the file is found; Last existing commit; In specific commit(s);
 2. Coding
    1. Commit encoding
@@ -66,14 +67,16 @@ I'm going to organize the UI mostly by using Bootstrap as the main library for c
    2. [x] Generate devlog compilation - basic
    3. [x] Generate a separate devlog source for each commit
       1. Checkboxes: Add commit logs; Add file from commit `devlog` footer; Add link to each build;
-4. Compilations
-   1. [ ] Generate a docx from a folder compilation (glob pattern)
+4. Export
+	1. [ ] **Add rich-text docx to md text sources**
+5. Compilations
+   1. [ ] **Generate a text source from a folder as a compilation (glob or hand picked)**
       1. Radio group: In all commits the folder is found; Last existing commit; In specific commit(s);
-5. Visualizations
+6. Visualizations
    1. [ ] Generate a chronological timeline of commits that shows passage of time between commits;
    2. [ ] Generate a topological timeline of commits that shows a linear ordered sequence of commits;
-6. [ ] Playable builds
-	1. [ ] Create a URI handler (see Electron Deep Link feature) that will open a specific version of the app that can run web builds from the local commits or show a list of build folders, one for each commit.
+7. Playable builds
+	1. [ ] Create a URI handler (see Electron Deep Link feature) that will open a specific version of the app that can run web-based playable builds from the local commits. Alternatively, show a list of build folders per commit.
 
 ## QDPX format notes
 

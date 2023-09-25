@@ -67,14 +67,16 @@ function createWindow() {
             mainWindow.webContents.send('commitDownloadInProgress', {
               hash: commit.hash,
               progress: info,
-              message: ''
+              message: '',
+              commitCount: allCommits.length
             })
           })
           .then(() => {
             mainWindow.webContents.send('commitDownloadInProgress', {
               hash: commit.hash,
               progress: { total: -1 },
-              message: ''
+              message: '',
+              commitCount: allCommits.length
             })
           })
       )
@@ -267,15 +269,17 @@ async function saveDialog(_event, saveOptions) {
   } catch (error) {
     res = undefined
   }
-  if (res.filePath == undefined) {
+  console.log(res)
+  if (!res || res.canceled) {
     return
+  } else {
+    fs.ensureFileSync(res.filePath)
+    fs.writeJSONSync(res.filePath, saveOptions.data)
   }
-  fs.ensureFileSync(res.filePath)
-  fs.writeJSONSync(res.filePath, saveOptions.data)
 }
 
 async function getDevlogForCommit(_event, commitHash) {
-  const commitData = allCommits.filter((c) => c.hashAbbrev == commitHash)[0]
+  const commitData = allCommits.filter((c) => c.hash == commitHash)[0]
   // basic devlog from commit message
   const commitISODate = DateTime.fromMillis(commitData.author.timestamp).toISODate()
   const devlog = {
@@ -293,12 +297,12 @@ async function getDevlogForCommit(_event, commitHash) {
 async function getDevlogCompilation(_event, devlogCompilationConfig) {
   let comp = '# Devlog compilation\n\n'
   let selectedCommits = allCommits.filter(
-    (c) => devlogCompilationConfig.selectedCommits.indexOf(c.hashAbbrev) >= 0
+    (c) => devlogCompilationConfig.selectedCommits.indexOf(c.hash) >= 0
   )
 
   for (let i = 0; i < selectedCommits.length; i++) {
     const sc = selectedCommits[i]
-    const devlogContent = await getDevlogForCommit(null, sc.hashAbbrev)
+    const devlogContent = await getDevlogForCommit(null, sc.hash)
     comp += `## ${devlogContent.content}\n\n---\n\n`
   }
 

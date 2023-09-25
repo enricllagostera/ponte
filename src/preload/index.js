@@ -14,8 +14,8 @@ if (process.contextIsolated) {
     contextBridge.exposeInMainWorld('loader', {
       checkRepoInfo: (repoInfo) => ipcRenderer.invoke('checkRepoInfo', repoInfo),
       loadRepoData: (repoInfo) => ipcRenderer.invoke('loadRepoData', repoInfo),
-      getDevlogForCommit: (hashAbbrev, devlogConfig) =>
-        ipcRenderer.invoke('getDevlogForCommit', hashAbbrev, devlogConfig),
+      getDevlogForCommit: (hash, devlogConfig) =>
+        ipcRenderer.invoke('getDevlogForCommit', hash, devlogConfig),
       getDevlogCompilation: (devlogCompilationConfig) =>
         ipcRenderer.invoke('getDevlogCompilation', devlogCompilationConfig),
       saveDialog: (saveOptions) => ipcRenderer.invoke('saveDialog', saveOptions),

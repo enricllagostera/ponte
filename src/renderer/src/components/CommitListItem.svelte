@@ -17,7 +17,7 @@
   function onToggleIncluded(event) {
     dispatch('toggleIncluded', {
       checked: event.target.checked,
-      hashAbbrev: commit.hashAbbrev
+      hash: commit.hash
     })
   }
 
@@ -27,12 +27,7 @@
   }
 
   function toggleFile(event, node) {
-    // console.log(event)
     node.selected = event.target.checked
-
-    console.log(node)
-    console.log(commit.fileTree)
-
     dispatch('fileToggled')
   }
 </script>
@@ -125,9 +120,9 @@
           role="switch"
           bind:checked={active}
           on:change={onToggleIncluded}
-          id="includeCheckbox_{commit.hashAbbrev}"
+          id="includeCheckbox_{commit.hash}"
         />
-        <label for="includeCheckbox_{commit.hashAbbrev}">Include in QDPX</label>
+        <label for="includeCheckbox_{commit.hash}">Include in QDPX</label>
       </div>
     </div>
     <div class="ms-auto">

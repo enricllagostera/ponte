@@ -1,5 +1,9 @@
 # Process journal
 
+## 2023-09-25 Refactor
+
+When I was doing the last batch of features, I realized that the code is very messy in some parts, so I took  a few hours to refactor things around to make it easier to add new features in the next work sessions. I think this round is mostly done by now, so I'll go back to working on features.
+
 ## 2023-09-22 Pre-meeting fixes
 
 I added a first version of the [related_work](related_work.md) notes. Also, I fixed some bugs with the saving and loading of the config file (it was generating a 40MB JSON before for some reason). Now that works OK, together with manually ignoring commits. Made a small change to improve the import of text sources in NVivo, should be working fine now, both with text sources and codes.

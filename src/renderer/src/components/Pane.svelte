@@ -1,5 +1,5 @@
 <script>
-  export let id
+  export let id = ''
   export let successClass = false
 </script>
 

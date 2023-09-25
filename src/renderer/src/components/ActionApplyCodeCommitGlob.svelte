@@ -52,7 +52,7 @@
       commitsToProcess.forEach((c) => {
         if (minimatch(`${c.subject}\n${c.body}`, `**${event.target.value}**`)) {
           subjectAndBodyArray.push({
-            hashAbbrev: c.hashAbbrev,
+            hash: c.hash,
             subject: `${c.subject}`
           })
         }
@@ -141,19 +141,6 @@
         {/each}
       </ul>
     </div>
-
-    <!-- {#if action.selectedCommits.length > 0 && action.codesToApply.length > 0}
-      <div class="card-body">
-        <div class="d-grid gap-2">
-          <button
-            class="btn btn-outline-primary"
-            type="button"
-            id="applyCodeCommitGlob-execute"
-            on:click={onChanged}><i class="bi bi-tags"></i> Apply codes</button
-          >
-        </div>
-      </div>
-    {/if} -->
   </div>
 </div>
 
