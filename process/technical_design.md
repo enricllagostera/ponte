@@ -68,7 +68,7 @@ I'm going to organize the UI mostly by using Bootstrap as the main library for c
    3. [x] Generate a separate devlog source for each commit
       1. Checkboxes: Add commit logs; Add file from commit `devlog` footer; Add link to each build;
 4. Export
-	1. [ ] **Add rich-text docx to md text sources**
+	1. [x] Add rich-text docx to md text sources
 5. Compilations
    1. [ ] **Generate a text source from a folder as a compilation (glob or hand picked)**
       1. Radio group: In all commits the folder is found; Last existing commit; In specific commit(s);

@@ -82,6 +82,8 @@
             sources.push({
               parent: 'copyTextSource',
               content: content,
+              originalExt: ext,
+              abs: file.abs,
               name: `${file.rel} @ ${commit.hash.substring(0, 7)}`
             })
           }
@@ -137,6 +139,7 @@
           const content = await window.files.readFileAtCommit(file.file, file.commit)
           sources.push({
             parent: 'copyTextSource',
+            originalExt: file.file.split('.')[file.file.split('.').length - 1],
             content: content,
             name: `${file.file} @ ${file.commit.substring(0, 7)}`
           })

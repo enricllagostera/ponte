@@ -197,12 +197,19 @@ async function exportQDPX(_event, exportData, exportOptions) {
   let exporter = new QdpxExporter()
   const qdeFolder = join(app.getPath('temp'), 'repo-to-qda', 'qde')
   const qdeSourcesFolder = join(app.getPath('temp'), 'repo-to-qda', 'qde', 'Sources')
+  fs.emptyDirSync(qdeFolder)
+  fs.emptyDirSync(qdeSourcesFolder)
   let allTs = []
   for (const source of exportData.sources) {
+    let ext = source.originalExt
+      ? source.originalExt
+      : source.name.split('.')[source.name.split('.').length - 1]
     const new_ts = await exporter.createTextSourceFromTextData(
       qdeSourcesFolder,
       source.name,
-      source.content
+      ext,
+      source.content,
+      source.abs
     )
     new_ts.PlainTextSelection = []
     allTs.push(new_ts)
@@ -285,6 +292,7 @@ async function getDevlogForCommit(_event, commitHash) {
   const devlog = {
     hashAbbrev: commitData.hashAbbrev,
     name: `Devlog for #${commitData.hashAbbrev} on ${commitISODate}`,
+    originalExt: 'md',
     content: `[Devlog] #${commitData.hashAbbrev} : ${
       commitData.subject
     }\n\nCommit date: ${DateTime.fromMillis(commitData.author.timestamp).toISO()}\n\nMessage:\n\n${
@@ -310,6 +318,7 @@ async function getDevlogCompilation(_event, devlogCompilationConfig) {
     parent: 'repository',
     hashAbbrev: '',
     name: `Devlog compilation`,
+    originalExt: 'md',
     content: comp
   }
 

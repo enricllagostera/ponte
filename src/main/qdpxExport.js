@@ -3,12 +3,14 @@ import * as fs from 'fs-extra'
 import * as path from 'path'
 import { create as xmlCreate } from 'xmlbuilder2'
 import AdmZip from 'adm-zip'
+import { convertMdToDocx, convertCodeToDocx } from './docxBuilder'
 
 class QdpxExporter {
   constructor(userGuid = utils.guid(), userName = 'DEFAULT') {
     this.userGuid = userGuid
     this.userName = userName
     this.xml = this.createBlankProject()
+    this.extToConvertToDocx = ['md', 'docx']
   }
 
   appendTextSource(ts) {
@@ -87,27 +89,34 @@ class QdpxExporter {
   async createTextSourceFromTextData(
     qdpxSourcesPath,
     name,
+    originalExt = 'txt',
     plainTextData = '',
-    richTextData = '',
-    ext = 'txt',
+    originalAbsPath = '',
     dateTime = utils.getNowDateTime()
   ) {
-    const guid_txt = utils.guid()
-    const guid_ext = utils.guid()
     const base_ts_guid = utils.guid()
+    const richTextExt = 'docx'
     let ts = {
       '@guid': base_ts_guid,
       '@name': name,
       '@plainTextPath': `internal://${base_ts_guid}.txt`,
-      '@richTextPath': `internal://${base_ts_guid}.${ext}`,
+      '@richTextPath': `internal://${base_ts_guid}.${richTextExt}`,
       '@creatingUser': this.userGuid,
       '@creationDateTime': dateTime,
       '#': ''
     }
 
     // Create file for rich text/ original ext version
-    if (richTextData != '') {
-      await fs.outputFile(path.join(qdpxSourcesPath, `/${base_ts_guid}.${ext}`), richTextData)
+    if (originalExt == 'md') {
+      // convert to docx if md
+      const docFile = await convertMdToDocx(plainTextData, name, originalAbsPath)
+      await fs.outputFile(path.join(qdpxSourcesPath, `/${base_ts_guid}.${richTextExt}`), docFile)
+    }
+    // Treat any other extension as plain text code
+    else {
+      // convert to docx if md
+      const docFile = await convertCodeToDocx(plainTextData, name, originalAbsPath)
+      await fs.outputFile(path.join(qdpxSourcesPath, `/${base_ts_guid}.${richTextExt}`), docFile)
     }
     // Create file for plain text version
     await fs.outputFile(path.join(qdpxSourcesPath, `/${base_ts_guid}.txt`), plainTextData)

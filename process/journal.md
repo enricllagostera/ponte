@@ -1,5 +1,9 @@
 # Process journal
 
+## 2023-09-26 Docx support
+
+I managed to bring back the docx rich text conversion I had working in the previous version. Markdown files now can preserve their images and some of their formatting. It is far from perfect, but it's a bit better than just reading it as plain text.
+
 ## 2023-09-25 Refactor
 
 When I was doing the last batch of features, I realized that the code is very messy in some parts, so I took  a few hours to refactor things around to make it easier to add new features in the next work sessions. I think this round is mostly done by now, so I'll go back to working on features.
