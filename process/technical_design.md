@@ -43,7 +43,7 @@ I'm going to organize the UI mostly by using Bootstrap as the main library for c
    3. Commit loading
       1. [-] Ignore commits from commit list (hashes or hashAbbrev)
       2. [ ] Ignore commits from subject (simple string pattern)
-      3. [x] Ignore commits from manual selection
+      3. [x] Ignore commits via manual selection
    4. File loading
       1. [x] Download commit files
       2. [x] Manually import files from commits
