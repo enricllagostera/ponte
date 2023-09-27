@@ -2,13 +2,9 @@ import { join } from 'path'
 import sanitizeHtml, { defaults } from 'sanitize-html'
 import { load as loadCheerio } from 'cheerio'
 import HTMLtoDOCX from 'html-to-docx'
+import { escape } from 'html-escaper'
 // import { pathToFileURL } from 'url'
 import imageToBase64 from 'image-to-base64'
-
-// Using ES6 import syntax
-import hljs from 'highlight.js/lib/core'
-import javascript from 'highlight.js/lib/languages/javascript'
-hljs.registerLanguage('javascript', javascript)
 
 import { marked } from 'marked'
 import { markedXhtml } from 'marked-xhtml'
@@ -41,17 +37,19 @@ export async function convertMdToDocx(md, name = '', basePath = '') {
     font: 'Roboto',
     fontSize: '12pt',
     title: name,
-    decodeUnicode: true
+    decodeUnicode: true,
+    lineNumber: false
   })
   return docRs
 }
 
-export async function convertCodeToDocx(content, name = '', basePath = '') {
+export async function convertCodeToDocx(content, name = '') {
   const allLines = content.split('\n')
   const cheerio = loadCheerio('', {})
   for (const line of allLines) {
+    const sLine = `<pre>${escape(line)}</pre>`
     cheerio('body').append(`<p>`)
-    cheerio('body').children().last().html(`<code>${line}</code>`)
+    cheerio('body').children().last().html(sLine)
   }
   cheerio('body').attr('style', 'line-height: 1em;')
   const processedHtml = cheerio.xml()
@@ -62,7 +60,7 @@ export async function convertCodeToDocx(content, name = '', basePath = '') {
     font: 'JetBrains Mono',
     fontSize: '9pt',
     title: name,
-    decodeUnicode: true
+    decodeUnicode: false
   })
   return docRs
 }

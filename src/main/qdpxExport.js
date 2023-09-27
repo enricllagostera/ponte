@@ -6,11 +6,12 @@ import AdmZip from 'adm-zip'
 import { convertMdToDocx, convertCodeToDocx } from './docxBuilder'
 
 class QdpxExporter {
-  constructor(userGuid = utils.guid(), userName = 'DEFAULT') {
+  constructor(qdeFolderPath, userGuid = utils.guid(), userName = 'DEFAULT') {
     this.userGuid = userGuid
     this.userName = userName
     this.xml = this.createBlankProject()
     this.extToConvertToDocx = ['md', 'docx']
+    this.qdeFolderPath = qdeFolderPath
   }
 
   appendTextSource(ts) {
@@ -139,6 +140,56 @@ class QdpxExporter {
     fs.ensureFileSync(exportQdpxFilename)
     await zip.writeZipPromise(exportQdpxFilename)
     console.log('done qdpx zip packing, file at ' + exportQdpxFilename)
+  }
+
+  async exportToFile(exportData, exportPath) {
+    const qdeSourcesFolder = path.join(this.qdeFolderPath, 'Sources')
+    fs.emptyDirSync(this.qdeFolderPath)
+    fs.emptyDirSync(qdeSourcesFolder)
+    let allTs = []
+    for (const source of exportData.sources) {
+      let ext = source.originalExt
+        ? source.originalExt
+        : source.name.split('.')[source.name.split('.').length - 1]
+      const new_ts = await this.createTextSourceFromTextData(
+        qdeSourcesFolder,
+        source.name,
+        ext,
+        source.content,
+        source.abs
+      )
+      new_ts.PlainTextSelection = []
+      allTs.push(new_ts)
+    }
+    for (const code of exportData.codes) {
+      let new_c = this.createCode(code.name)
+      let matchCount = 0
+      for (const commit of code.commits) {
+        allTs.forEach((ts, i) => {
+          const s = exportData.sources[i].content.indexOf(commit.hashAbbrev)
+          if (s >= 0) {
+            matchCount++
+            const pts = this.createPlainTextSelection(
+              `Match ${matchCount} of #${commit.hashAbbrev}`,
+              s,
+              s + commit.hashAbbrev.length
+            )
+            pts.Coding = this.createCoding(new_c['@guid'])
+            ts.PlainTextSelection.push(pts)
+          }
+        })
+      }
+      this.appendCode(new_c)
+    }
+
+    for (const ts of allTs) {
+      if (ts.PlainTextSelection.length == 0) {
+        delete ts.PlainTextSelection
+      }
+      this.appendTextSource(ts)
+    }
+
+    await this.writeFile(this.qdeFolderPath, exportPath)
   }
 }
 

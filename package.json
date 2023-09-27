@@ -28,6 +28,7 @@
     "fs-extra": "^11.1.1",
     "glob": "^10.3.4",
     "highlight.js": "^11.8.0",
+    "html-escaper": "^3.0.3",
     "html-to-docx": "^1.8.0",
     "image-to-base64": "^2.2.0",
     "luxon": "^3.4.2",

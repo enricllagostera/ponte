@@ -251,6 +251,7 @@
 
   onMount(() => {
     console.log('Starting app...')
+    footer.setup()
   })
 </script>
 
@@ -330,7 +331,7 @@
       <div class="row" style:height={repoInfoReady ? '23%' : '35%'}>
         <div class="col d-flex">
           {#key repoLoader}
-            <RepoLoader on:repoDataLoaded={onLoadedRepoData} on:startLoading={footer.setup} />
+            <RepoLoader on:repoDataLoaded={onLoadedRepoData} />
           {/key}
         </div>
       </div>

@@ -1,5 +1,5 @@
 import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron'
-import { join, normalize } from 'path'
+import { join } from 'path'
 import * as fs from 'fs-extra'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
@@ -194,55 +194,8 @@ async function exportQDPX(_event, exportData, exportOptions) {
   } catch (error) {
     return
   }
-  let exporter = new QdpxExporter()
-  const qdeFolder = join(app.getPath('temp'), 'repo-to-qda', 'qde')
-  const qdeSourcesFolder = join(app.getPath('temp'), 'repo-to-qda', 'qde', 'Sources')
-  fs.emptyDirSync(qdeFolder)
-  fs.emptyDirSync(qdeSourcesFolder)
-  let allTs = []
-  for (const source of exportData.sources) {
-    let ext = source.originalExt
-      ? source.originalExt
-      : source.name.split('.')[source.name.split('.').length - 1]
-    const new_ts = await exporter.createTextSourceFromTextData(
-      qdeSourcesFolder,
-      source.name,
-      ext,
-      source.content,
-      source.abs
-    )
-    new_ts.PlainTextSelection = []
-    allTs.push(new_ts)
-  }
-  for (const code of exportData.codes) {
-    let new_c = exporter.createCode(code.name)
-    let matchCount = 0
-    for (const commit of code.commits) {
-      allTs.forEach((ts, i) => {
-        const s = exportData.sources[i].content.indexOf(commit.hashAbbrev)
-        if (s >= 0) {
-          matchCount++
-          const pts = exporter.createPlainTextSelection(
-            `Match ${matchCount} of #${commit.hashAbbrev}`,
-            s,
-            s + commit.hashAbbrev.length
-          )
-          pts.Coding = exporter.createCoding(new_c['@guid'])
-          ts.PlainTextSelection.push(pts)
-        }
-      })
-    }
-    exporter.appendCode(new_c)
-  }
-
-  for (const ts of allTs) {
-    if (ts.PlainTextSelection.length == 0) {
-      delete ts.PlainTextSelection
-    }
-    exporter.appendTextSource(ts)
-  }
-
-  await exporter.writeFile(qdeFolder, res.filePath)
+  const exporter = new QdpxExporter(join(app.getPath('temp'), 'repo-to-qda', 'qde'))
+  await exporter.exportToFile(exportData, res.filePath)
 }
 
 async function loadDialog(_event, loadOptions) {
