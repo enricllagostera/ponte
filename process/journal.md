@@ -1,5 +1,9 @@
 # Process journal
 
+## 2023-10-03 Folder text compilation
+
+I managed to add a folder as text source, similar to what I had in the earlier proof-of-concept stage of the tool. For now it creates a Markdown file with the text contents and then adds it to the QDPX export. It is also converted to docx, as all other markdown files. The formatting of folder compilations that include both code and text is still a bit messy, but that's ok for now.
+
 ## 2023-09-26 Docx support
 
 I managed to bring back the docx rich text conversion I had working in the previous version. Markdown files now can preserve their images and some of their formatting. It is far from perfect, but it's a bit better than just reading it as plain text.

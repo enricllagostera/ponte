@@ -24,6 +24,14 @@ export class ActionDB {
         selectedFiles: []
       },
       {
+        name: 'manualImportFolderText',
+        guid: uuid(),
+        active: true,
+        title: 'Import folders as text compilation',
+        description: 'Includes selected folders as compiled text sources on QDPX.',
+        selectedFolders: []
+      },
+      {
         name: 'devlogCompilation',
         guid: uuid(),
         active: true,
@@ -69,6 +77,10 @@ export class ActionDB {
 
   get individualCommitDevlog() {
     return this.get('individualCommitDevlog')
+  }
+
+  get manualImportFolderText() {
+    return this.get('manualImportFolderText')
   }
 
   addApplyCodeCommitGlobTo() {

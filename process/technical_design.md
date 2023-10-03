@@ -32,12 +32,7 @@ I'm going to organize the UI mostly by using Bootstrap as the main library for c
    1. [x] Add a navbar GUI
    2. [x] Save config file
    3. [x] Load config file
-
-### Conversion actions
-
-#todo
-
-1. Loading
+3. Loading
    1. [x] Validate GitHub repository information
    2. [x] Define repository via GUI
    3. Commit loading
@@ -51,7 +46,9 @@ I'm going to organize the UI mostly by using Bootstrap as the main library for c
          1. Radio group: In all commits the file is found; Last existing commit; In specific commit(s);
       4. [ ] Copy file as sources and encode from filename (glob pattern)
          1. Radio group: In all commits the file is found; Last existing commit; In specific commit(s);
-2. Coding
+      5. Wiki loading
+         1. [ ] Load commits from wiki repo and display in timeline;
+4. Coding
    1. Commit encoding
       1. [x] Encode commits from subject (glob pattern)
          1. Example: All commits with `docs**` on subject line are encoded with `documentation`.
@@ -61,21 +58,21 @@ I'm going to organize the UI mostly by using Bootstrap as the main library for c
       1. [ ] Encode files from filename (glob patterns)
       2. [ ] Encode files from text content (glob pattern, aka auto-code)
       3. [ ] Encode manually selected files
-3. Devlogs
+5. Devlogs
    1. [ ] Generate devlog compilation with advanced options
       1. Checkboxes: Add commit logs; Add file from commit `devlog` footer; Add link to each build;
    2. [x] Generate devlog compilation - basic
    3. [x] Generate a separate devlog source for each commit
       1. Checkboxes: Add commit logs; Add file from commit `devlog` footer; Add link to each build;
-4. Export
+6. Export
 	1. [x] Add rich-text docx to md text sources
-5. Compilations
-   1. [ ] **Generate a text source from a folder as a compilation (glob or hand picked)**
-      1. Radio group: In all commits the folder is found; Last existing commit; In specific commit(s);
-6. Visualizations
+7. Compilations
+   1. [x] Generate a text source from a folder as a compilation (hand picked)
+      1. [ ] Add glob pattern for folder compilation;
+8. Visualizations
    1. [ ] Generate a chronological timeline of commits that shows passage of time between commits;
    2. [ ] Generate a topological timeline of commits that shows a linear ordered sequence of commits;
-7. Playable builds
+9. Playable builds
 	1. [ ] Create a URI handler (see Electron Deep Link feature) that will open a specific version of the app that can run web-based playable builds from the local commits. Alternatively, show a list of build folders per commit.
 
 ## QDPX format notes

@@ -93,7 +93,8 @@ class QdpxExporter {
     originalExt = 'txt',
     plainTextData = '',
     originalAbsPath = '',
-    dateTime = utils.getNowDateTime()
+    dateTime = utils.getNowDateTime(),
+    isFolder = false
   ) {
     const base_ts_guid = utils.guid()
     const richTextExt = 'docx'
@@ -110,13 +111,13 @@ class QdpxExporter {
     // Create file for rich text/ original ext version
     if (originalExt == 'md') {
       // convert to docx if md
-      const docFile = await convertMdToDocx(plainTextData, name, originalAbsPath)
+      const docFile = await convertMdToDocx(plainTextData, name, originalAbsPath, isFolder)
       await fs.outputFile(path.join(qdpxSourcesPath, `/${base_ts_guid}.${richTextExt}`), docFile)
     }
     // Treat any other extension as plain text code
     else {
       // convert to docx if md
-      const docFile = await convertCodeToDocx(plainTextData, name, originalAbsPath)
+      const docFile = await convertCodeToDocx(plainTextData, name, originalAbsPath, isFolder)
       await fs.outputFile(path.join(qdpxSourcesPath, `/${base_ts_guid}.${richTextExt}`), docFile)
     }
     // Create file for plain text version
@@ -156,7 +157,9 @@ class QdpxExporter {
         source.name,
         ext,
         source.content,
-        source.abs
+        source.abs,
+        undefined,
+        source.parent == 'compilationSource' ? true : false
       )
       new_ts.PlainTextSelection = []
       allTs.push(new_ts)

@@ -30,6 +30,11 @@
     node.selected = event.target.checked
     dispatch('fileToggled')
   }
+
+  function toggleFolder(event, node) {
+    node.selected = event.target.checked
+    dispatch('folderToggled')
+  }
 </script>
 
 <div class="card my-3" class:text-bg-secondary={!active}>
@@ -76,7 +81,18 @@
             : 'transparent'}
         >
           {#if node.children}
-            <i class="bi bi-folder me-1"></i> {node.name}
+            <div class="form-check form-switch">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                role="switch"
+                id="folderSwitch"
+                on:change={(e) => toggleFolder(e, node)}
+                checked={node.selected}
+              />
+            </div>
+            <i class="bi bi-folder me-1"></i>
+            {node.name}
           {:else}
             {#if ['md', 'css', 'js', 'txt', 'html'].indexOf(getExt(node.name)) >= 0}
               <div class="form-check form-switch">

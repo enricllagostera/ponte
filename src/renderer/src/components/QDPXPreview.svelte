@@ -37,8 +37,10 @@
       <h3><i class="bi bi-archive"></i> Sources</h3>
       <ul class=" list-unstyled my-2">
         {#each qdpxData.sources as source}
-          {#if source.parent == 'repository' || source.parent == 'copyTextSource' || source.parent == 'devlog'}
-            <li class="ms-2"><TextSourcePreview {source} /></li>
+          {#if source.parent == 'repository' || source.parent == 'copyTextSource' || source.parent == 'compilationSource' || source.parent == 'devlog'}
+            <li class="ms-2">
+              <TextSourcePreview {source} />
+            </li>
           {/if}
         {/each}
         {#if qdpxData.commits}

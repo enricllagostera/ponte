@@ -59,7 +59,9 @@ export async function getFileTree(folderPath, baseFolder, commitHash) {
     let newFolder = {
       name: folder,
       abs: path.join(folderPath, folder),
-      rel: path.relative(folderPath, path.join(folderPath, folder))
+      rel: path.relative(folderPath, path.join(folderPath, folder)),
+      selected: false,
+      commitHash: commitHash
     }
     newFolder.children = [
       ...(await getFileTree(path.join(folderPath, folder), baseFolder, commitHash))

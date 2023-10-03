@@ -93,6 +93,41 @@
       commitsToProcess = [...$repo.commits]
     }
 
+    if (actions.manualImportFolderText.active) {
+      actions.manualImportFolderText.selectedFolders = []
+      for (const commit of commitsToProcess) {
+        for (const folder of getAllSelectedFolders(commit.fileTree)) {
+          actions.manualImportFolderText.selectedFolders.push(folder)
+          const filesInFolder = getAllFilesInFolder(folder)
+          let compilationSource = {
+            parent: 'compilationSource',
+            content: `# Compilation for ${folder.rel} @ ${commit.hash.substring(0, 7)}`,
+            originalExt: 'md',
+            abs: folder.abs,
+            name: `${folder.rel} @ ${commit.hash.substring(0, 7)}`
+          }
+          for (const file of filesInFolder) {
+            const ext = file.name.split('.')[file.name.split('.').length - 1]
+            if (supportedTextExts.indexOf(ext) >= 0) {
+              compilationSource.content += `\n\n## [${file.rel}]\n\n`
+              if (ext == 'md') {
+                compilationSource.content += await window.files.readFileAtCommit(
+                  file.rel,
+                  commit.hash
+                )
+              } else {
+                const fileData = await window.files.readFileAtCommit(file.rel, commit.hash)
+                compilationSource.content += `\`\`\`\n${fileData}\`\`\``
+              }
+            }
+          }
+          sources.push(compilationSource)
+        }
+      }
+    } else {
+      commitsToProcess = [...$repo.commits]
+    }
+
     if (actions.devlogCompilation.active) {
       const dScs = commitsToProcess.map((commit) => commit.hash)
       const compilationSource = await window.loader.getDevlogCompilation({
@@ -160,6 +195,20 @@
     }
   }
 
+  function getAllSelectedFolders(directory) {
+    let selected = []
+    for (const dirent of directory) {
+      if (dirent.children?.length > 0) {
+        // is folder
+        if (dirent.selected) {
+          selected.push(dirent)
+        }
+        selected.push(...getAllSelectedFolders(dirent.children))
+      }
+    }
+    return [...selected]
+  }
+
   function getAllSelectedFiles(directory) {
     let selected = []
     for (const dirent of directory) {
@@ -176,10 +225,29 @@
     return selected
   }
 
+  function getAllFilesInFolder(folder) {
+    let selected = []
+    for (const dirent of folder.children) {
+      if (dirent.children?.length > 0) {
+        // is folder
+        selected.push(...getAllFilesInFolder(dirent))
+      } else if (!dirent.children) {
+        // is file
+        selected.push(dirent)
+      }
+    }
+    return selected
+  }
+
   function findInTreeAndToggleSelected(abs, directory, value) {
     for (const dirent of directory) {
       if (dirent.children?.length > 0) {
         // is folder
+        if (dirent.abs == abs) {
+          dirent.selected = value
+          return
+        }
+
         findInTreeAndToggleSelected(abs, dirent.children, value)
       } else if (!dirent.children && dirent.abs == abs) {
         dirent.selected = value
@@ -216,6 +284,13 @@
       findInTreeAndToggleSelected(
         file.abs,
         $repo.commits.find((c) => c.hash == file.commitHash).fileTree,
+        true
+      )
+    }
+    for (const folder of actions.manualImportFolderText.selectedFolders) {
+      findInTreeAndToggleSelected(
+        folder.abs,
+        $repo.commits.find((c) => c.hash == folder.commitHash).fileTree,
         true
       )
     }
@@ -390,7 +465,7 @@
               </div>
               <div slot="body">
                 <div class="list-group">
-                  {#each [actions.manualIgnoreCommits, actions.manualImportFiles, actions.devlogCompilation, actions.individualCommitDevlog] as action (action.guid)}
+                  {#each [actions.manualIgnoreCommits, actions.manualImportFiles, actions.manualImportFolderText, actions.devlogCompilation, actions.individualCommitDevlog] as action (action.guid)}
                     <ActionListitem {action} on:actionUpdated={updateQdpx} />
                   {/each}
 
@@ -432,6 +507,7 @@
                 activeAtStart={checkIfActiveAtStart(commit.hash)}
                 on:toggleIncluded={toggleIncludedCommit}
                 on:fileToggled={updateQdpx}
+                on:folderToggled={updateQdpx}
               />
             {/each}
           {:else}

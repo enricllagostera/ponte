@@ -6,6 +6,8 @@
   <summary class="fs-5"
     >{#if source.parent == 'repository'}
       <i class="bi bi-journals"></i>
+    {:else if source.parent == 'compilationSource'}
+      <i class="bi bi-folder"></i>
     {:else if source.parent == 'copyTextSource'}
       <i class="bi bi-file-text"></i>
     {/if}

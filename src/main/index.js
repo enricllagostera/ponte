@@ -1,14 +1,15 @@
 import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron'
+import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { join } from 'path'
 import * as fs from 'fs-extra'
-import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import icon from '../../resources/icon.png?asset'
 import { DateTime } from 'luxon'
 
+import icon from '../../resources/icon.png?asset'
 import * as files from './fileSystemHandling'
 import QdpxExporter from './qdpxExport'
 import utils from './helpers'
 import DataInitializer from './dataInitializer'
+import { formatCodeAsHTML } from './docxBuilder'
 
 let initializer
 let allCommits
@@ -126,6 +127,7 @@ function createWindow() {
   ipcMain.handle('exportQDPX', exportQDPX, mainWindow)
   ipcMain.handle('runGlobOnCommit', runGlobOnCommit)
   ipcMain.handle('readFileAtCommit', readFileAtCommit)
+  ipcMain.handle('convertCodeToHTML', (e, c) => formatCodeAsHTML(c))
   ipcMain.handle('showInExplorer', showInExplorer)
 
   // HMR for renderer base on electron-vite cli.
