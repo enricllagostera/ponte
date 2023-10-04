@@ -173,7 +173,7 @@ class QdpxExporter {
           if (s >= 0) {
             matchCount++
             const pts = this.createPlainTextSelection(
-              `Match ${matchCount} of #${commit.hashAbbrev}`,
+              `Match ${matchCount} of ${code.name} @ #${commit.hashAbbrev}`,
               s,
               s + commit.hashAbbrev.length
             )

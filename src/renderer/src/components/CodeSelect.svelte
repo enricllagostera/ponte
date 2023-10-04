@@ -14,16 +14,7 @@
   onMount(() => {
     value = initialValues
     items = [...initialOptions]
-    console.log(value, items)
   })
-
-  // function onChanged(event) {
-  //   console.log(value, items)
-  //   dispatch('codesChanged', {
-  //     codes: value.map((v) => v.value),
-  //     options: items.map((v) => v.options)
-  //   })
-  // }
 
   function handleFilter(e) {
     if (value?.find((i) => i.label === filterText)) return

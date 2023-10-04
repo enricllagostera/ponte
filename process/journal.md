@@ -1,8 +1,14 @@
 # Process journal
 
-## 2023-10-03 Folder text compilation
+## 2023-10-04 Saving & loading the manual encoding
+
+I have to improve the manual encoding, right now it is slightly broken. (...) OK, it was actually a lot broken. It took me waaaay longer than I expected to filly fix it. Well, at least it seems fully functional now.
+
+## 2023-10-03 Folder text compilation & manual encoding
 
 I managed to add a folder as text source, similar to what I had in the earlier proof-of-concept stage of the tool. For now it creates a Markdown file with the text contents and then adds it to the QDPX export. It is also converted to docx, as all other markdown files. The formatting of folder compilations that include both code and text is still a bit messy, but that's ok for now.
+
+(...) Managed to add some basic manual encoding, still some work to do on saving and loading. This already makes it easier to associate commits and files to specific codes and ideas, and I think it expands preliminar coding possibilities. For now it adds a title to all files and encodes all references to a commit hash abbreviation.
 
 ## 2023-09-26 Docx support
 

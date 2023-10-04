@@ -59,6 +59,10 @@
     updateQdpx()
   }
 
+  function commitEncoded(e) {
+    updateQdpx()
+  }
+
   async function updateQdpx() {
     let sources = []
     if (actions.manualIgnoreCommits.active) {
@@ -79,12 +83,14 @@
           const ext = file.name.split('.')[file.name.split('.').length - 1]
           if (supportedTextExts.indexOf(ext) >= 0) {
             const content = await window.files.readFileAtCommit(file.rel, commit.hash)
+            const fileTitle = `${file.rel} @ #${commit.hash.substring(0, 7)}`
+            const contentWithHeader = `title:  ${fileTitle}\n\n${content}`
             sources.push({
               parent: 'copyTextSource',
-              content: content,
+              content: contentWithHeader,
               originalExt: ext,
               abs: file.abs,
-              name: `${file.rel} @ ${commit.hash.substring(0, 7)}`
+              name: fileTitle
             })
           }
         }
@@ -101,7 +107,7 @@
           const filesInFolder = getAllFilesInFolder(folder)
           let compilationSource = {
             parent: 'compilationSource',
-            content: `# Compilation for ${folder.rel} @ ${commit.hash.substring(0, 7)}`,
+            content: `# Compilation for ${folder.rel} @ #${commit.hashAbbrev}`,
             originalExt: 'md',
             abs: folder.abs,
             name: `${folder.rel} @ ${commit.hash.substring(0, 7)}`
@@ -146,6 +152,26 @@
 
     const allCodesToSendToQDPXExport = []
 
+    // encode commits manually
+    if (actions.manualEncodeCommits.active) {
+      for (const codeInAction of actions.manualEncodeCommits.codesToApply) {
+        const getCodeOnExportList = allCodesToSendToQDPXExport.filter(
+          (c) => c.name == codeInAction.code.value
+        )
+        if (getCodeOnExportList.length == 1) {
+          getCodeOnExportList[0].commits = [
+            ...getCodeOnExportList[0].commits,
+            ...commitsToProcess.filter((c) => codeInAction.commits.indexOf(c.hash) >= 0)
+          ]
+        } else {
+          allCodesToSendToQDPXExport.push({
+            name: codeInAction.code.value,
+            commits: [...commitsToProcess.filter((c) => codeInAction.commits.indexOf(c.hash) >= 0)]
+          })
+        }
+      }
+    }
+
     const allApplyCodeCommitByGlob = actions.getAll('applyCodeCommitGlob')
     for (const act of allApplyCodeCommitByGlob) {
       if (act.active) {
@@ -172,11 +198,13 @@
       if (act.active) {
         for (const file of act.selectedFiles) {
           const content = await window.files.readFileAtCommit(file.file, file.commit)
+          const fileTitle = `${file.file} @ #${file.commit.substring(0, 7)}`
+          const contentWithHeader = `title:  ${fileTitle}\n\n${content}`
           sources.push({
             parent: 'copyTextSource',
             originalExt: file.file.split('.')[file.file.split('.').length - 1],
-            content: content,
-            name: `${file.file} @ ${file.commit.substring(0, 7)}`
+            content: contentWithHeader,
+            name: fileTitle
           })
         }
       }
@@ -465,7 +493,7 @@
               </div>
               <div slot="body">
                 <div class="list-group">
-                  {#each [actions.manualIgnoreCommits, actions.manualImportFiles, actions.manualImportFolderText, actions.devlogCompilation, actions.individualCommitDevlog] as action (action.guid)}
+                  {#each [actions.manualIgnoreCommits, actions.manualImportFiles, actions.manualImportFolderText, actions.devlogCompilation, actions.individualCommitDevlog, actions.manualEncodeCommits] as action (action.guid)}
                     <ActionListitem {action} on:actionUpdated={updateQdpx} />
                   {/each}
 
@@ -504,10 +532,12 @@
               <CommitListItem
                 {commit}
                 {userRepoInfo}
+                encodingAction={actions.manualEncodeCommits}
                 activeAtStart={checkIfActiveAtStart(commit.hash)}
                 on:toggleIncluded={toggleIncludedCommit}
                 on:fileToggled={updateQdpx}
                 on:folderToggled={updateQdpx}
+                on:commitEncoded={commitEncoded}
               />
             {/each}
           {:else}

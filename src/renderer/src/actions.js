@@ -32,6 +32,15 @@ export class ActionDB {
         selectedFolders: []
       },
       {
+        name: 'manualEncodeCommits',
+        guid: uuid(),
+        active: true,
+        title: 'Manually apply code to commits',
+        description: 'Manually add codes in the commits timeline.',
+        codesToApply: []
+        // [{ code :{value, label}, commits: [hash0, hash1] }, ...]
+      },
+      {
         name: 'devlogCompilation',
         guid: uuid(),
         active: true,
@@ -69,6 +78,10 @@ export class ActionDB {
 
   get manualImportFiles() {
     return this.get('manualImportFiles')
+  }
+
+  get manualEncodeCommits() {
+    return this.get('manualEncodeCommits')
   }
 
   get devlogCompilation() {

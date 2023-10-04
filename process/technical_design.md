@@ -48,15 +48,16 @@ I'm going to organize the UI mostly by using Bootstrap as the main library for c
          1. Radio group: In all commits the file is found; Last existing commit; In specific commit(s);
       5. Wiki loading
          1. [ ] Load commits from wiki repo and display in timeline;
+         2. [ ] Allow to import individual wiki files or folder compilations
 4. Coding
    1. Commit encoding
       1. [x] Encode commits from subject (glob pattern)
          1. Example: All commits with `docs**` on subject line are encoded with `documentation`.
-      2. [ ] Manually encode commits
-      3. [?] Encode commits from full text content (glob pattern)
+      2. [ ] ***Manually encode commits*** (save and load properly)
+      3. [ ] Encode commits from full text content (glob pattern)
    2. File encoding
       1. [ ] Encode files from filename (glob patterns)
-      2. [ ] Encode files from text content (glob pattern, aka auto-code)
+      2. [ ] ***Encode files from text content (glob pattern, aka auto-code)***
       3. [ ] Encode manually selected files
 5. Devlogs
    1. [ ] Generate devlog compilation with advanced options

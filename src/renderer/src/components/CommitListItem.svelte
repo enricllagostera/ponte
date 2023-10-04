@@ -3,8 +3,12 @@
   import { DateTime } from 'luxon'
   import { marked } from 'marked'
 
+  import CodeSelect from './CodeSelect.svelte'
+  import { codeOptions } from '../stores'
+
   import Tree from 'svelte-tree'
 
+  export let encodingAction = {}
   export let activeAtStart = true
   export let commit
   export let userRepoInfo
@@ -34,6 +38,94 @@
   function toggleFolder(event, node) {
     node.selected = event.target.checked
     dispatch('folderToggled')
+  }
+
+  function updateCodes(codes, options) {
+    for (const code of options) {
+      let previousOptions = $codeOptions.filter((o) => o.value != code.value)
+      $codeOptions = [...previousOptions, ...options]
+    }
+    commit.appliedCodes = [...codes]
+    console.log(commit)
+  }
+
+  function getAllCodesForThisCommit() {
+    const res = encodingAction.codesToApply.filter((e) => e.commits.indexOf(commit.hash) >= 0)
+    return res.map((r) => r.code.value)
+  }
+
+  function findIndexCodeToApply(name) {
+    const res = encodingAction.codesToApply.findIndex((e) => e.code.value == name)
+    return res
+  }
+
+  function appendToCodesToApply(newEntries = []) {
+    encodingAction.codesToApply = [...encodingAction.codesToApply, ...newEntries]
+  }
+
+  function removeCodeToApply(codeToRemove) {
+    encodingAction.codesToApply = encodingAction.codesToApply.filter(
+      (c) => c.code.value != codeToRemove.code.value
+    )
+  }
+
+  function appendToCommits(indexOfCode, newHash) {
+    const other = encodingAction.codesToApply[indexOfCode].commits.filter((c) => c !== newHash)
+    encodingAction.codesToApply[indexOfCode].commits = [...other, newHash]
+  }
+
+  function removeFromCommits(indexOfCode, hashToRemove) {
+    const other = encodingAction.codesToApply[indexOfCode].commits.filter((c) => c !== hashToRemove)
+    encodingAction.codesToApply[indexOfCode].commits = [...other]
+  }
+
+  function codesChanged(event) {
+    console.log(event.detail)
+    console.log('old options', $codeOptions)
+    updateCodes(event.detail.codes, event.detail.options)
+
+    const codesToAdd = event.detail.codes.filter((c) => findIndexCodeToApply(c.value) < 0)
+
+    const codesAlreadyInAction = event.detail.codes.filter(
+      (c) => findIndexCodeToApply(c.value) >= 0
+    )
+
+    const entriesWithObsoleteCodes = encodingAction.codesToApply.filter((entry) => {
+      const entryHasThisCommit = entry.commits.indexOf(commit.hash) >= 0
+      const entryCodeIsNotInEvent =
+        event.detail.codes.findIndex((c) => c.value == entry.code.value) < 0
+      return entryHasThisCommit && entryCodeIsNotInEvent
+    })
+
+    // create new codesToApply entries
+    for (const newCode of codesToAdd) {
+      appendToCodesToApply([
+        {
+          code: newCode,
+          commits: [commit.hash]
+        }
+      ])
+    }
+
+    // update existing codesToApply entries
+    for (const codeToAppend of codesAlreadyInAction) {
+      const appendIndex = findIndexCodeToApply(codeToAppend.value)
+      appendToCommits(appendIndex, commit.hash)
+    }
+
+    for (const obsoleteEntry of entriesWithObsoleteCodes) {
+      const obsIndex = findIndexCodeToApply(obsoleteEntry.code.value)
+      removeFromCommits(obsIndex, commit.hash)
+    }
+
+    // remove all empty codes (not referencesd by any commit)
+    const emptyCodesToApply = encodingAction.codesToApply.filter((e) => e.commits.length == 0)
+    for (const emptyCode of emptyCodesToApply) {
+      removeCodeToApply(emptyCode)
+    }
+
+    encodingAction.codesToApply = [...encodingAction.codesToApply]
+    dispatch('commitEncoded', { codes: commit.appliedCodes, commit: commit.hash })
   }
 </script>
 
@@ -153,6 +245,15 @@
         <i class="bi bi-github"></i> Browse on Github</a
       >
     </div>
+  </div>
+
+  <div class="card-footer d-flex d-flex flex-grow-0 align-items-center">
+    <CodeSelect
+      id={`"${commit.hash}-codeSelect"`}
+      initialOptions={$codeOptions}
+      initialValues={getAllCodesForThisCommit()}
+      on:codesChanged={codesChanged}
+    />
   </div>
 </div>
 
