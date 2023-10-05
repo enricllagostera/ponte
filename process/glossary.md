@@ -1,3 +1,5 @@
+# Glossary
+
 ## CAQDAS, or Computer Aided Qualitative Data Analysis Software
 
 Tools like NVivo, Atlas.ti, MAXQDA, QualCoder. Most of these are proprietary and closed tools. These tools are mostly used for [[#QDA]], but can also be used for literature reviews and other forms of reference-heavy textual analysis.

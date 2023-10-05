@@ -1,3 +1,5 @@
+# Technical design
+
 The project's main language (and ensuing tech stack) is Javascript, running on a local-first desktop environment.
 
 ## Tech stack

@@ -1,3 +1,5 @@
+# Research statement
+
 ## Questions
 
 1. How to scaffold QDA for game design projects through a corpus preparation stage?
