@@ -1,5 +1,11 @@
 # Process journal
 
+## 2023-10-05 Building 0.0.2 and workshop prep
+
+Rilla has proposed that we do a qualitative analysis workshop on Oct 06, 2023. I created some questions and ideas for it [over here](analysis_workshop_01_prep.md).
+
+The idea is to familiarize folks in the research group with the methodology and the tools involved. In this case, this will mean both the repo-to-qda tool for preparing a corpus of data. The workshop might be multi-part.
+
 ## 2023-10-04 Saving & loading the manual encoding
 
 I have to improve the manual encoding, right now it is slightly broken. (...) OK, it was actually a lot broken. It took me waaaay longer than I expected to filly fix it. Well, at least it seems fully functional now.
@@ -16,7 +22,7 @@ I managed to bring back the docx rich text conversion I had working in the previ
 
 ## 2023-09-25 Refactor
 
-When I was doing the last batch of features, I realized that the code is very messy in some parts, so I took  a few hours to refactor things around to make it easier to add new features in the next work sessions. I think this round is mostly done by now, so I'll go back to working on features.
+When I was doing the last batch of features, I realized that the code is very messy in some parts, so I took a few hours to refactor things around to make it easier to add new features in the next work sessions. I think this round is mostly done by now, so I'll go back to working on features.
 
 ## 2023-09-22 Pre-meeting fixes
 
@@ -44,7 +50,7 @@ I finally finished doing this, downloading things to a better organized temp fol
 
 ## 2023-09-15 GaR meeting
 
-- [ ] Prepare a Mac build of version 0.0.1 #todo
+- [>] Prepare a Mac build of version 0.0.1 #todo
 
 After I talked about how design is more of a distributed process than just the integration on one folder/tool, and that this might need a combination of methodologies for analysis, Danny mentioned that even though automating some of that would be beneficial, it was important to not lose sight of the process, and that journaling / practices like that could support that. I sent the message below on Zoom as a clarification.
 
@@ -66,7 +72,7 @@ After I talked about how design is more of a distributed process than just the i
       2. How to deal with notes that might be the basis for unpublished paper? %% Discussion for later. Probably define a protocol for the whole GaR or maybe prepare a paper on it? %%
          1. What could a writing embargo look like?
    3. Joseph will work with the UX of the tools for the GaR project: **repo-to-qda**, archivistagd. %% Focus will be on repo-to-qda work. %%
-      1. [ ] Write a note to Joseph on the UX and references for the repo-to-qda app and tag him on the repo #todo
+      1. [x] Write a note to Joseph on the UX and references for the repo-to-qda app and tag him on the repo #todo
 
 ## 2023-09-05 Encoding actions bug fixing and changes of component
 
