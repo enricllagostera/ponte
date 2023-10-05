@@ -6,7 +6,7 @@ date: 2023-08-24
 
 Here is a draft of a general flow. It has a three-pane structure.
 
-![](conversion_workflow.png)
+![](../media/conversion_workflow.png)
 
 From this, and together with ideas from the last meeting, I designed a list of possible actions up on [technical_design](process/technical_design.md). In a way, the list is more of a wishlist, I'm not sure all of that will be needed. Maybe a way to prioritize them is to think of what would be useful in each of these cases:
 

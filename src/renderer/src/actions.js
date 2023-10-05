@@ -37,8 +37,7 @@ export class ActionDB {
         active: true,
         title: 'Manually apply code to commits',
         description: 'Manually add codes in the commits timeline.',
-        codesToApply: []
-        // [{ code :{value, label}, commits: [hash0, hash1] }, ...]
+        codesToApply: [] // [{ code :{value, label}, commits: [hash0, hash1] }, ...]
       },
       {
         name: 'devlogCompilation',

@@ -22,7 +22,7 @@ When I was doing the last batch of features, I realized that the code is very me
 
 I added a first version of the [related_work](related_work.md) notes. Also, I fixed some bugs with the saving and loading of the config file (it was generating a 40MB JSON before for some reason). Now that works OK, together with manually ignoring commits. Made a small change to improve the import of text sources in NVivo, should be working fine now, both with text sources and codes.
 
-![Video update](20230922-repo-to-qda.mp4)
+![Video update](media/20230922-repo-to-qda.mp4)
 
 ## 2023-09-21 File visualizations
 
@@ -48,7 +48,7 @@ I finally finished doing this, downloading things to a better organized temp fol
 
 After I talked about how design is more of a distributed process than just the integration on one folder/tool, and that this might need a combination of methodologies for analysis, Danny mentioned that even though automating some of that would be beneficial, it was important to not lose sight of the process, and that journaling / practices like that could support that. I sent the message below on Zoom as a clarification.
 
-![](20230915115024.png)
+![](media/20230915115024.png)
 
 ## 2023-09-08 GaR meeting
 
