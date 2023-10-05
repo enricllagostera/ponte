@@ -1,7 +1,6 @@
 import { app } from 'electron'
 import * as path from 'path'
 import * as fs from 'fs-extra'
-import * as glob from 'glob'
 
 export function getRepoClonePath(user, repo) {
   return path.join(getPathForRepo(user, repo), 'clone')
@@ -55,7 +54,6 @@ export async function getFileTree(folderPath, baseFolder, commitHash) {
     .map((dirent) => dirent.name)
 
   for (const folder of folderNames) {
-    // ...(await getFileList(path.join(folderPath, folder)))
     let newFolder = {
       name: folder,
       abs: path.join(folderPath, folder),

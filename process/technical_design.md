@@ -26,57 +26,7 @@ I'm going to organize the UI mostly by using Bootstrap as the main library for c
 
 ## Features
 
-#todo
-
-1. QDPX export
-   1. [x] Add save file dialog for QDPX file
-2. Save and load configuration files
-   1. [x] Add a navbar GUI
-   2. [x] Save config file
-   3. [x] Load config file
-3. Loading
-   1. [x] Validate GitHub repository information
-   2. [x] Define repository via GUI
-   3. Commit loading
-      1. [-] Ignore commits from commit list (hashes or hashAbbrev)
-      2. [ ] Ignore commits from subject (simple string pattern)
-      3. [x] Ignore commits via manual selection
-   4. File loading
-      1. [x] Download commit files
-      2. [x] Manually import files from commits
-      3. [x] Copy file as sources from filename (glob pattern)
-         1. Radio group: In all commits the file is found; Last existing commit; In specific commit(s);
-      4. [ ] Copy file as sources and encode from filename (glob pattern)
-         1. Radio group: In all commits the file is found; Last existing commit; In specific commit(s);
-      5. Wiki loading
-         1. [ ] Load commits from wiki repo and display in timeline;
-         2. [ ] Allow to import individual wiki files or folder compilations
-4. Coding
-   1. Commit encoding
-      1. [x] Encode commits from subject (glob pattern)
-         1. Example: All commits with `docs**` on subject line are encoded with `documentation`.
-      2. [ ] ***Manually encode commits*** (save and load properly)
-      3. [ ] Encode commits from full text content (glob pattern)
-   2. File encoding
-      1. [ ] Encode files from filename (glob patterns)
-      2. [ ] ***Encode files from text content (glob pattern, aka auto-code)***
-      3. [ ] Encode manually selected files
-5. Devlogs
-   1. [ ] Generate devlog compilation with advanced options
-      1. Checkboxes: Add commit logs; Add file from commit `devlog` footer; Add link to each build;
-   2. [x] Generate devlog compilation - basic
-   3. [x] Generate a separate devlog source for each commit
-      1. Checkboxes: Add commit logs; Add file from commit `devlog` footer; Add link to each build;
-6. Export
-	1. [x] Add rich-text docx to md text sources
-7. Compilations
-   1. [x] Generate a text source from a folder as a compilation (hand picked)
-      1. [ ] Add glob pattern for folder compilation;
-8. Visualizations
-   1. [ ] Generate a chronological timeline of commits that shows passage of time between commits;
-   2. [ ] Generate a topological timeline of commits that shows a linear ordered sequence of commits;
-9. Playable builds
-	1. [ ] Create a URI handler (see Electron Deep Link feature) that will open a specific version of the app that can run web-based playable builds from the local commits. Alternatively, show a list of build folders per commit.
+{ 2023-10-05T17:49:04-04:00 I moved the features to-do list to a separate file: [to-do](to-do.md) }
 
 ## QDPX format notes
 

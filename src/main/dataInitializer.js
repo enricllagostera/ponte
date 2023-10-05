@@ -86,7 +86,7 @@ class DataInitializer {
   showFilesAsTree(files, commitHash) {
     let tree = []
     for (const file of files) {
-      const name = resolve(files.getPathForCommit(this.userName, this.repoName, commitHash), file)
+      resolve(files.getPathForCommit(this.userName, this.repoName, commitHash), file)
     }
 
     return tree

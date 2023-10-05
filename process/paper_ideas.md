@@ -1,6 +1,6 @@
 # Ideas for a research paper on repo-to-qda
 
-## 2023-09-15 Revised research design 
+## 2023-09-15 Revised research design
 
 The main difference would be to do the case studies based on workshops with the other participants, record / note them using the tool and analysing that.
 
@@ -30,7 +30,7 @@ The main difference would be to do the case studies based on workshops with the 
    2. Use the tool on its own development repo.
    3. Workshop with other GaR members using it to start analysis on a shared analysis case.
 3. Findings of cases about tool use
-	1. TBD
+   1. TBD
 4. Shared data
    1. Publish the files themselves
       1. Config files for cases 1 and 2.

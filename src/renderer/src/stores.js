@@ -2,7 +2,7 @@ import { writable } from 'svelte/store'
 
 export const repo = writable({
   // userRepoInfo: 'pippinbarr/itisasifyouweremakinglove',
-  userRepoInfo: 'enricllagostera/g2k',
+  userRepoInfo: '',
   commits: []
 })
 

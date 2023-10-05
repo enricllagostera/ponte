@@ -6,3 +6,4 @@ out
 process/ref_materials/samples/nvivo-export.qdpx
 process/ref_materials/samples/**/
 *.log*
+.pandoc/
