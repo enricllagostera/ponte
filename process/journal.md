@@ -1,8 +1,24 @@
 # Process journal
 
+## 2023-10-11 Work on disk optimization and some basic caching
+
+**Researched Git file trees.** The `ls-tree` command gives me a file tree that I can use for matching and the loading the files only when needed. Got all file trees with decent feedback and I'm checking if there is already a local clone before triggering a fresh download. Very basic, but effective. Might be worth it to move all git operations to `git.js`.
+
+**Modified git2json to get diffs in "operation" mode.** This makes it easier to understand what is new / gone / changed and might allow for a better GUI later.
+
+**Loaded file trees from Git and showed them on the commit list item preview again.** The events are being triggered fine, but they don't have the file contents, so there are errors. There is slow down on larger projects. I'll need to paginate / lazy-load the commit list items.
+
+## 2023-10-10 Back to dev
+
+During the weekend, Chip sent more detailed feedback, which I added to the [analysis_workshop_01](analysis_workshop_01.md) notes. Before I get into exploring new design directions or features, I'll work on trying to fix the broken export and on optimizing the use of disk in users' computers.
+
+## 2023-10-06 Workshop notes
+
+The workshop wen very well. Lots of interesting insight and lines for further research and refinement. I added another file with [notes and observations](analysis_workshop_01.md). After I got back home, I started the transcription efforts and some research on caching and ways to optimize disk space.
+
 ## 2023-10-05 Building 0.0.2 and workshop prep
 
-Rilla has proposed that we do a qualitative analysis workshop on Oct 06, 2023. I created some questions and ideas for it [over here](analysis_workshop_01_prep.md).
+Rilla has proposed that we do a qualitative analysis workshop on Oct 06, 2023. I created some questions and ideas for it [over here](analysis_workshop_01.md).
 
 The idea is to familiarize folks in the research group with the methodology and the tools involved. In this case, this will mean both the repo-to-qda tool for preparing a corpus of data. The workshop might be multi-part.
 

@@ -29,6 +29,7 @@
   let repoLoader = {}
   let userRepoInfo = ''
   let footer
+  let repoLoadingPromise = null
 
   function onLoadedRepoData() {
     // called when repo data is loaded via the repo loader gui
@@ -434,7 +435,10 @@
       <div class="row" style:height={repoInfoReady ? '23%' : '35%'}>
         <div class="col d-flex">
           {#key repoLoader}
-            <RepoLoader on:repoDataLoaded={onLoadedRepoData} />
+            <RepoLoader
+              on:repoDataLoaded={onLoadedRepoData}
+              bind:loadPromise={repoLoadingPromise}
+            />
           {/key}
         </div>
       </div>
@@ -538,6 +542,7 @@
                 on:fileToggled={updateQdpx}
                 on:folderToggled={updateQdpx}
                 on:commitEncoded={commitEncoded}
+                promise={repoLoadingPromise}
               />
             {/each}
           {:else}

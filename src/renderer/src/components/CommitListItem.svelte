@@ -12,6 +12,7 @@
   export let activeAtStart = true
   export let commit
   export let userRepoInfo
+  export let promise
   let active = activeAtStart
 
   let showFileTree = false
@@ -129,7 +130,7 @@
   }
 </script>
 
-<div class="card my-3" class:text-bg-secondary={!active}>
+<div class="card my-3 overflow-x-hidden" class:text-bg-secondary={!active}>
   <div class="card-header">
     <i class="bi bi-git"></i> #{commit.hashAbbrev} <i class="bi bi-calendar-event"></i>
     {DateTime.fromMillis(commit.author.timestamp).toISODate()}, approx. {DateTime.fromMillis(
@@ -156,66 +157,68 @@
       <summary class="mb-2 btn btn-outline-primary"
         ><i class="bi bi-eye"></i> Preview files in this commit</summary
       >
-      <Tree tree={commit.fileTree} let:node>
-        <div
-          class="d-flex align-items-center p-1 rounded-1"
-          class:text-secondary={['md', 'css', 'js', 'txt', 'html'].indexOf(getExt(node.name)) < 0 &&
-            !node.children}
-          class:my-1={['md', 'css', 'js', 'txt', 'html'].indexOf(getExt(node.name)) < 0 &&
-            !node.children}
-          style:margin-left={['md', 'css', 'js', 'txt', 'html'].indexOf(getExt(node.name)) < 0 &&
-          !node.children
-            ? '-1em'
-            : ''}
-          style:background-color={['md', 'css', 'js', 'txt', 'html'].indexOf(getExt(node.name)) <
-            0 && !node.children
-            ? '#f0f0f0'
-            : 'transparent'}
-        >
-          {#if node.children}
-            <div class="form-check form-switch">
-              <input
-                class="form-check-input"
-                type="checkbox"
-                role="switch"
-                id="folderSwitch"
-                on:change={(e) => toggleFolder(e, node)}
-                checked={node.selected}
-              />
-            </div>
-            <i class="bi bi-folder me-1"></i>
-            {node.name}
-          {:else}
-            {#if ['md', 'css', 'js', 'txt', 'html'].indexOf(getExt(node.name)) >= 0}
+      {#await promise then}
+        <Tree tree={commit.fileTree} let:node>
+          <div
+            class="d-flex align-items-center p-1 rounded-1 fs-6 text-red"
+            class:text-secondary={['md', 'css', 'js', 'txt', 'html'].indexOf(getExt(node.name)) <
+              0 && !node.children}
+            class:my-1={['md', 'css', 'js', 'txt', 'html'].indexOf(getExt(node.name)) < 0 &&
+              !node.children}
+            style:margin-left={['md', 'css', 'js', 'txt', 'html'].indexOf(getExt(node.name)) < 0 &&
+            !node.children
+              ? '-1em'
+              : ''}
+            style:background-color={['md', 'css', 'js', 'txt', 'html'].indexOf(getExt(node.name)) <
+              0 && !node.children
+              ? '#f0f0f0'
+              : 'transparent'}
+          >
+            {#if node.children}
               <div class="form-check form-switch">
                 <input
                   class="form-check-input"
                   type="checkbox"
                   role="switch"
-                  id="flexSwitchCheckDefault"
-                  disabled={['md', 'css', 'js', 'txt', 'html'].indexOf(getExt(node.name)) < 0}
-                  on:change={(e) => toggleFile(e, node)}
+                  id="folderSwitch"
+                  on:change={(e) => toggleFolder(e, node)}
                   checked={node.selected}
                 />
               </div>
-              <i class="bi bi-file-text-fill me-1"></i>
-            {/if}
-            {node.name}
-            <button class="btn btn-link" on:click={window.files.showInExplorer(node.abs)}
-              ><i class="bi bi-folder2-open"></i></button
-            >
+              <i class="bi bi-folder me-1"></i>
+              {node.name}
+            {:else}
+              {#if ['md', 'css', 'js', 'txt', 'html'].indexOf(getExt(node.name)) >= 0}
+                <div class="form-check form-switch">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    role="switch"
+                    id="flexSwitchCheckDefault"
+                    disabled={['md', 'css', 'js', 'txt', 'html'].indexOf(getExt(node.name)) < 0}
+                    on:change={(e) => toggleFile(e, node)}
+                    checked={node.selected}
+                  />
+                </div>
+                <i class="bi bi-file-text-fill me-1"></i>
+              {/if}
+              {node.name}
+              <button class="btn btn-link" on:click={window.files.showInExplorer(node.abs)}
+                ><i class="bi bi-folder2-open"></i></button
+              >
 
-            <a
-              name=""
-              id=""
-              href={`https://github.com/${userRepoInfo}/tree/${commit.hash}/${node.rel}`}
-              target="_blank"
-            >
-              <i class="bi bi-github"></i>
-            </a>
-          {/if}
-        </div>
-      </Tree>
+              <a
+                name=""
+                id=""
+                href={`https://github.com/${userRepoInfo}/tree/${commit.hash}/${node.rel}`}
+                target="_blank"
+              >
+                <i class="bi bi-github"></i>
+              </a>
+            {/if}
+          </div>
+        </Tree>
+      {/await}
     </details>
   </div>
 

@@ -1,9 +1,8 @@
 import GitLoader from './gitLogLoader'
 import utils from './helpers'
 import * as files from './fileSystemHandling'
-
 import * as fs from 'fs-extra'
-import { join, resolve } from 'path'
+import { join, resolve, relative } from 'path'
 import AdmZip from 'adm-zip'
 import { glob } from 'glob'
 
@@ -33,6 +32,53 @@ class DataInitializer {
     return res
   }
 
+  async getFileList(commitTree) {
+    return this.gitLoader.getFileList(commitTree)
+  }
+
+  async convertToFileTree(fileList, baseAbsPath, commitHash) {
+    let tree = []
+    let hierarchy = {}
+    // var hierarchy = []
+    // adapted from https://codereview.stackexchange.com/questions/158134/generate-a-nested-structure-based-on-a-list-of-file-paths
+    let paths = [...fileList]
+    paths.forEach(function (filePath) {
+      filePath.split('/').reduce(function (r, e) {
+        return r[e] || (r[e] = {})
+      }, hierarchy)
+    })
+    tree = this.getTree(hierarchy, '', '', baseAbsPath, commitHash)
+
+    return tree
+  }
+
+  getTree(hierarchy, rootPath, folderPath, baseAbsPath, commitHash) {
+    let res = []
+    for (const entry of Object.keys(hierarchy)) {
+      let children = Object.keys(hierarchy[entry])
+      let childrenCount = children.length
+      // is file
+      if (childrenCount <= 0) {
+        res.push({
+          name: entry,
+          rel: relative(rootPath, join(folderPath, entry)),
+          abs: join(baseAbsPath, folderPath, entry),
+          selected: false,
+          commitHash: commitHash
+        })
+      } else {
+        res.push({
+          name: entry,
+          rel: join(folderPath, entry),
+          abs: join(baseAbsPath, folderPath, entry),
+          selected: false,
+          commitHash: commitHash,
+          children: this.getTree(hierarchy[entry], rootPath, join(folderPath, entry), baseAbsPath)
+        })
+      }
+    }
+    return res
+  }
   async startDownloadZip(commitHash, onProgressCb) {
     const zipUrl = utils.getGithubUrl(this.repoInfo) + '/archive/' + commitHash + '.zip'
     const localFile = join(this.zipsPath, `${commitHash}.zip`)

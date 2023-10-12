@@ -54,70 +54,93 @@ function createWindow() {
   ipcMain.handle('loadRepoData', async (_event, repoInfo) => {
     const inputGitDataPath = files.getAppGitDataPath()
     initializer = new DataInitializer(repoInfo, inputGitDataPath)
+
     mainWindow.webContents.send('commitDownloadInProgress', {
       message: 'Cloning repository...'
     })
     allCommits = await initializer.loadCommitsFromGit()
-
-    let downloadPromises = []
-    for (const commit of allCommits) {
-      downloadPromises.push(
-        initializer
-          .startDownloadZip(commit.hash, (info) => {
-            // console.log(info)
-            mainWindow.webContents.send('commitDownloadInProgress', {
-              hash: commit.hash,
-              progress: info,
-              message: '',
-              commitCount: allCommits.length
-            })
-          })
-          .then(() => {
-            mainWindow.webContents.send('commitDownloadInProgress', {
-              hash: commit.hash,
-              progress: { total: -1 },
-              message: '',
-              commitCount: allCommits.length
-            })
-          })
-      )
-    }
-
-    await Promise.allSettled(downloadPromises)
-    console.log('finished downloading all')
-    const allExtractions = initializer.extractAllZips(allCommits.map((c) => c.hash))
     mainWindow.webContents.send('commitDownloadInProgress', {
-      message: 'Extracting ZIPs. This might take a while...'
+      message: 'Getting file information for each commit...'
     })
-    await Promise.allSettled(allExtractions)
-    mainWindow.webContents.send('commitDownloadInProgress', {
-      message: 'Getting file structure for each commit...'
-    })
-    console.log('finished extracting all')
-
-    let fileStructurePromises = []
+    let index = 0
     for (const commit of allCommits) {
-      fileStructurePromises.push(
-        files
-          .getFileTree(
-            initializer.getExtractedZipPathForCommit(commit.hash),
-            initializer.getExtractedZipPathForCommit(commit.hash),
-            commit.hash
-          )
-          .then(async (info) => {
-            commit.fileTree = info
-            // commit.fileTree = await files.getFileTree(
-            // initializer.getExtractedZipPathForCommit(commit.hash)
-          })
+      const fileList = [...(await initializer.getFileList(commit.tree))]
+      const rootPathForCommit = files.getPathForCommit(
+        initializer.userName,
+        initializer.repoName,
+        commit.hash
       )
+      commit.fileTree = await initializer.convertToFileTree(
+        fileList,
+        rootPathForCommit,
+        commit.hash
+      )
+      index += 1
+      mainWindow.webContents.send('commitDownloadInProgress', {
+        message: `Getting file tree for commit ${index} of ${allCommits.length}...`
+      })
     }
+    mainWindow.webContents.send('commitDownloadInProgress', {
+      message: `File trees for all commits are ready.`
+    })
+    // let downloadPromises = []
+    // for (const commit of allCommits) {
+    //   downloadPromises.push(
+    //     initializer
+    //       .startDownloadZip(commit.hash, (info) => {
+    //         // console.log(info)
+    //         mainWindow.webContents.send('commitDownloadInProgress', {
+    //           hash: commit.hash,
+    //           progress: info,
+    //           message: '',
+    //           commitCount: allCommits.length
+    //         })
+    //       })
+    //       .then(() => {
+    //         mainWindow.webContents.send('commitDownloadInProgress', {
+    //           hash: commit.hash,
+    //           progress: { total: -1 },
+    //           message: '',
+    //           commitCount: allCommits.length
+    //         })
+    //       })
+    //   )
+    // }
 
-    await Promise.allSettled(fileStructurePromises)
+    // await Promise.allSettled(downloadPromises)
+    // console.log('finished downloading all')
+    // const allExtractions = initializer.extractAllZips(allCommits.map((c) => c.hash))
+    // mainWindow.webContents.send('commitDownloadInProgress', {
+    //   message: 'Extracting ZIPs. This might take a while...'
+    // })
+    // await Promise.allSettled(allExtractions)
+    // mainWindow.webContents.send('commitDownloadInProgress', {
+    //   message: 'Getting file structure for each commit...'
+    // })
+    // console.log('finished extracting all')
+
+    // let fileStructurePromises = []
+    // for (const commit of allCommits) {
+    //   fileStructurePromises.push(
+    //     files
+    //       .getFileTree(
+    //         initializer.getExtractedZipPathForCommit(commit.hash),
+    //         initializer.getExtractedZipPathForCommit(commit.hash),
+    //         commit.hash
+    //       )
+    //       .then(async (info) => {
+    //         commit.fileTree = info
+    //         // commit.fileTree = await files.getFileTree(
+    //         // initializer.getExtractedZipPathForCommit(commit.hash)
+    //       })
+    //   )
+    // }
+
+    // await Promise.allSettled(fileStructurePromises)
     mainWindow.webContents.send('commitDownloadInProgress', {
       message: ''
     })
-
-    return JSON.stringify(allCommits)
+    return allCommits
   })
 
   ipcMain.handle('getDevlogForCommit', getDevlogForCommit)

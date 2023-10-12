@@ -7,7 +7,7 @@
 
   let confirmedRepoInfo = ''
   let confirmPromise = null
-  let loadPromise = null
+  export let loadPromise = null
 
   async function checkRepoInfo() {
     confirmPromise = window.loader.checkRepoInfo($repo.userRepoInfo)
@@ -18,7 +18,7 @@
     dispatch('startLoading')
 
     loadPromise = window.loader.loadRepoData($repo.userRepoInfo)
-    $repo.commits = JSON.parse(await loadPromise)
+    $repo.commits = await loadPromise
 
     dispatch('repoDataLoaded', {
       commits: $repo.commits,
