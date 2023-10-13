@@ -1,13 +1,14 @@
-<script>
+<script lang="ts">
   import { createEventDispatcher, onMount } from 'svelte'
   import Select from 'svelte-select'
+  import type { CodeOption } from '../../../types'
 
-  export let initialOptions
-  export let initialValues
+  export let initialOptions: CodeOption[]
+  export let initialValues: CodeOption[]
 
-  let filterText = ''
-  let value = null
-  let items
+  let filterText: string = ''
+  let value: CodeOption[] | null = null
+  let items: CodeOption[] | null
 
   const dispatch = createEventDispatcher()
 
@@ -16,7 +17,7 @@
     items = [...initialOptions]
   })
 
-  function handleFilter(e) {
+  function handleFilter(e): void {
     if (value?.find((i) => i.label === filterText)) return
     if (e.detail.length === 0 && filterText.length > 0) {
       const prev = items.filter((i) => !i.created)
@@ -24,7 +25,7 @@
     }
   }
 
-  function handleClear(e) {
+  function handleClear(e: CustomEvent): void {
     value = value || []
     const toRemove = Array.isArray(e.detail) ? e.detail : [e.detail]
     for (const rv of [...toRemove]) {
@@ -36,8 +37,8 @@
     })
   }
 
-  function handleChange(e) {
-    items = items.map((i) => {
+  function handleChange(): void {
+    items = items.map((i: CodeOption) => {
       delete i.created
       return i
     })
@@ -75,10 +76,6 @@
 </div>
 
 <style>
-  /* .form-control :global(.svelte-select) {
-    border: 0;
-  } */
-
   .form-control.fc-select {
     padding: 0;
   }

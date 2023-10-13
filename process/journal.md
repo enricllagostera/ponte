@@ -1,5 +1,20 @@
 # Process journal
 
+## 2023-10-13 Meeting with Rilla and TS conversion
+
+In the morning I discussed the workshop notes and insight with Rilla. We agreed on me continuing the work of optimizing and the system for medium sized projects and better disk storage and use. We also discussed different forms of presenting the repository to facilitate analysis, with mentions of concepts such as views, filters, and timelines. Another point was about how organizing data and familiarizing yourself with it allows for the development of an intuition about where meaningful aspects can be found. Choosing, pattern-identification, moving are key actions. 
+
+A few concrete things from the meeting: 
+
+- **Focusing on the action of "picking" or "adding" sources from the larger visualization as triggers for reflection.** This is a good moment to prompt the researcher for a memo note about why these materials are being picked. This would be a way to start of the projects with some memos over the choice of analysis data.
+- **Different lenses lead to different GT analysis (or quali in general).**
+
+In the afternoon I continued work on the progressive conversion to TS. It's advancing. Now I'm thinking of preparing some docs on the architecture of this app, using the C4 model. I want to do this in order to both have docs on it and also to improve it, as I think I'm reaching some boundaries of the current messy, ad-hoc, structure.
+
+## 2023-10-12 Continuing work on general optimization
+
+I decided to try again to refactor to TS. I know I had trouble before, but I do think that this will help me improve and catch data errors lately. They are already showing up more frequently as I go with the optimization for handling larger projects. So, for now, I'm in the middle of a lot of error and warning fixing.
+
 ## 2023-10-11 Work on disk optimization and some basic caching
 
 **Researched Git file trees.** The `ls-tree` command gives me a file tree that I can use for matching and the loading the files only when needed. Got all file trees with decent feedback and I'm checking if there is already a local clone before triggering a fresh download. Very basic, but effective. Might be worth it to move all git operations to `git.js`.

@@ -1,28 +1,33 @@
-<script>
+<script lang="ts">
   let message = ''
 
-  export function setup() {
+  export function setup(): void {
     let progressPerCommit = new Map()
-    window.loader.onDownloadInProgress((event, data) => {
-      if (data.message != '') {
-        // if there is a message, just forward it to the footer
-        message = data.message
-        return
-      } else if (!data.progress) {
-        // no message and no data means that message should be cleared
-        message = ''
-        return
+    window.loader.onDownloadInProgress(
+      (
+        _event: any,
+        data: { message: string; progress: { total: number }; hash: any; commitCount: number }
+      ) => {
+        if (data.message != '') {
+          // if there is a message, just forward it to the footer
+          message = data.message
+          return
+        } else if (!data.progress) {
+          // no message and no data means that message should be cleared
+          message = ''
+          return
+        }
+        // has the download completed?
+        if (data.progress.total < 0) {
+          progressPerCommit.delete(data.hash)
+        } else {
+          progressPerCommit.set(data.hash, data)
+        }
+        message = `Downloading commits... (${
+          data.commitCount - Array.from(progressPerCommit).length
+        }/${data.commitCount})`
       }
-      // has the download completed?
-      if (data.progress.total < 0) {
-        progressPerCommit.delete(data.hash)
-      } else {
-        progressPerCommit.set(data.hash, data)
-      }
-      message = `Downloading commits... (${
-        data.commitCount - Array.from(progressPerCommit).length
-      }/${data.commitCount})`
-    })
+    )
   }
 </script>
 

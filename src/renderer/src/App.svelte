@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { onMount } from 'svelte'
   import { Modal } from 'bootstrap'
 
@@ -12,39 +12,39 @@
   import WaitingModal from './components/WaitingModal.svelte'
   import Pane from './components/Pane.svelte'
 
-  import { clickOutside } from './clickOutside.js'
-  import { ActionDB } from './actions.js'
-  import { repo, codeOptions } from './stores.js'
+  import type { Commit, RepoDirent, AppliedCode, Action } from '../../types'
+  import { clickOutside } from './clickOutside'
+  import { ActionDB } from './actions'
+  import { repo, codeOptions, settings } from './stores'
   import NotificationFooter from './components/NotificationFooter.svelte'
+  import type { PathLike } from 'fs-extra'
 
-  const supportedTextExts = ['md', 'txt', 'js', 'css', 'html']
   const defaultQdpx = { sources: [], codes: [], commits: [] }
 
   let actionDropdown = false
-  let commitsToProcess = []
+  let commitsToProcess: Commit[] = []
   let actions = new ActionDB()
-  let newConfigModalOpen = false
   let qdpx = { ...defaultQdpx }
   let repoInfoReady = false
   let repoLoader = {}
   let userRepoInfo = ''
-  let footer
+  let footer: NotificationFooter
   let repoLoadingPromise = null
 
-  function onLoadedRepoData() {
+  function onLoadedRepoData(): void {
     // called when repo data is loaded via the repo loader gui
     actions = new ActionDB()
     repoDataIsReady()
   }
 
-  function repoDataIsReady() {
+  function repoDataIsReady(): void {
     userRepoInfo = $repo.userRepoInfo
     commitsToProcess = [...$repo.commits]
     repoInfoReady = true
     updateQdpx()
   }
 
-  function toggleIncludedCommit(event) {
+  function toggleIncludedCommit(event: CustomEvent): void {
     const hash = event.detail.hash
     const checked = event.detail.checked
     if (!checked) {
@@ -60,11 +60,11 @@
     updateQdpx()
   }
 
-  function commitEncoded(e) {
+  function commitEncoded(): void {
     updateQdpx()
   }
 
-  async function updateQdpx() {
+  async function updateQdpx(): Promise<void> {
     let sources = []
     if (actions.manualIgnoreCommits.active) {
       commitsToProcess = [
@@ -82,7 +82,7 @@
         for (const file of getAllSelectedFiles(commit.fileTree)) {
           actions.manualImportFiles.selectedFiles.push(file)
           const ext = file.name.split('.')[file.name.split('.').length - 1]
-          if (supportedTextExts.indexOf(ext) >= 0) {
+          if ($settings.supportedTextExts.indexOf(ext) >= 0) {
             const content = await window.files.readFileAtCommit(file.rel, commit.hash)
             const fileTitle = `${file.rel} @ #${commit.hash.substring(0, 7)}`
             const contentWithHeader = `title:  ${fileTitle}\n\n${content}`
@@ -115,7 +115,7 @@
           }
           for (const file of filesInFolder) {
             const ext = file.name.split('.')[file.name.split('.').length - 1]
-            if (supportedTextExts.indexOf(ext) >= 0) {
+            if ($settings.supportedTextExts.indexOf(ext) >= 0) {
               compilationSource.content += `\n\n## [${file.rel}]\n\n`
               if (ext == 'md') {
                 compilationSource.content += await window.files.readFileAtCommit(
@@ -151,23 +151,29 @@
       }
     }
 
-    const allCodesToSendToQDPXExport = []
+    const allCodesToSendToQDPXExport: AppliedCode[] = []
 
     // encode commits manually
     if (actions.manualEncodeCommits.active) {
       for (const codeInAction of actions.manualEncodeCommits.codesToApply) {
         const getCodeOnExportList = allCodesToSendToQDPXExport.filter(
-          (c) => c.name == codeInAction.code.value
+          (c) => c.code.value == codeInAction.code.value
         )
         if (getCodeOnExportList.length == 1) {
-          getCodeOnExportList[0].commits = [
-            ...getCodeOnExportList[0].commits,
-            ...commitsToProcess.filter((c) => codeInAction.commits.indexOf(c.hash) >= 0)
+          getCodeOnExportList[0].commitHashes = [
+            ...getCodeOnExportList[0].commitHashes,
+            ...commitsToProcess
+              .filter((c) => codeInAction.commitHashes.findIndex((ca) => ca == c.hash) >= 0)
+              .map((r) => r.hash)
           ]
         } else {
           allCodesToSendToQDPXExport.push({
-            name: codeInAction.code.value,
-            commits: [...commitsToProcess.filter((c) => codeInAction.commits.indexOf(c.hash) >= 0)]
+            code: { ...codeInAction.code },
+            commitHashes: [
+              ...commitsToProcess
+                .filter((c) => codeInAction.commitHashes.findIndex((ca) => ca == c.hash) >= 0)
+                .map((r) => r.hash)
+            ]
           })
         }
       }
@@ -178,16 +184,16 @@
       if (act.active) {
         for (const selectedCode of act.codesToApply) {
           const getCodeOnExportList = allCodesToSendToQDPXExport.filter(
-            (c) => c.name == selectedCode.value
+            (c) => c.code.value == selectedCode.code.value
           )
           if (getCodeOnExportList.length == 1) {
-            getCodeOnExportList.commits = getCodeOnExportList.commits.concat(
-              selectedCode.selectedCommits
+            getCodeOnExportList[0].commitHashes = getCodeOnExportList[0].commitHashes.concat(
+              selectedCode.commitHashes
             )
           } else {
             allCodesToSendToQDPXExport.push({
-              name: selectedCode.value,
-              commits: act.selectedCommits
+              code: { ...selectedCode.code },
+              commitHashes: act.selectedCommits.map((sc) => sc.hash)
             })
           }
         }
@@ -198,12 +204,12 @@
     for (const act of allImportFilesByGlob) {
       if (act.active) {
         for (const file of act.selectedFiles) {
-          const content = await window.files.readFileAtCommit(file.file, file.commit)
-          const fileTitle = `${file.file} @ #${file.commit.substring(0, 7)}`
+          const content = await window.files.readFileAtCommit(file.name, file.commitHash)
+          const fileTitle = `${file.name} @ #${file.commitHash.substring(0, 7)}`
           const contentWithHeader = `title:  ${fileTitle}\n\n${content}`
           sources.push({
             parent: 'copyTextSource',
-            originalExt: file.file.split('.')[file.file.split('.').length - 1],
+            originalExt: file.name.split('.')[file.name.split('.').length - 1],
             content: contentWithHeader,
             name: fileTitle
           })
@@ -217,14 +223,14 @@
     }
   }
 
-  function dismissAddActionsDropdown(event) {
+  function dismissAddActionsDropdown(event: CustomEvent): void {
     //console.log(event)
     if (actionDropdown && event.detail.target.id != 'addActionDropdownBtn') {
       actionDropdown = false
     }
   }
 
-  function getAllSelectedFolders(directory) {
+  function getAllSelectedFolders(directory: RepoDirent[]): RepoDirent[] {
     let selected = []
     for (const dirent of directory) {
       if (dirent.children?.length > 0) {
@@ -238,7 +244,7 @@
     return [...selected]
   }
 
-  function getAllSelectedFiles(directory) {
+  function getAllSelectedFiles(directory: RepoDirent[]): RepoDirent[] {
     let selected = []
     for (const dirent of directory) {
       if (dirent.children?.length > 0) {
@@ -254,7 +260,7 @@
     return selected
   }
 
-  function getAllFilesInFolder(folder) {
+  function getAllFilesInFolder(folder: RepoDirent): RepoDirent[] {
     let selected = []
     for (const dirent of folder.children) {
       if (dirent.children?.length > 0) {
@@ -268,8 +274,8 @@
     return selected
   }
 
-  function findInTreeAndToggleSelected(abs, directory, value) {
-    for (const dirent of directory) {
+  function findInTreeAndToggleSelected(abs: PathLike, directory: RepoDirent, value: boolean): void {
+    for (const dirent of directory.children) {
       if (dirent.children?.length > 0) {
         // is folder
         if (dirent.abs == abs) {
@@ -277,7 +283,7 @@
           return
         }
 
-        findInTreeAndToggleSelected(abs, dirent.children, value)
+        findInTreeAndToggleSelected(abs, dirent, value)
       } else if (!dirent.children && dirent.abs == abs) {
         dirent.selected = value
         return
@@ -285,7 +291,7 @@
     }
   }
 
-  function resetConfig() {
+  function resetConfig(): void {
     $repo.userRepoInfo = ''
     $repo.commits = []
     repoLoader = {}
@@ -295,11 +301,11 @@
     qdpx = { ...defaultQdpx }
   }
 
-  async function loadConfig() {
+  async function loadConfig(): Promise<void> {
     let loadOptions = {
       title: `Load RepoToQDA config...`
     }
-    let res = await window.loader.loadDialog(loadOptions)
+    let res = JSON.parse(await window.loader.loadDialog(loadOptions))
     const waitingModal = Modal.getInstance('#waitingLoadData')
     if (!res) {
       waitingModal.toggle()
@@ -307,8 +313,8 @@
     }
     resetConfig()
     $repo.userRepoInfo = res.userRepoInfo
-    $repo.commits = JSON.parse(await window.loader.loadRepoData($repo.userRepoInfo))
-    actions.current = [...res.actions]
+    $repo.commits = await window.loader.loadRepoData($repo.userRepoInfo)
+    actions.current = [...(res.actions as Action[])]
     for (const file of actions.manualImportFiles.selectedFiles) {
       findInTreeAndToggleSelected(
         file.abs,
@@ -326,14 +332,14 @@
     $repo.commits = [...$repo.commits]
     const allApplyCodeCommitByGlob = actions.getAll('applyCodeCommitGlob')
     for (const act of allApplyCodeCommitByGlob) {
-      $codeOptions = [...$codeOptions, ...act.codesToApply]
+      $codeOptions = [...$codeOptions, ...act.codesToApply.map((ca) => ca.code)]
     }
     waitingModal.toggle()
     repoDataIsReady()
     updateQdpx()
   }
 
-  async function saveConfig() {
+  async function saveConfig(): Promise<void> {
     let saveOptions = {
       title: `Save RepoToQDA config...`,
       data: {
@@ -344,13 +350,17 @@
     await window.loader.saveDialog(saveOptions)
   }
 
-  function deleteActionFromList(action) {
-    actions.current = actions.removeFrom(action)
+  function deleteActionFromList(event: CustomEvent): void {
+    actions.current = actions.removeFrom(event.detail.action)
     updateQdpx()
   }
 
-  function checkIfActiveAtStart(hash) {
+  function checkIfActiveAtStart(hash): boolean {
     return actions.manualIgnoreCommits.ignoredCommits.indexOf(hash) < 0
+  }
+
+  function toggleDropdown(): void {
+    actionDropdown = !actionDropdown
   }
 
   onMount(() => {
@@ -370,7 +380,6 @@
 <main class="container-fluid d-flex vh-100 max-vh100 flex-column" style="max-height: 100vh">
   <!-- Modals -->
   <StaticAlert
-    open={newConfigModalOpen}
     dialog={{
       id: 'newConfig',
       title: 'Are you sure you want to start a new config?',
@@ -409,7 +418,6 @@
             data-bs-target="#newConfig"
             class="btn btn-outline-primary ms-auto"
             type="button"
-            on:click={() => (newConfigModalOpen = true)}
             ><i class="bi bi-file-plus-fill"></i> New config
           </button>
 
@@ -459,9 +467,7 @@
                       class="btn btn-primary btn-sm dropdown-toggle"
                       type="button"
                       aria-expanded={actionDropdown}
-                      on:click={() => {
-                        actionDropdown = !actionDropdown
-                      }}
+                      on:click={toggleDropdown}
                     >
                       <i class="bi bi-plus-circle"></i> Add action
                     </button>
@@ -506,16 +512,15 @@
                       {action}
                       {commitsToProcess}
                       on:actionUpdated={updateQdpx}
-                      on:actionDeleted={(e) => deleteActionFromList(e.detail.action)}
+                      on:actionDeleted={deleteActionFromList}
                     />
                   {/each}
 
                   {#each actions.getAll('importFilesByGlob') as action (action.guid)}
                     <ActionImportFilesByGlob
                       {action}
-                      {commitsToProcess}
                       on:actionUpdated={updateQdpx}
-                      on:actionDeleted={(e) => deleteActionFromList(e.detail.action)}
+                      on:actionDeleted={deleteActionFromList}
                     />
                   {/each}
                 </div>

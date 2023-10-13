@@ -1,5 +1,5 @@
-<script>
-  import { repo } from '../stores.js'
+<script lang="ts">
+  import { repo } from '../stores'
   import { createEventDispatcher } from 'svelte'
   import Pane from './Pane.svelte'
 

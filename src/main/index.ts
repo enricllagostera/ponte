@@ -1,4 +1,12 @@
-import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron'
+import {
+  app,
+  shell,
+  BrowserWindow,
+  ipcMain,
+  dialog,
+  IpcMainInvokeEvent,
+  OpenDialogReturnValue
+} from 'electron'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { join } from 'path'
 import * as fs from 'fs-extra'
@@ -11,10 +19,12 @@ import utils from './helpers'
 import DataInitializer from './dataInitializer'
 import { formatCodeAsHTML } from './docxBuilder'
 
-let initializer
-let allCommits
+import type { Commit, Devlog } from '../types'
 
-function createWindow() {
+let initializer: DataInitializer
+let allCommits: Commit[]
+
+function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 1440,
@@ -37,13 +47,13 @@ function createWindow() {
     return { action: 'deny' }
   })
 
-  ipcMain.handle('checkRepoInfo', async (_event, repoInfo) => {
+  ipcMain.handle('checkRepoInfo', async (_event: IpcMainInvokeEvent, repoInfo) => {
     const url = utils.getGithubUrl(repoInfo)
     let res = false
     try {
       res = await utils.validateGithubRepo(repoInfo)
     } catch (error) {
-      throw new Error(error.message)
+      throw new Error((error as Error).message)
     }
     if (res) {
       return url
@@ -51,7 +61,7 @@ function createWindow() {
     return ''
   })
 
-  ipcMain.handle('loadRepoData', async (_event, repoInfo) => {
+  ipcMain.handle('loadRepoData', async (_event: IpcMainInvokeEvent, repoInfo) => {
     const inputGitDataPath = files.getAppGitDataPath()
     initializer = new DataInitializer(repoInfo, inputGitDataPath)
 
@@ -145,12 +155,12 @@ function createWindow() {
 
   ipcMain.handle('getDevlogForCommit', getDevlogForCommit)
   ipcMain.handle('getDevlogCompilation', getDevlogCompilation)
-  ipcMain.handle('saveDialog', saveDialog, mainWindow)
-  ipcMain.handle('loadDialog', loadDialog, mainWindow)
-  ipcMain.handle('exportQDPX', exportQDPX, mainWindow)
+  ipcMain.handle('saveDialog', saveDialog)
+  ipcMain.handle('loadDialog', loadDialog)
+  ipcMain.handle('exportQDPX', exportQDPX)
   ipcMain.handle('runGlobOnCommit', runGlobOnCommit)
   ipcMain.handle('readFileAtCommit', readFileAtCommit)
-  ipcMain.handle('convertCodeToHTML', (e, c) => formatCodeAsHTML(c))
+  ipcMain.handle('convertCodeToHTML', formatCodeAsHTML)
   ipcMain.handle('showInExplorer', showInExplorer)
 
   // HMR for renderer base on electron-vite cli.
@@ -194,22 +204,22 @@ app.on('window-all-closed', () => {
   }
 })
 
-async function showInExplorer(_event, filePath) {
+async function showInExplorer(_event: IpcMainInvokeEvent, filePath): Promise<void> {
   return shell.showItemInFolder(filePath)
 }
 
-async function readFileAtCommit(_event, filePath, commitHash) {
+async function readFileAtCommit(_event: IpcMainInvokeEvent, filePath, commitHash): Promise<string> {
   return await initializer.readFileAtCommit(filePath, commitHash)
 }
 
-async function runGlobOnCommit(_event, pattern, commitHash) {
+async function runGlobOnCommit(_event: IpcMainInvokeEvent, pattern, commitHash): Promise<string[]> {
   return await initializer.runGlobOnCommit(pattern, commitHash)
 }
 
-async function exportQDPX(_event, exportData, exportOptions) {
+async function exportQDPX(_event: IpcMainInvokeEvent, exportData, exportOptions): Promise<void> {
   let res
   try {
-    res = await dialog.showSaveDialog(null, {
+    res = await dialog.showSaveDialog({
       ...exportOptions,
       filters: [{ name: 'QDPX file', extensions: ['qdpx'] }]
     })
@@ -223,31 +233,33 @@ async function exportQDPX(_event, exportData, exportOptions) {
   await exporter.exportToFile(exportData, res.filePath)
 }
 
-async function loadDialog(_event, loadOptions) {
-  let res
+async function loadDialog(
+  _event: IpcMainInvokeEvent,
+  loadOptions: Electron.OpenDialogOptions
+): Promise<string> {
+  let dialogRes: OpenDialogReturnValue
   try {
-    res = await dialog.showOpenDialog(null, {
+    dialogRes = await dialog.showOpenDialog({
       ...loadOptions,
       filters: [{ name: 'Repo to QDA JSON', extensions: ['json'] }],
       properties: ['openFile']
     })
-    if (res.canceled) {
-      return
+    if (dialogRes.canceled) {
+      return ''
     }
-    if (fs.existsSync(res.filePaths[0])) {
-      res = fs.readJSONSync(res.filePaths[0])
+    if (fs.existsSync(dialogRes.filePaths[0])) {
+      return fs.readFileSync(dialogRes.filePaths[0], 'utf-8')
     }
-    return res
+    return ''
   } catch (error) {
-    res = undefined
+    return ''
   }
-  return res
 }
 
-async function saveDialog(_event, saveOptions) {
+async function saveDialog(_event: IpcMainInvokeEvent, saveOptions): Promise<void> {
   let res
   try {
-    res = await dialog.showSaveDialog(null, {
+    res = await dialog.showSaveDialog({
       ...saveOptions,
       filters: [{ name: 'Repo to QDA JSON', extensions: ['json'] }]
     })
@@ -263,11 +275,11 @@ async function saveDialog(_event, saveOptions) {
   }
 }
 
-async function getDevlogForCommit(_event, commitHash) {
+async function getDevlogForCommit(_event: IpcMainInvokeEvent, commitHash: string): Promise<Devlog> {
   const commitData = allCommits.filter((c) => c.hash == commitHash)[0]
   // basic devlog from commit message
   const commitISODate = DateTime.fromMillis(commitData.author.timestamp).toISODate()
-  const devlog = {
+  const devlog: Devlog = {
     hashAbbrev: commitData.hashAbbrev,
     name: `Devlog for #${commitData.hashAbbrev} on ${commitISODate}`,
     originalExt: 'md',
@@ -280,15 +292,18 @@ async function getDevlogForCommit(_event, commitHash) {
   return devlog
 }
 
-async function getDevlogCompilation(_event, devlogCompilationConfig) {
+async function getDevlogCompilation(
+  _event: IpcMainInvokeEvent,
+  devlogCompilationConfig
+): Promise<Devlog> {
   let comp = '# Devlog compilation\n\n'
-  let selectedCommits = allCommits.filter(
+  const selectedCommits = allCommits.filter(
     (c) => devlogCompilationConfig.selectedCommits.indexOf(c.hash) >= 0
   )
 
   for (let i = 0; i < selectedCommits.length; i++) {
     const sc = selectedCommits[i]
-    const devlogContent = await getDevlogForCommit(null, sc.hash)
+    const devlogContent = await getDevlogForCommit(_event, sc.hash)
     comp += `## ${devlogContent.content}\n\n---\n\n`
   }
 

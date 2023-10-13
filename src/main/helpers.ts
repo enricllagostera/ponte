@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { AxiosProgressEvent } from 'axios'
 import * as fs from 'fs-extra'
 import { v4 as uuid } from 'uuid'
 import { DateTime } from 'luxon'
@@ -10,13 +10,13 @@ export default {
   RepoError,
   BuildError,
   isRepoInfoValid,
-  getGithubUrl: (userRepoInfo) => {
+  getGithubUrl: (userRepoInfo): string => {
     if (!isRepoInfoValid(userRepoInfo)) {
       throw new Error('Invalid user/repository info.')
     }
     return `https://github.com/${userRepoInfo}`
   },
-  validateGithubRepo: async (userRepoInfo) => {
+  validateGithubRepo: async (userRepoInfo): Promise<boolean> => {
     if (!isRepoInfoValid(userRepoInfo)) {
       throw new Error('Invalid user/repository info. Use `myUser/myRepository` format.')
     }
@@ -36,7 +36,11 @@ export default {
     }
     return false
   },
-  fetch: async (url, path, onProgressCb) => {
+  fetch: async (
+    url: string,
+    path: string,
+    onProgressCb: (arg0: AxiosProgressEvent) => void
+  ): Promise<any> => {
     fs.ensureFileSync(path)
     const writer = fs.createWriteStream(path)
     const response = await axios({
@@ -56,18 +60,18 @@ export default {
       writer.on('error', reject)
     })
   },
-  guid: () => {
+  guid: (): string => {
     return uuid().toUpperCase()
   },
-  formatDate: (dateTime) => {
+  formatDate: (dateTime: DateTime): string => {
     return dateTime.toUTC().toFormat("yyyy-LL-dd'T'hh:mm:ss'Z'")
   },
-  getNowDateTime: () => {
+  getNowDateTime: (): string => {
     return DateTime.utc().toFormat("yyyy-LL-dd'T'hh:mm:ss'Z'")
   }
 }
 
-function isRepoInfoValid(repoInfo) {
+function isRepoInfoValid(repoInfo: string): boolean {
   if (repoInfo != undefined && typeof repoInfo == 'string' && repoInfo != '') {
     if (repoInfo.split('/').length == 2) return true
   }

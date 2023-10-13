@@ -1,6 +1,5 @@
 <script>
   export let dialog
-  export let open = false
 </script>
 
 <div
@@ -11,7 +10,6 @@
   tabindex="-1"
   aria-labelledby="staticBackdropLabel"
   aria-hidden="true"
-  {open}
 >
   <div class="modal-dialog">
     <div class="modal-content">

@@ -1,11 +1,11 @@
-<script>
+<script lang="ts">
   import { createEventDispatcher } from 'svelte'
 
   export let action
 
   const dispatch = createEventDispatcher()
 
-  function onChanged() {
+  function onChanged(): void {
     dispatch('actionUpdated', {
       state: action
     })

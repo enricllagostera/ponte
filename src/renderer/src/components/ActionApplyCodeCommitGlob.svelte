@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { createEventDispatcher, onMount } from 'svelte'
   import { minimatch } from 'minimatch'
   import { codeOptions } from '../stores'
@@ -15,7 +15,7 @@
     action.selectedCommits = action.selectedCommits || []
   })
 
-  function onChanged(event) {
+  function onChanged(): void {
     // action.codesToApply = [...codesToApply]
 
     dispatch('actionUpdated', {
@@ -23,13 +23,13 @@
     })
   }
 
-  function onDeleted() {
+  function onDeleted(): void {
     dispatch('actionDeleted', {
       action: action
     })
   }
 
-  function updateCodes(codes, options) {
+  function updateCodes(codes, options): void {
     for (const code of options) {
       let previousOptions = $codeOptions.filter((o) => o.value != code.value)
       $codeOptions = [...previousOptions, ...options]
@@ -37,7 +37,7 @@
     action.codesToApply = [...codes]
   }
 
-  function codesChanged(event) {
+  function codesChanged(event): void {
     console.log(event.detail)
     console.log('old', $codeOptions)
     updateCodes(event.detail.codes, event.detail.options)
@@ -46,18 +46,20 @@
     })
   }
 
-  function matchCommitBySubjectAndBody(event) {
-    if (event.target.value.length >= 0) {
+  function matchCommitBySubjectAndBody(event: Event): void {
+    if ((event.target as HTMLInputElement).value.length >= 0) {
       const subjectAndBodyArray = []
       commitsToProcess.forEach((c) => {
-        if (minimatch(`${c.subject}\n${c.body}`, `**${event.target.value}**`)) {
+        if (
+          minimatch(`${c.subject}\n${c.body}`, `**${(event.target as HTMLInputElement).value}**`)
+        ) {
           subjectAndBodyArray.push({
             hash: c.hash,
             subject: `${c.subject}`
           })
         }
       })
-      action.searchPattern = event.target.value
+      action.searchPattern = (event.target as HTMLInputElement).value
       action.selectedCommits = subjectAndBodyArray
       dispatch('actionUpdated', {
         action: action
@@ -65,7 +67,7 @@
     }
   }
 
-  function scrollToNewAction(node) {
+  function scrollToNewAction(node): void {
     node.scrollIntoView({ block: 'nearest', inline: 'nearest' })
   }
 </script>
@@ -117,7 +119,6 @@
 
     <!-- <label for="tags">Codes to apply</label> -->
     <CodeSelect
-      id="{`${action.name}-${action.guid}`}-codeSelect"
       initialOptions={$codeOptions}
       initialValues={action.codesToApply}
       on:codesChanged={codesChanged}

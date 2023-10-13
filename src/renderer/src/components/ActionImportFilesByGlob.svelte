@@ -1,6 +1,6 @@
-<script>
+<script lang="ts">
   import { createEventDispatcher, onMount } from 'svelte'
-  import { repo } from './../stores'
+  import { repo } from '../stores'
 
   export let action
 
@@ -12,28 +12,28 @@
     action.inputCommitOption = action.inputCommitOption || 'latest'
   })
 
-  function onChanged(_event) {
+  function onChanged(): void {
     dispatch('actionUpdated', {
       action: action
     })
   }
 
-  function onDeleted() {
+  function onDeleted(): void {
     dispatch('actionDeleted', {
       action: action
     })
   }
 
-  function onCommitOptionChanged(_event) {
+  function onCommitOptionChanged(): void {
     matchFilesByPattern()
   }
 
-  function onFilePatternChanged(event) {
-    action.searchPattern = event.target.value
+  function onFilePatternChanged(event: Event): void {
+    action.searchPattern = (event.target as HTMLInputElement).value
     matchFilesByPattern()
   }
 
-  async function matchFilesByPattern() {
+  async function matchFilesByPattern(): Promise<void> {
     action.selectedFiles = []
     let results = []
     if (action.inputCommitOption == 'latest') {
@@ -49,7 +49,7 @@
     onChanged()
   }
 
-  function scrollToNewAction(node) {
+  function scrollToNewAction(node: HTMLElement): void {
     node.scrollIntoView({ block: 'nearest', inline: 'nearest' })
   }
 </script>

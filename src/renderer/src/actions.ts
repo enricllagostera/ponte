@@ -1,11 +1,13 @@
 import { v4 as uuid } from 'uuid'
+import type { Action } from '../../types'
 
 export class ActionDB {
+  current: Action[]
   constructor() {
     this.current = this.getDefault()
   }
 
-  getDefault() {
+  getDefault(): Action[] {
     return [
       {
         name: 'manualIgnoreCommits',
@@ -59,44 +61,44 @@ export class ActionDB {
     ]
   }
 
-  get(name) {
+  get(name: string): Action {
     return this.current.filter((a) => a.name == name)[0]
   }
 
-  getAll(name) {
+  getAll(name: string): Action[] {
     return this.current.filter((a) => a.name == name)
   }
 
-  removeFrom(action) {
+  removeFrom(action: Action): Action[] {
     return [...this.current.filter((a) => a.guid != action.guid)]
   }
 
-  get manualIgnoreCommits() {
+  get manualIgnoreCommits(): Action {
     return this.get('manualIgnoreCommits')
   }
 
-  get manualImportFiles() {
+  get manualImportFiles(): Action {
     return this.get('manualImportFiles')
   }
 
-  get manualEncodeCommits() {
+  get manualEncodeCommits(): Action {
     return this.get('manualEncodeCommits')
   }
 
-  get devlogCompilation() {
+  get devlogCompilation(): Action {
     return this.get('devlogCompilation')
   }
 
-  get individualCommitDevlog() {
+  get individualCommitDevlog(): Action {
     return this.get('individualCommitDevlog')
   }
 
-  get manualImportFolderText() {
+  get manualImportFolderText(): Action {
     return this.get('manualImportFolderText')
   }
 
-  addApplyCodeCommitGlobTo() {
-    const adding = {
+  addApplyCodeCommitGlobTo(): Action[] {
+    const adding: Action = {
       name: 'applyCodeCommitGlob',
       guid: uuid(),
       active: true,
@@ -113,8 +115,8 @@ export class ActionDB {
     return this.current
   }
 
-  addImportFilesByGlobTo() {
-    const adding = {
+  addImportFilesByGlobTo(): Action[] {
+    const adding: Action = {
       name: 'importFilesByGlob',
       guid: uuid(),
       active: true,

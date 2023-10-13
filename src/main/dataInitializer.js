@@ -1,10 +1,11 @@
-import GitLoader from './gitLogLoader'
-import utils from './helpers'
-import * as files from './fileSystemHandling'
 import * as fs from 'fs-extra'
 import { join, resolve, relative } from 'path'
 import AdmZip from 'adm-zip'
 import { glob } from 'glob'
+
+import GitLoader from './gitLogLoader'
+import utils from './helpers'
+import * as files from './fileSystemHandling'
 
 class DataInitializer {
   /**

@@ -26,7 +26,7 @@
       <button
         class="btn btn-primary btn-sm"
         type="button"
-        disabled={!qdpxData.commits.length > 0}
+        disabled={qdpxData.commits.length <= 0}
         on:click={exportQDPX}>Export QDPX</button
       >
     </div>

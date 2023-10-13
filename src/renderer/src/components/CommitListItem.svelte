@@ -1,14 +1,16 @@
-<script>
+<script lang="ts">
+  /** eslint-disable @typescript-eslint/explicit-function-return-type */
   import { createEventDispatcher } from 'svelte'
   import { DateTime } from 'luxon'
   import { marked } from 'marked'
 
   import CodeSelect from './CodeSelect.svelte'
-  import { codeOptions } from '../stores'
+  import { codeOptions, settings } from '../stores'
 
   import Tree from 'svelte-tree'
+  import type { Action, AppliedCode, CodeOption } from '../../../types'
 
-  export let encodingAction = {}
+  export let encodingAction: Action
   export let activeAtStart = true
   export let commit
   export let userRepoInfo
@@ -19,68 +21,70 @@
 
   const dispatch = createEventDispatcher()
 
-  function onToggleIncluded(event) {
+  function onToggleIncluded(event): void {
     dispatch('toggleIncluded', {
       checked: event.target.checked,
       hash: commit.hash
     })
   }
 
-  function getExt(filename) {
+  function getExt(filename): string {
     const ext = filename.split('.')[filename.split('.').length - 1]
     return ext
   }
 
-  function toggleFile(event, node) {
+  function toggleFile(event, node): void {
     node.selected = event.target.checked
     dispatch('fileToggled')
   }
 
-  function toggleFolder(event, node) {
+  function toggleFolder(event, node): void {
     node.selected = event.target.checked
     dispatch('folderToggled')
   }
 
-  function updateCodes(codes, options) {
+  function updateCodes(codes, options): void {
     for (const code of options) {
       let previousOptions = $codeOptions.filter((o) => o.value != code.value)
       $codeOptions = [...previousOptions, ...options]
     }
     commit.appliedCodes = [...codes]
-    console.log(commit)
+    // console.log(commit)
   }
 
-  function getAllCodesForThisCommit() {
-    const res = encodingAction.codesToApply.filter((e) => e.commits.indexOf(commit.hash) >= 0)
-    return res.map((r) => r.code.value)
+  function getAllCodesForThisCommit(): CodeOption[] {
+    const res = encodingAction.codesToApply.filter((e) => e.commitHashes.indexOf(commit.hash) >= 0)
+    return res.map((r) => r.code)
   }
 
-  function findIndexCodeToApply(name) {
+  function findIndexCodeToApply(name: string): number {
     const res = encodingAction.codesToApply.findIndex((e) => e.code.value == name)
     return res
   }
 
-  function appendToCodesToApply(newEntries = []) {
+  function appendToCodesToApply(newEntries: AppliedCode[] = []): void {
     encodingAction.codesToApply = [...encodingAction.codesToApply, ...newEntries]
   }
 
-  function removeCodeToApply(codeToRemove) {
+  function removeCodeToApply(codeToRemove): void {
     encodingAction.codesToApply = encodingAction.codesToApply.filter(
       (c) => c.code.value != codeToRemove.code.value
     )
   }
 
-  function appendToCommits(indexOfCode, newHash) {
-    const other = encodingAction.codesToApply[indexOfCode].commits.filter((c) => c !== newHash)
-    encodingAction.codesToApply[indexOfCode].commits = [...other, newHash]
+  function appendToCommits(indexOfCode: number, newHash: string): void {
+    const other = encodingAction.codesToApply[indexOfCode].commitHashes.filter((c) => c !== newHash)
+    encodingAction.codesToApply[indexOfCode].commitHashes = [...other, newHash]
   }
 
-  function removeFromCommits(indexOfCode, hashToRemove) {
-    const other = encodingAction.codesToApply[indexOfCode].commits.filter((c) => c !== hashToRemove)
-    encodingAction.codesToApply[indexOfCode].commits = [...other]
+  function removeFromCommits(indexOfCode: number, hashToRemove: string): void {
+    const other = encodingAction.codesToApply[indexOfCode].commitHashes.filter(
+      (c) => c !== hashToRemove
+    )
+    encodingAction.codesToApply[indexOfCode].commitHashes = [...other]
   }
 
-  function codesChanged(event) {
+  function codesChanged(event: CustomEvent): void {
     console.log(event.detail)
     console.log('old options', $codeOptions)
     updateCodes(event.detail.codes, event.detail.options)
@@ -92,7 +96,7 @@
     )
 
     const entriesWithObsoleteCodes = encodingAction.codesToApply.filter((entry) => {
-      const entryHasThisCommit = entry.commits.indexOf(commit.hash) >= 0
+      const entryHasThisCommit = entry.commitHashes.indexOf(commit.hash) >= 0
       const entryCodeIsNotInEvent =
         event.detail.codes.findIndex((c) => c.value == entry.code.value) < 0
       return entryHasThisCommit && entryCodeIsNotInEvent
@@ -103,7 +107,7 @@
       appendToCodesToApply([
         {
           code: newCode,
-          commits: [commit.hash]
+          commitHashes: [commit.hash]
         }
       ])
     }
@@ -120,13 +124,21 @@
     }
 
     // remove all empty codes (not referencesd by any commit)
-    const emptyCodesToApply = encodingAction.codesToApply.filter((e) => e.commits.length == 0)
+    const emptyCodesToApply = encodingAction.codesToApply.filter((e) => e.commitHashes.length == 0)
     for (const emptyCode of emptyCodesToApply) {
       removeCodeToApply(emptyCode)
     }
 
     encodingAction.codesToApply = [...encodingAction.codesToApply]
     dispatch('commitEncoded', { codes: commit.appliedCodes, commit: commit.hash })
+  }
+
+  function revealInExplorer(abs: string): void {
+    window.files.showInExplorer(abs)
+  }
+
+  function checkTextSourceExt(filename: string): boolean {
+    return $settings.supportedTextExts.indexOf('.' + getExt(filename)) >= 0
   }
 </script>
 
@@ -161,16 +173,10 @@
         <Tree tree={commit.fileTree} let:node>
           <div
             class="d-flex align-items-center p-1 rounded-1 fs-6 text-red"
-            class:text-secondary={['md', 'css', 'js', 'txt', 'html'].indexOf(getExt(node.name)) <
-              0 && !node.children}
-            class:my-1={['md', 'css', 'js', 'txt', 'html'].indexOf(getExt(node.name)) < 0 &&
-              !node.children}
-            style:margin-left={['md', 'css', 'js', 'txt', 'html'].indexOf(getExt(node.name)) < 0 &&
-            !node.children
-              ? '-1em'
-              : ''}
-            style:background-color={['md', 'css', 'js', 'txt', 'html'].indexOf(getExt(node.name)) <
-              0 && !node.children
+            class:text-secondary={!checkTextSourceExt(node.name) && !node.children}
+            class:my-1={!checkTextSourceExt(node.name) && !node.children && !node.children}
+            style:margin-left={!checkTextSourceExt(node.name) && !node.children ? '-1em' : ''}
+            style:background-color={!checkTextSourceExt(node.name) && !node.children
               ? '#f0f0f0'
               : 'transparent'}
           >
@@ -188,14 +194,14 @@
               <i class="bi bi-folder me-1"></i>
               {node.name}
             {:else}
-              {#if ['md', 'css', 'js', 'txt', 'html'].indexOf(getExt(node.name)) >= 0}
+              {#if checkTextSourceExt(node.name)}
                 <div class="form-check form-switch">
                   <input
                     class="form-check-input"
                     type="checkbox"
                     role="switch"
                     id="flexSwitchCheckDefault"
-                    disabled={['md', 'css', 'js', 'txt', 'html'].indexOf(getExt(node.name)) < 0}
+                    disabled={!checkTextSourceExt(node.name)}
                     on:change={(e) => toggleFile(e, node)}
                     checked={node.selected}
                   />
@@ -203,13 +209,11 @@
                 <i class="bi bi-file-text-fill me-1"></i>
               {/if}
               {node.name}
-              <button class="btn btn-link" on:click={window.files.showInExplorer(node.abs)}
+              <button class="btn btn-link" on:click={() => revealInExplorer(node.abs)}
                 ><i class="bi bi-folder2-open"></i></button
               >
 
               <a
-                name=""
-                id=""
                 href={`https://github.com/${userRepoInfo}/tree/${commit.hash}/${node.rel}`}
                 target="_blank"
               >
@@ -238,8 +242,6 @@
     </div>
     <div class="ms-auto">
       <a
-        name=""
-        id=""
         class="btn btn-primary"
         href={`https://github.com/${userRepoInfo}/tree/${commit.hash}`}
         target="_blank"
@@ -252,7 +254,6 @@
 
   <div class="card-footer d-flex d-flex flex-grow-0 align-items-center">
     <CodeSelect
-      id={`"${commit.hash}-codeSelect"`}
       initialOptions={$codeOptions}
       initialValues={getAllCodesForThisCommit()}
       on:codesChanged={codesChanged}

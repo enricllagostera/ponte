@@ -5,7 +5,16 @@ module.exports = {
   extends: [
     'eslint:recommended',
     'plugin:svelte/recommended',
-    '@electron-toolkit',
+    '@electron-toolkit/eslint-config-ts/recommended',
     '@electron-toolkit/eslint-config-prettier'
+  ],
+  overrides: [
+    {
+      files: ['*.svelte'],
+      parser: 'svelte-eslint-parser',
+      parserOptions: {
+        parser: '@typescript-eslint/parser'
+      }
+    }
   ]
 }

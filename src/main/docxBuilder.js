@@ -58,7 +58,7 @@ export async function convertMdToDocx(md, name = '', basePath = '', isFolder = f
   }
 }
 
-export async function formatCodeAsHTML(content) {
+export async function formatCodeAsHTML(_event, content) {
   const allLines = content.split('\n')
   const cheerio = loadCheerio('', {})
   for (const line of allLines) {

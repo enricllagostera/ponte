@@ -1,7 +1,5 @@
 ---
-
 kanban-plugin: basic
-
 ---
 
 ## Backlog
@@ -11,13 +9,12 @@ kanban-plugin: basic
 - [ ] Compile devlogs with advanced options (git footer)
 - [ ] Compile folders from glob pattern
 - [ ] Copy file as sources and encode from filename (glob pattern)
-- [ ] Visualize commits in an ordered  topological timeline (usual git charts)
+- [ ] Visualize commits in an ordered topological timeline (usual git charts)
 - [ ] Visualize a timeline of commits showing passage of time between them
 - [ ] Encode files from text content (glob pattern, aka auto-code)
 - [ ] Encode files from filename (glob patterns)
 - [ ] Encode commits from full text content (glob pattern)
 - [ ] Create a URI handler (see Electron Deep Link feature) that will open a specific version of the app that can run web-based playable builds from the local commits. Alternatively, show a list of build folders per commit.
-
 
 ## High priority
 
@@ -27,18 +24,15 @@ kanban-plugin: basic
 - [ ] Allow importing from wiki as individual files or as folder compilations
 - [ ] Load commits from wiki repo and display in commit feed
 
-
 ## In progress
-
-
 
 ## Done
 
 **Complete**
+
 - [x] Bring feedback from Chip into the process notes
 
-
-***
+---
 
 ## Archive
 
@@ -48,7 +42,9 @@ kanban-plugin: basic
 - [x] 2023-10-06T13:07:32-04:00 -- Prepare MAC build
 
 %% kanban:settings
+
 ```
 {"kanban-plugin":"basic"}
 ```
+
 %%
