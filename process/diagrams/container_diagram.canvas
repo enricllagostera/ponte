@@ -1,0 +1,31 @@
+{
+	"nodes":[
+		{"id":"2fb730d575a0f767","type":"group","x":320,"y":-480,"width":1187,"height":1020,"color":"2","label":"Container diagram - Repo-To-QDA desktop application"},
+		{"id":"d918c7c65b75e3c4","type":"group","x":1000,"y":760,"width":850,"height":100,"label":"Diagram key - Updated on 2023-10-16"},
+		{"id":"c88644599073e2f9","type":"text","text":"**GITHUB**\n\n(Software system, remote)\n\nRemote repository storage and project management.","x":-80,"y":30,"width":293,"height":220,"color":"6"},
+		{"id":"5f6d8bc84f0ab876","type":"text","text":"GIT CLI\n\n(Software system, local)\n\nGit running on a local clore of the repository.","x":-80,"y":620,"width":293,"height":220,"color":"6"},
+		{"id":"45b660caf9c1ccf0","type":"text","text":"**LOCAL FILE SYSTEM**\n\nStores project information and temporary repository file contents.","x":1580,"y":-60,"width":280,"height":220,"color":"6"},
+		{"id":"cc4a136edd49a74a","type":"text","text":"**DESKTOP GUI**\n\n(Container: Electron renderer process. Svelte and TypeScript)\n\nMain point of access to users. Allows to select a repo, pick files and commits as sources, encode them, and export the result for use in other tools.","x":340,"y":-460,"width":367,"height":291,"color":"2"},
+		{"id":"59451aa7c47d7eec","type":"text","text":"**PROJECT DATA BACKGROUND PROCESS**\n\n(Container: Hidden Electron renderer process. TypeScript)\n\nHandles saving and loading app settings, projects and other temporary data to the file system.","x":1120,"y":-447,"width":367,"height":266,"color":"2"},
+		{"id":"f93c4318bf1aa1a4","type":"text","text":"**REPO DATA BACKGROUND PROCESS**\n\n(Container: Hidden Electron renderer process. TypeScript)\n\nManages long-running and computing intensive operations.","x":1120,"y":260,"width":367,"height":260,"color":"2"},
+		{"id":"aa181f43229415c7","type":"text","text":"**QDA SOFTWARE (NVivo, Atlas.ti, etc)**\n\nAllows users to organize, code, annotate, and interconnect sources, supporting a variety of qualitative methodologies.","x":1580,"y":-800,"width":320,"height":220,"color":"6"},
+		{"id":"a4b2b5ac11708d69","type":"text","text":"**RESEARCHER**\n\n(Software system, remote)\n\nRemote repository storage and project management.","x":-80,"y":-800,"width":293,"height":220,"color":"4"},
+		{"id":"5ebddde4396067c4","type":"text","text":"**DESKTOP MAIN APPLICATION**\n\n(Container: Electron main process. NodeJS and TypeScript)\n\nHandles data indexing, storage and calls to Git system to read and filter repository information. Manages background processes.","x":340,"y":50,"width":367,"height":260,"color":"2"},
+		{"id":"c4615129e202b487","type":"text","text":"External system","x":1020,"y":780,"width":250,"height":60,"color":"6"},
+		{"id":"6ceb88c14a692376","type":"text","text":"Application","x":1300,"y":780,"width":250,"height":60,"color":"2"},
+		{"id":"130fb2f4be98907b","type":"text","text":"Person","x":1580,"y":780,"width":250,"height":60,"color":"4"}
+	],
+	"edges":[
+		{"id":"6b6f3e69c241accd","fromNode":"cc4a136edd49a74a","fromSide":"bottom","toNode":"5ebddde4396067c4","toSide":"top","label":"Loads data from\n (IPC)"},
+		{"id":"9ff7eea73b9671f5","fromNode":"cc4a136edd49a74a","fromSide":"left","toNode":"c88644599073e2f9","toSide":"top","label":"Shows repository or file \ndetails (browser links)"},
+		{"id":"cf2883490634f170","fromNode":"f93c4318bf1aa1a4","fromSide":"bottom","toNode":"5f6d8bc84f0ab876","toSide":"right","label":"Loads repository data\n(child process)"},
+		{"id":"40b9d326f097d8c9","fromNode":"5ebddde4396067c4","fromSide":"right","toNode":"f93c4318bf1aa1a4","toSide":"top","label":"Loads repository data\n(IPC)"},
+		{"id":"d8ba359902e45ed7","fromNode":"a4b2b5ac11708d69","fromSide":"right","toNode":"cc4a136edd49a74a","toSide":"top","label":"Loads repository, organizes \ndata and exports it"},
+		{"id":"6bb5891d740d2eef","fromNode":"5ebddde4396067c4","fromSide":"top","toNode":"59451aa7c47d7eec","toSide":"bottom","fromEnd":"arrow","label":"Saves and loads project data\n(IPC)"},
+		{"id":"1f5e90dc655a9b6a","fromNode":"5f6d8bc84f0ab876","fromSide":"top","toNode":"c88644599073e2f9","toSide":"bottom","label":"Creates local clone from\n(HTTP)"},
+		{"id":"b0b8ff4726175058","fromNode":"59451aa7c47d7eec","fromSide":"right","toNode":"45b660caf9c1ccf0","toSide":"top","fromEnd":"arrow","label":"Saves and loads\nproject data\n(API)"},
+		{"id":"4e005213400e65fb","fromNode":"59451aa7c47d7eec","fromSide":"top","toNode":"aa181f43229415c7","toSide":"bottom","label":"Exports QDPX file"},
+		{"id":"41cef806756508f4","fromNode":"a4b2b5ac11708d69","fromSide":"right","toNode":"aa181f43229415c7","toSide":"left","label":"Prepares analysis with"},
+		{"id":"0fa13943097af798","fromNode":"f93c4318bf1aa1a4","fromSide":"left","toNode":"5ebddde4396067c4","toSide":"bottom","label":"Sends repo data and \nfile contents\n(IPC)"}
+	]
+}

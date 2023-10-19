@@ -1,5 +1,19 @@
 # Process journal
 
+## 2023-10-17 Visualization tests
+
+I decided to experiment a bit with viz for commits. I didn't wnat to have to completely integrate it into the app for now, so I made use of the Svelte REPL tool. I created a [small app there](https://svelte.dev/repl/b8366d3e58024016a655fc7601d58054?version=4.2.1) that uses d3 and Svelte to summarize file changes in commits. Also added [a zipped version fo the test here](media/20231017_svelte_repl_viz_01.zip). It was tricky setting it up, as I kind of have to (re)learn d3 to do that, but it did work out in the end. 
+
+Here is a small video showing it:
+
+![](media/20231017_viz_file_changes.mp4)
+
+I think this is an interesting data change to highlight, but it should not be fully equated to significance. Lots of changes in files might be connected to re-versioning and changes in dependencies, for instance. It is a start though.
+
+## 2023-10-16 Architecture work
+
+I've been mostly trying to better elaborate the [architecture of the app](devlog/16_architecture.md)before I start handling with disk use and memory optimizations. I just want to make sure that I won't have to redo a lot of it later. My goal is to find a way to encapsulate the parts of the system (repo data indexing and storage, caching, searching) in ways that can be flexibly changed if needed. So, more complexity, but necessary.
+
 ## 2023-10-13 Meeting with Rilla and TS conversion
 
 In the morning I discussed the workshop notes and insight with Rilla. We agreed on me continuing the work of optimizing and the system for medium sized projects and better disk storage and use. We also discussed different forms of presenting the repository to facilitate analysis, with mentions of concepts such as views, filters, and timelines. Another point was about how organizing data and familiarizing yourself with it allows for the development of an intuition about where meaningful aspects can be found. Choosing, pattern-identification, moving are key actions. 

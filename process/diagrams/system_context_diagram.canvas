@@ -1,0 +1,25 @@
+{
+	"nodes":[
+		{"id":"0b4aefa1ba76ad10","type":"group","x":-300,"y":-900,"width":1210,"height":1100,"label":"System context diagram  - RepoToQDA"},
+		{"id":"63f8449a3bfee427","type":"group","x":-300,"y":280,"width":850,"height":100,"label":"Diagram key - Updated on 2023-10-13"},
+		{"id":"d4561b4d17913211","type":"text","text":"External system","x":-280,"y":300,"width":250,"height":60,"color":"6"},
+		{"id":"cff6b5692e368c2c","type":"text","text":"Application","x":0,"y":300,"width":250,"height":60,"color":"2"},
+		{"id":"11f3ecc23d477792","type":"text","text":"Person","x":280,"y":300,"width":250,"height":60,"color":"4"},
+		{"id":"bb273b5c37964edb","type":"text","text":"**RESEARCHER**\n\nInterested in analyzing a game project that is managed through a version-controlled repository.","x":-220,"y":-740,"width":250,"height":220,"color":"4"},
+		{"id":"111766e0b64ed5a5","type":"text","text":"**GIT CLI**\n\nLocal version-control system.","x":216,"y":-100,"width":250,"height":120,"color":"6"},
+		{"id":"eef0487b5e76cd7e","type":"text","text":"**LOCAL FILE SYSTEM**","x":-220,"y":-75,"width":280,"height":70,"color":"6"},
+		{"id":"2b47bd7c9bec3e26","type":"text","text":"**REPO-TO-QDA**\n\nAllows users to navigate, filter, select and encode game project data to export as sources for qualitative analysis.","x":179,"y":-520,"width":325,"height":200,"color":"2"},
+		{"id":"4b9f4250ee3668e2","type":"text","text":"**GITHUB**\n\nRemote version-control and project management platform.","x":605,"y":-120,"width":250,"height":160,"color":"6"},
+		{"id":"eeedcfbbd5e711ea","type":"text","text":"**QDA SOFTWARE (NVivo, Atlas.ti, etc)**\n\nAllows users to organize, code, annotate, and interconnect sources, supporting a variety of qualitative methodologies.","x":570,"y":-760,"width":320,"height":220,"color":"6"}
+	],
+	"edges":[
+		{"id":"558432462164a272","fromNode":"2b47bd7c9bec3e26","fromSide":"right","toNode":"eeedcfbbd5e711ea","toSide":"bottom","label":"Exports processed \nsources via QDPX file"},
+		{"id":"d5df9d5bf127d2dd","fromNode":"111766e0b64ed5a5","fromSide":"bottom","toNode":"4b9f4250ee3668e2","toSide":"bottom","label":"Loads repository data from"},
+		{"id":"96cd8d387e65d615","fromNode":"2b47bd7c9bec3e26","fromSide":"right","toNode":"4b9f4250ee3668e2","toSide":"top","label":"Links to views and extra \ninfo on repo data"},
+		{"id":"e9030d67e9d16eb8","fromNode":"111766e0b64ed5a5","fromSide":"bottom","toNode":"eef0487b5e76cd7e","toSide":"bottom","label":"Stores local version of repository"},
+		{"id":"a00e4fea962beb46","fromNode":"2b47bd7c9bec3e26","fromSide":"bottom","toNode":"111766e0b64ed5a5","toSide":"top","label":"Loads and handle \nrepo data via git.js"},
+		{"id":"741c9266a045622e","fromNode":"2b47bd7c9bec3e26","fromSide":"left","toNode":"eef0487b5e76cd7e","toSide":"top","label":"Stores project settings, indexes, \nand copies of repo file contents"},
+		{"id":"6f14198340edbb81","fromNode":"bb273b5c37964edb","fromSide":"top","toNode":"eeedcfbbd5e711ea","toSide":"top","label":"Prepares analysis with"},
+		{"id":"630b09ebb1301556","fromNode":"bb273b5c37964edb","fromSide":"right","toNode":"2b47bd7c9bec3e26","toSide":"top","label":"Organizes and selects repo \ndata as analysis sources"}
+	]
+}
