@@ -71,7 +71,8 @@ export type Commit = {
   body: string
   refs: []
   tree: string
-  treeAbbrev: string
+  parents: string[]
+  //treeAbbrev: string
   fileTree: RepoDirent[]
 }
 

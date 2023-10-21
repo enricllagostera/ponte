@@ -1,5 +1,11 @@
 # Process journal
 
+## 2023-10-21 Changing Git system
+
+I'm changing the underlying Git system to isomorphic-git. The hope is that it will make the cross-platform packaging and installation more seamless and consistent. The potential downgrade is in performance and having a much more limited API to work with. Let's see how that goes.
+
+(...) Yeah, it seems that this won't work well in the end. It is a bit too limited, particularly in fetching info about remore branches and commits. I think I might have to go back to the previous system.
+
 ## 2023-10-20 Meeting notes
 
 We had a pretty good discussion over visualizations and the tool. Lots of useful insight and observations. 
