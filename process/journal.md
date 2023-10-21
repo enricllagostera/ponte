@@ -1,8 +1,30 @@
 # Process journal
 
+## 2023-10-20 Meeting notes
+
+We had a pretty good discussion over visualizations and the tool. Lots of useful insight and observations. 
+
+Pre-meeting notes.
+
+![](media/20231020120408_pre_meeting_notes.png)
+
+Notes from the brainstorming session on 2023-10-20.
+
+![](media/20231020120425_meeting_notes.png)
+
+## 2023-10-19 Some more viz and meeting prep
+
+Now one that shows the [branching of commits](https://svelte.dev/repl/0302d29e5426419f97d24e2abe389f11?version=4.2.2).
+
+![](media/20231019_viz_branches.mp4)
+
+After some more refinements:
+
+![](media/20231019184213_viz_branch_icons.png)
+
 ## 2023-10-17 Visualization tests
 
-I decided to experiment a bit with viz for commits. I didn't wnat to have to completely integrate it into the app for now, so I made use of the Svelte REPL tool. I created a [small app there](https://svelte.dev/repl/b8366d3e58024016a655fc7601d58054?version=4.2.1) that uses d3 and Svelte to summarize file changes in commits. Also added [a zipped version fo the test here](media/20231017_svelte_repl_viz_01.zip). It was tricky setting it up, as I kind of have to (re)learn d3 to do that, but it did work out in the end. 
+I decided to experiment a bit with viz for commits. I didn't want to have to completely integrate it into the app for now, so I made use of the Svelte REPL tool. I created a [small app there](https://svelte.dev/repl/b8366d3e58024016a655fc7601d58054?version=4.2.1) that uses d3 and Svelte to summarize file changes in commits. Also added [a zipped version fo the test here](media/20231017_svelte_repl_viz_01.zip). It was tricky setting it up, as I kind of have to (re)learn d3 to do that, but it did work out in the end. 
 
 Here is a small video showing it:
 

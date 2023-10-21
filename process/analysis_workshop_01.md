@@ -2,7 +2,7 @@
 
 ## Preparation (2023-10-05)
 
-I tweaked some of these based on the questionnaire about QDAS learning strategies and usability notes from @freitas2019 and general methodological questions raised in @gilbert2014 .
+I tweaked some of these based on the questionnaire about QDAS learning strategies and usability notes from @freitas2019 and general methodological questions raised in another source [@gilbert2014].
 
 - Context: informal, preliminary impressions, early use of prototype.
 - Data collection: audio recording; Zoom recording;
@@ -32,7 +32,7 @@ I tweaked some of these based on the questionnaire about QDAS learning strategie
 
 ## Post meeting notes (2023-10-06)
 
-Overall, the workshop went quite well. I ended up doing a longer demo at the start (around 20-25min) to give an overview of the tool, its purpose and general functions. Then, we discussed the briefing questions and instructed folks to open a repo of their own and select data, reflecting on their process. This stage took around 12-20min. Finally, the debriefing moment took around 30min. We discussed a variety of insights, usability questions and reflections from participants. The workshop was recorded (as Zoom meeting and audio file in-person). Here are my [handwritten notes (scan)](media/20231006-wksp-notes.pdf) and a [local copy of my audio recording](D:\google_drive\audio\shared\20231006-analysis-wksp.mp3) .
+Overall, the workshop went quite well. I ended up doing a longer demo at the start (around 20-25min) to give an overview of the tool, its purpose and general functions. Then, we discussed the briefing questions and instructed folks to open a repo of their own and select data, reflecting on their process. This stage took around 12-20min. Finally, the debriefing moment took around 30min. We discussed a variety of insights, usability questions and reflections from participants. The workshop was recorded (as Zoom meeting and audio file in-person). Here are my [handwritten notes (scan)](media/20231006-wksp-notes.pdf) and a [local copy of my audio recording](D:\google_drive\audio\shared\20231006-analysis-wksp.mp3) . [[analysis_workshop_01_debriefing_transcript]]
 
 ### Feature ideas
 

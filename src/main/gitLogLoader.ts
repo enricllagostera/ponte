@@ -39,6 +39,9 @@ class GitLogLoader {
     await this.#cloneRepo(userRepoInfo, clonePath)
     this.git = Git.simpleGit(clonePath)
     const commitData = await gitLogFormat({ path: clonePath })
+    for (const commit of commitData) {
+      commit.branches = await this.getBranches(commit.hash)
+    }
     return commitData
   }
 
@@ -46,6 +49,11 @@ class GitLogLoader {
     const ft = await this.git.raw(['ls-tree', tree, '-r', '--name-only'])
     const res = ft.split('\n').filter((e) => e != '')
     return res
+  }
+
+  async getBranches(commitHash: string): Promise<string[]> {
+    const ft = await this.git.branch(['-a', '--contains', commitHash])
+    return ft.all.filter((b) => b.startsWith('remote'))
   }
 }
 export default GitLogLoader

@@ -431,6 +431,15 @@
           <button class="btn btn-outline-primary ms-2" type="button" on:click={saveConfig}
             ><i class="bi bi-file-arrow-down-fill"></i> Save config</button
           >
+
+          {#if $repo.commits.length > 0}
+            <button
+              type="button"
+              class="btn btn-outline-primary ms-2"
+              on:click={() => navigator.clipboard.writeText(JSON.stringify($repo.commits))}
+              ><i class="bi bi-clipboard-plus"></i> Copy commit data to clipboard</button
+            >
+          {/if}
         </div>
       </nav>
     </div>

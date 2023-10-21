@@ -69,30 +69,31 @@ function createWindow(): void {
       message: 'Cloning repository...'
     })
     allCommits = await initializer.loadCommitsFromGit()
-    mainWindow.webContents.send('commitDownloadInProgress', {
-      message: 'Getting file information for each commit...'
-    })
-    let index = 0
-    for (const commit of allCommits) {
-      const fileList = [...(await initializer.getFileList(commit.tree))]
-      const rootPathForCommit = files.getPathForCommit(
-        initializer.userName,
-        initializer.repoName,
-        commit.hash
-      )
-      commit.fileTree = await initializer.convertToFileTree(
-        fileList,
-        rootPathForCommit,
-        commit.hash
-      )
-      index += 1
-      mainWindow.webContents.send('commitDownloadInProgress', {
-        message: `Getting file tree for commit ${index} of ${allCommits.length}...`
-      })
-    }
-    mainWindow.webContents.send('commitDownloadInProgress', {
-      message: `File trees for all commits are ready.`
-    })
+
+    // mainWindow.webContents.send('commitDownloadInProgress', {
+    //   message: 'Getting file information for each commit...'
+    // })
+    // let index = 0
+    // for (const commit of allCommits) {
+    //   const fileList = [...(await initializer.getFileList(commit.tree))]
+    //   const rootPathForCommit = files.getPathForCommit(
+    //     initializer.userName,
+    //     initializer.repoName,
+    //     commit.hash
+    //   )
+    //   commit.fileTree = await initializer.convertToFileTree(
+    //     fileList,
+    //     rootPathForCommit,
+    //     commit.hash
+    //   )
+    //   index += 1
+    //   mainWindow.webContents.send('commitDownloadInProgress', {
+    //     message: `Getting file tree for commit ${index} of ${allCommits.length}...`
+    //   })
+    // }
+    // mainWindow.webContents.send('commitDownloadInProgress', {
+    //   message: `File trees for all commits are ready.`
+    // })
     // let downloadPromises = []
     // for (const commit of allCommits) {
     //   downloadPromises.push(
