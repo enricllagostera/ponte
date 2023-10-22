@@ -1,5 +1,15 @@
 # Process journal
 
+## 2023-10-21 & 22 Changing Git system
+
+I'm changing the underlying Git system to isomorphic-git. The hope is that it will make the cross-platform packaging and installation more seamless and consistent. The potential downgrade is in performance and having a much more limited API to work with. Let's see how that goes.
+
+(...) Yeah, it seems that this won't work well in the end. It is a bit too limited, particularly in fetching info about remore branches and commits. I think I might have to go back to the previous system. So, I reverted back from the `git-in-js` branch. I was experimenting with keeping feature and design tests in separate branches (for documentation sake as well).
+
+I think I'll just make the change to use simple-git only, removing the `git2json` dependency and making all the Git calls through the same system. It still depends on the terminal, but it is generally fast and allows for the whole of Git's API.
+
+2023-10-22T10:57:25-04:00 OK, finished removing the `git2json` library.
+
 ## 2023-10-20 Meeting notes
 
 We had a pretty good discussion over visualizations and the tool. Lots of useful insight and observations. 

@@ -72,7 +72,9 @@ export type Commit = {
   refs: []
   tree: string
   treeAbbrev: string
+  branches: string[]
   fileTree: RepoDirent[]
+  fileChangeStats: string[]
 }
 
 export type CommitAuthor = {

@@ -2,7 +2,8 @@ import { writable } from 'svelte/store'
 import type { CodeOption } from '../../types'
 
 export const repo = writable({
-  userRepoInfo: 'pippinbarr/v-r-5',
+  userRepoInfo: 'enricllagostera/repo-to-qda',
+  // userRepoInfo: 'pippinbarr/v-r-5',
   // userRepoInfo: '',
   commits: []
 })

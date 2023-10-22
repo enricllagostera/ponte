@@ -1,6 +1,5 @@
 import * as Git from 'simple-git'
 import fs from 'fs-extra'
-import { run as gitLogFormat } from '@fabien0102/git2json'
 import { emptyDirSync } from 'fs-extra'
 import utils from './helpers'
 import { Commit } from '../types'
@@ -12,16 +11,21 @@ import { Commit } from '../types'
  */
 class GitLogLoader {
   private git: Git.SimpleGit
+  private clonePath: string
 
-  constructor() {
-    this.git = Git.simpleGit()
+  constructor(clonePath: string) {
+    this.clonePath = clonePath
+    if (!fs.pathExistsSync(this.clonePath)) {
+      emptyDirSync(this.clonePath)
+    }
+    this.git = Git.simpleGit(clonePath)
   }
 
-  async #cloneRepo(userRepoInfo, clonePath): Promise<Git.Response<string> | undefined> {
+  async #cloneRepo(userRepoInfo: string): Promise<Git.Response<string> | undefined> {
     let foundLocalClone = false
-    if (fs.pathExistsSync(clonePath)) {
+    if (fs.pathExistsSync(this.clonePath)) {
       try {
-        Git.simpleGit(clonePath).log(['-n 1'])
+        console.log(await this.git.log(['-n 1']))
         foundLocalClone = true
       } catch (error) {
         foundLocalClone = false
@@ -31,21 +35,63 @@ class GitLogLoader {
       return
     }
     const url = await utils.getGithubUrl(userRepoInfo)
-    emptyDirSync(clonePath)
-    return await Git.simpleGit().clone(url, clonePath)
+    emptyDirSync(this.clonePath)
+    return await Git.simpleGit().clone(url, this.clonePath, { '-n': null })
   }
 
-  async loadFrom(userRepoInfo = '', clonePath = ''): Promise<Commit[]> {
-    await this.#cloneRepo(userRepoInfo, clonePath)
-    this.git = Git.simpleGit(clonePath)
-    const commitData = await gitLogFormat({ path: clonePath })
-    for (const commit of commitData) {
+  async loadFrom(userRepoInfo = ''): Promise<Commit[]> {
+    await this.#cloneRepo(userRepoInfo)
+    // const args = ['-C', path, 'log', `--pretty=format:%x01${prettyKeys}%x01`, '--name-status', '--date-order', '--all']
+    const logData = await this.git.log({
+      strictDate: true,
+      '--all': null,
+      '--full-history': null,
+      // '--stat': null,
+      // '--numstat': null,
+      format: {
+        hash: '%H',
+        hashAbbrev: '%h',
+        tree: '%T',
+        treeAbbrev: '%t',
+        parents: '%P',
+        author_name: '%an',
+        author_email: '%ae',
+        author_timestamp: '%at',
+        committer_name: '%cn',
+        committer_email: '%ce',
+        committer_timestamp: '%at',
+        subject: '%s',
+        body: '%b',
+        refs: '%D',
+        trailers: '%(trailers)'
+      }
+    })
+    const commits: Commit[] = [...logData.all] as Commit[]
+    for (const commit of commits) {
+      commit.fileTree = []
+      commit.author = {
+        name: commit.author_name,
+        timestamp: Number(commit.author_timestamp) * 1000
+      }
+      commit.committer = {
+        name: commit.committer_name,
+        timestamp: Number(commit.committer_timestamp) * 1000
+      }
+      commit.refs = commit.refs.split(',').map((b) => b.split(' ')[0])
       commit.branches = await this.getBranches(commit.hash)
+      // commit.fileChangeStats = await this.git.raw(
+      //   'log',
+      //   commit.hash,
+      //   '-1',
+      //   '--all',
+      //   '--name-status',
+      //   '--pretty=%h'
+      // )
     }
-    return commitData
+    return commits
   }
 
-  async getFileList(tree: any): Promise<string[]> {
+  async getFileList(tree: string): Promise<string[]> {
     const ft = await this.git.raw(['ls-tree', tree, '-r', '--name-only'])
     const res = ft.split('\n').filter((e) => e != '')
     return res

@@ -22,9 +22,9 @@ class DataInitializer {
     this.userName = repoInfo.split('/')[0]
     this.repoName = repoInfo.split('/')[1]
     this.repoPath = inputPath
-    this.gitLoader = new GitLoader()
     this.zipsPath = files.getRepoZipsPath(this.userName, this.repoName)
     this.clonePath = files.getRepoClonePath(this.userName, this.repoName)
+    this.gitLoader = new GitLoader(this.clonePath)
   }
 
   async loadCommitsFromGit() {
