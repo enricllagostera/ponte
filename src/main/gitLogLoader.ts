@@ -73,20 +73,28 @@ class GitLogLoader {
         name: commit.author_name,
         timestamp: Number(commit.author_timestamp) * 1000
       }
+      delete commit.author_name
+      delete commit.author_timestamp
+      delete commit.author_email
       commit.committer = {
         name: commit.committer_name,
         timestamp: Number(commit.committer_timestamp) * 1000
       }
+      delete commit.committer_name
+      delete commit.committer_timestamp
+      delete commit.committer_email
       commit.refs = commit.refs.split(',').map((b) => b.split(' ')[0])
       commit.branches = await this.getBranches(commit.hash)
-      // commit.fileChangeStats = await this.git.raw(
-      //   'log',
-      //   commit.hash,
-      //   '-1',
-      //   '--all',
-      //   '--name-status',
-      //   '--pretty=%h'
-      // )
+      let logFileChanges = await this.git.raw('show', commit.hash, '--name-status', '--pretty=%h')
+      logFileChanges = logFileChanges
+        .substring(logFileChanges.split('\n')[0].length + 2, logFileChanges.length)
+        .trim()
+      commit.fileChangeStats = logFileChanges.split('\n').map((f) => {
+        return {
+          operation: f.split('\t')[0],
+          filepath: f.split('\t')[1]
+        }
+      })
     }
     return commits
   }
