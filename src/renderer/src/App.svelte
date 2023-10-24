@@ -28,9 +28,9 @@
   let qdpx = { ...defaultQdpx }
   let repoInfoReady = false
   let repoLoader = {}
+  let repoLoadingPromise = null
   let userRepoInfo = ''
   let footer: NotificationFooter
-  let repoLoadingPromise = null
 
   function onLoadedRepoData(): void {
     // called when repo data is loaded via the repo loader gui
@@ -294,10 +294,12 @@
   }
 
   function resetConfig(): void {
+    userRepoInfo = ''
     $repo.userRepoInfo = ''
     $repo.commits = []
     repoLoader = {}
     repoInfoReady = false
+    repoLoadingPromise = null
     commitsToProcess = []
     actions = new ActionDB()
     qdpx = { ...defaultQdpx }
