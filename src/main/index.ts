@@ -17,6 +17,7 @@ import * as files from './fileSystemHandling'
 import QdpxExporter from './qdpxExport'
 import utils from './helpers'
 import DataInitializer from './dataInitializer'
+import { clearCache } from './dataInitializer'
 import { formatCodeAsHTML } from './docxBuilder'
 
 import type { Commit, Devlog } from '../types'
@@ -64,90 +65,18 @@ function createWindow(): void {
   ipcMain.handle('loadRepoData', async (_event: IpcMainInvokeEvent, repoInfo) => {
     const inputGitDataPath = files.getAppGitDataPath()
     initializer = new DataInitializer(repoInfo, inputGitDataPath)
-
     mainWindow.webContents.send('commitDownloadInProgress', {
       message: 'Cloning repository...'
     })
-    allCommits = await initializer.loadCommitsFromGit()
-
-    // mainWindow.webContents.send('commitDownloadInProgress', {
-    //   message: 'Getting file information for each commit...'
-    // })
-    // let index = 0
-    // for (const commit of allCommits) {
-    //   const fileList = [...(await initializer.getFileList(commit.tree))]
-    //   const rootPathForCommit = files.getPathForCommit(
-    //     initializer.userName,
-    //     initializer.repoName,
-    //     commit.hash
-    //   )
-    //   commit.fileTree = await initializer.convertToFileTree(
-    //     fileList,
-    //     rootPathForCommit,
-    //     commit.hash
-    //   )
-    //   index += 1
-    //   mainWindow.webContents.send('commitDownloadInProgress', {
-    //     message: `Getting file tree for commit ${index} of ${allCommits.length}...`
-    //   })
-    // }
-    // mainWindow.webContents.send('commitDownloadInProgress', {
-    //   message: `File trees for all commits are ready.`
-    // })
-    // let downloadPromises = []
-    // for (const commit of allCommits) {
-    //   downloadPromises.push(
-    //     initializer
-    //       .startDownloadZip(commit.hash, (info) => {
-    //         // console.log(info)
-    //         mainWindow.webContents.send('commitDownloadInProgress', {
-    //           hash: commit.hash,
-    //           progress: info,
-    //           message: '',
-    //           commitCount: allCommits.length
-    //         })
-    //       })
-    //       .then(() => {
-    //         mainWindow.webContents.send('commitDownloadInProgress', {
-    //           hash: commit.hash,
-    //           progress: { total: -1 },
-    //           message: '',
-    //           commitCount: allCommits.length
-    //         })
-    //       })
-    //   )
-    // }
-
-    // await Promise.allSettled(downloadPromises)
-    // console.log('finished downloading all')
-    // const allExtractions = initializer.extractAllZips(allCommits.map((c) => c.hash))
-    // mainWindow.webContents.send('commitDownloadInProgress', {
-    //   message: 'Extracting ZIPs. This might take a while...'
-    // })
-    // await Promise.allSettled(allExtractions)
-    // mainWindow.webContents.send('commitDownloadInProgress', {
-    //   message: 'Getting file structure for each commit...'
-    // })
-    // console.log('finished extracting all')
-
-    // let fileStructurePromises = []
-    // for (const commit of allCommits) {
-    //   fileStructurePromises.push(
-    //     files
-    //       .getFileTree(
-    //         initializer.getExtractedZipPathForCommit(commit.hash),
-    //         initializer.getExtractedZipPathForCommit(commit.hash),
-    //         commit.hash
-    //       )
-    //       .then(async (info) => {
-    //         commit.fileTree = info
-    //         // commit.fileTree = await files.getFileTree(
-    //         // initializer.getExtractedZipPathForCommit(commit.hash)
-    //       })
-    //   )
-    // }
-
-    // await Promise.allSettled(fileStructurePromises)
+    allCommits = await initializer.loadCommitsFromGit((msg) => {
+      mainWindow.webContents.send(
+        'commitDownloadInProgress',
+        {
+          message: msg
+        },
+        false
+      )
+    })
     mainWindow.webContents.send('commitDownloadInProgress', {
       message: ''
     })
@@ -163,6 +92,7 @@ function createWindow(): void {
   ipcMain.handle('readFileAtCommit', readFileAtCommit)
   ipcMain.handle('convertCodeToHTML', formatCodeAsHTML)
   ipcMain.handle('showInExplorer', showInExplorer)
+  ipcMain.handle('forceClearCache', clearCache)
 
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
@@ -267,7 +197,7 @@ async function saveDialog(_event: IpcMainInvokeEvent, saveOptions): Promise<void
   } catch (error) {
     res = undefined
   }
-  console.log(res)
+  // console.log(res)
   if (!res || res.canceled) {
     return
   } else {
@@ -318,6 +248,5 @@ async function getDevlogCompilation(
 
   return devlog
 }
-
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.

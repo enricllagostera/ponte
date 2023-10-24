@@ -16,6 +16,7 @@
   import { clickOutside } from './clickOutside'
   import { ActionDB } from './actions'
   import { repo, codeOptions, settings } from './stores'
+  import { fs } from './fileSystem'
   import NotificationFooter from './components/NotificationFooter.svelte'
   import type { PathLike } from 'fs-extra'
 
@@ -275,7 +276,8 @@
   }
 
   function findInTreeAndToggleSelected(abs: PathLike, directory: RepoDirent, value: boolean): void {
-    for (const dirent of directory.children) {
+    const dir = directory.children || []
+    for (const dirent of dir) {
       if (dirent.children?.length > 0) {
         // is folder
         if (dirent.abs == abs) {
@@ -317,15 +319,25 @@
     actions.current = [...(res.actions as Action[])]
     for (const file of actions.manualImportFiles.selectedFiles) {
       findInTreeAndToggleSelected(
-        file.abs,
-        $repo.commits.find((c) => c.hash == file.commitHash).fileTree,
+        file.rel,
+        {
+          name: '',
+          rel: '',
+          selected: false,
+          children: $repo.commits.find((c) => c.hash == file.commitHash).fileTree as RepoDirent[]
+        },
         true
       )
     }
     for (const folder of actions.manualImportFolderText.selectedFolders) {
       findInTreeAndToggleSelected(
-        folder.abs,
-        $repo.commits.find((c) => c.hash == folder.commitHash).fileTree,
+        folder.rel,
+        {
+          name: '',
+          rel: '',
+          selected: false,
+          children: $repo.commits.find((c) => c.hash == folder.commitHash).fileTree as RepoDirent[]
+        },
         true
       )
     }
@@ -413,6 +425,16 @@
       <nav class="navbar border-bottom border-body">
         <div class="container-fluid justify-content-start">
           <span class="navbar-brand"><h3>RepoToQDA</h3></span>
+
+          {#if $repo.commits.length == 0}
+            <button
+              type="button"
+              class="btn btn-outline-primary ms-2"
+              on:click={() => window.files.forceClearCache()}
+              ><i class="bi bi-trash3-fill"></i> Clear local caches (all repos)</button
+            >
+          {/if}
+
           <button
             data-bs-toggle="modal"
             data-bs-target="#newConfig"
@@ -496,7 +518,7 @@
                           }}>Apply codes to commits by pattern</button
                         >
                       </li>
-                      <li>
+                      <!-- <li>
                         <button
                           class="dropdown-item"
                           type="button"
@@ -505,7 +527,7 @@
                             actionDropdown = false
                           }}>Import files by glob pattern</button
                         >
-                      </li>
+                      </li> -->
                     </ul>
                   </div>
                 </div>
@@ -525,13 +547,13 @@
                     />
                   {/each}
 
-                  {#each actions.getAll('importFilesByGlob') as action (action.guid)}
+                  <!-- {#each actions.getAll('importFilesByGlob') as action (action.guid)}
                     <ActionImportFilesByGlob
                       {action}
                       on:actionUpdated={updateQdpx}
                       on:actionDeleted={deleteActionFromList}
                     />
-                  {/each}
+                  {/each} -->
                 </div>
               </div>
             </Pane>

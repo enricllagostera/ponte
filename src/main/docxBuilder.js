@@ -3,7 +3,6 @@ import sanitizeHtml, { defaults } from 'sanitize-html'
 import { load as loadCheerio } from 'cheerio'
 import HTMLtoDOCX from 'html-to-docx'
 import { escape } from 'html-escaper'
-// import { pathToFileURL } from 'url'
 import imageToBase64 from 'image-to-base64'
 
 import { marked } from 'marked'

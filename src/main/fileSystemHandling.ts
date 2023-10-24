@@ -1,6 +1,5 @@
 import { app } from 'electron'
 import * as path from 'path'
-// import * as fs from 'fs-extra'
 
 export function getRepoClonePath(user: string, repo: string): string {
   return path.join(getPathForRepo(user, repo), 'clone')
@@ -12,6 +11,10 @@ export function getRepoZipsPath(user: string, repo: string): string {
 
 export function getAppGitDataPath(): string {
   return path.join(app.getPath('temp'), 'repo-to-qda/gitData')
+}
+
+export function getAppFileCachePath(): string {
+  return path.join(app.getPath('temp'), 'repo-to-qda/cache')
 }
 
 export function getPathForRepo(user: string, repo: string): string {

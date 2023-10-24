@@ -3,13 +3,13 @@
   export let successClass: boolean = false
 </script>
 
-<div class="row flex-grow-1">
+<div class="row flex-grow-1 mw-100">
   <div class="col d-flex">
     <div class="card rounded-0 m-1 flex-grow-1" class:text-bg-success={successClass}>
       <div class="card-header d-flex flex-grow-0 w-100" style="height:2.5rem">
         <slot name="header" />
       </div>
-      <div class="card-body flexOverflow overflow-auto" {id}>
+      <div class="card-body flexOverflow overflow-auto mw-100" {id}>
         <slot name="body" />
       </div>
       <div class="card-footer overflow-auto">

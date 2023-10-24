@@ -164,18 +164,18 @@ class QdpxExporter {
       new_ts.PlainTextSelection = []
       allTs.push(new_ts)
     }
-    for (const code of exportData.codes) {
-      let new_c = this.createCode(code.name)
+    for (const appliedCode of exportData.codes) {
+      let new_c = this.createCode(appliedCode.code.value)
       let matchCount = 0
-      for (const commit of code.commits) {
+      for (const hash of appliedCode.commitHashes) {
         allTs.forEach((ts, i) => {
-          const s = exportData.sources[i].content.indexOf(commit.hashAbbrev)
+          const s = exportData.sources[i].content.indexOf(hash.substring(0, 7))
           if (s >= 0) {
             matchCount++
             const pts = this.createPlainTextSelection(
-              `Match ${matchCount} of ${code.name} @ #${commit.hashAbbrev}`,
+              `Match ${matchCount} of ${appliedCode.code.value} @ #${hash.substring(0, 7)}`,
               s,
-              s + commit.hashAbbrev.length
+              s + hash.substring(0, 7).length
             )
             pts.Coding = this.createCoding(new_c['@guid'])
             ts.PlainTextSelection.push(pts)

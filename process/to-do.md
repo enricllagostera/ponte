@@ -6,6 +6,8 @@ kanban-plugin: basic
 
 ## Backlog
 
+- [ ] Visualize a timeline of commits showing passage of time between them
+- [ ] Visualize commits in an ordered topological timeline (usual git charts)
 - [ ] Allow importing from wiki as individual files or as folder compilations
 - [ ] Load commits from wiki repo and display in commit feed
 - [ ] Encode manually selected files
@@ -21,15 +23,10 @@ kanban-plugin: basic
 
 ## High priority
 
-- [ ] Load components only when in view to optimize performance
-- [ ] Fix exported files
-- [ ] Visualize a timeline of commits showing passage of time between them
-- [ ] Visualize commits in an ordered topological timeline (usual git charts)
 
 
 ## In progress
 
-- [ ] Research options to optimize disk space use and download times
 
 
 ## Done
@@ -41,6 +38,9 @@ kanban-plugin: basic
 
 ## Archive
 
+- [x] 2023-10-24T16:06:38-04:00 -- Load components only when in view to optimize performance
+- [x] 2023-10-24T16:06:38-04:00 -- Research options to optimize disk space use and download times
+- [x] 2023-10-24T16:06:38-04:00 -- Fix exported files
 - [x] 2023-10-20T12:43:00-04:00 -- Research ways to cache the data between uses
 - [x] 2023-10-20T12:43:00-04:00 -- Bring feedback from Chip into the process notes
 - [x] 2023-10-06T16:54:10-04:00 -- Write down post-workshop notes

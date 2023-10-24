@@ -14,6 +14,8 @@ declare global {
     }
     electron: unknown
     files: {
+      forceClearCache: () => Promise<void>
+      readFile: (rel: fsExtra.PathLike) => Promise<string | Buffer>
       readFileAtCommit: (rel: fsExtra.PathLike, commitHash: string) => Promise<string>
       showInExplorer: (abs: fsExtra.PathLike) => void
       runGlobOnCommit: (searchPattern: string, commitHash: string) => []
@@ -51,7 +53,7 @@ export type CodeOption = {
 export type RepoDirent = {
   name: string
   selected: boolean
-  abs: fsExtra.PathLike
+  abs?: fsExtra.PathLike
   rel: fsExtra.PathLike
   children?: RepoDirent[]
   commitHash?: string
@@ -69,12 +71,12 @@ export type Commit = {
   committer: CommitAuthor
   subject: string
   body: string
-  refs: []
+  refs: string[]
   tree: string
   treeAbbrev: string
   branches: string[]
   fileTree: RepoDirent[]
-  fileChangeStats: string[]
+  fileChangeStats: { operation: string; filepath: string }[]
 }
 
 export type CommitAuthor = {

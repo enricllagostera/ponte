@@ -7,8 +7,10 @@
   import CodeSelect from './CodeSelect.svelte'
   import { codeOptions, settings } from '../stores'
 
-  import Tree from 'svelte-tree'
+  import { inview } from 'svelte-inview'
+  import Tree from './Tree.svelte'
   import type { Action, AppliedCode, CodeOption } from '../../../types'
+  // import { fade } from 'svelte/transition'
 
   export let encodingAction: Action
   export let activeAtStart = true
@@ -18,6 +20,11 @@
   let active = activeAtStart
 
   let showFileTree = false
+  let isInView = false
+  let inViewOptions = {
+    rootMargin: '50px',
+    unobserveOnEnter: true
+  }
 
   const dispatch = createEventDispatcher()
 
@@ -29,7 +36,7 @@
   }
 
   function getExt(filename): string {
-    const ext = filename.split('.')[filename.split('.').length - 1]
+    const ext = filename.split('.').pop()
     return ext
   }
 
@@ -85,8 +92,8 @@
   }
 
   function codesChanged(event: CustomEvent): void {
-    console.log(event.detail)
-    console.log('old options', $codeOptions)
+    // console.log(event.detail)
+    // console.log('old options', $codeOptions)
     updateCodes(event.detail.codes, event.detail.options)
 
     const codesToAdd = event.detail.codes.filter((c) => findIndexCodeToApply(c.value) < 0)
@@ -133,16 +140,42 @@
     dispatch('commitEncoded', { codes: commit.appliedCodes, commit: commit.hash })
   }
 
-  function revealInExplorer(abs: string): void {
-    window.files.showInExplorer(abs)
-  }
+  // function revealInExplorer(abs: string): void {
+  //   window.files.showInExplorer(abs)
+  // }
 
   function checkTextSourceExt(filename: string): boolean {
-    return $settings.supportedTextExts.indexOf('.' + getExt(filename)) >= 0
+    return $settings.supportedTextExts.indexOf(getExt(filename)) > -1
+  }
+
+  function isSupportedFile(node): boolean {
+    if (!node.children && checkTextSourceExt(node.name)) {
+      return true
+    }
+    return false
+  }
+
+  function isUnsupported(node): boolean {
+    if (node.children) {
+      return false
+    }
+    return checkTextSourceExt(node.name) == false
   }
 </script>
 
-<div class="card my-3 overflow-x-hidden" class:text-bg-secondary={!active}>
+<div
+  class="card my-3 overflow-auto"
+  class:text-bg-secondary={!active}
+  use:inview={inViewOptions}
+  on:inview_enter={(event) => {
+    const { inView } = event.detail
+    isInView = inView
+  }}
+  on:inview_leave={(event) => {
+    const { inView } = event.detail
+    isInView = inView
+  }}
+>
   <div class="card-header">
     <i class="bi bi-git"></i> #{commit.hashAbbrev} <i class="bi bi-calendar-event"></i>
     {DateTime.fromMillis(commit.author.timestamp).toISODate()}, approx. {DateTime.fromMillis(
@@ -158,75 +191,76 @@
       </div>
     {/if}
   </div>
-  <div class="card-body">
-    <details
-      class:border-end={showFileTree}
-      class:border-2={showFileTree}
-      class:border-primary={showFileTree}
-      class="pe-2"
-      bind:open={showFileTree}
-    >
-      <summary class="mb-2 btn btn-outline-primary"
-        ><i class="bi bi-eye"></i> Preview files in this commit</summary
+  {#if isInView}
+    <div class="card-body overflow-auto">
+      <details
+        class:animate={isInView}
+        class:border-end={showFileTree}
+        class:border-2={showFileTree}
+        class:border-primary={showFileTree}
+        class="pe-2 overflow-auto"
+        bind:open={showFileTree}
       >
-      {#await promise then}
-        <Tree tree={commit.fileTree} let:node>
-          <div
-            class="d-flex align-items-center p-1 rounded-1 fs-6 text-red"
-            class:text-secondary={!checkTextSourceExt(node.name) && !node.children}
-            class:my-1={!checkTextSourceExt(node.name) && !node.children && !node.children}
-            style:margin-left={!checkTextSourceExt(node.name) && !node.children ? '-1em' : ''}
-            style:background-color={!checkTextSourceExt(node.name) && !node.children
-              ? '#f0f0f0'
-              : 'transparent'}
-          >
-            {#if node.children}
-              <div class="form-check form-switch">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  role="switch"
-                  id="folderSwitch"
-                  on:change={(e) => toggleFolder(e, node)}
-                  checked={node.selected}
-                />
-              </div>
-              <i class="bi bi-folder me-1"></i>
-              {node.name}
-            {:else}
-              {#if checkTextSourceExt(node.name)}
+        <summary class="mb-2 btn btn-outline-primary"
+          ><i class="bi bi-eye"></i> Preview files in this commit</summary
+        >
+        {#await promise then}
+          <Tree tree={commit.fileTree} let:node>
+            <div
+              class="d-flex align-items-center p-1 rounded-1 fs-6 text-red"
+              class:text-secondary={isUnsupported(node)}
+              class:my-1={isUnsupported(node)}
+              style:margin-left={isUnsupported(node) ? '-1em' : ''}
+              style:background-color={isUnsupported(node) ? '#f0f0f0' : 'transparent'}
+            >
+              {#if node.children}
                 <div class="form-check form-switch">
                   <input
                     class="form-check-input"
                     type="checkbox"
                     role="switch"
-                    id="flexSwitchCheckDefault"
-                    disabled={!checkTextSourceExt(node.name)}
-                    on:change={(e) => toggleFile(e, node)}
+                    id="folderSwitch"
+                    on:change={(e) => toggleFolder(e, node)}
                     checked={node.selected}
                   />
                 </div>
-                <i class="bi bi-file-text-fill me-1"></i>
-              {/if}
-              {node.name}
-              <button class="btn btn-link" on:click={() => revealInExplorer(node.abs)}
+                <i class="bi bi-folder me-1"></i>
+                {node.name}
+              {:else}
+                {#if checkTextSourceExt(node.name)}
+                  <div class="form-check form-switch">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      role="switch"
+                      id="flexSwitchCheckDefault"
+                      disabled={!checkTextSourceExt(node.name)}
+                      on:change={(e) => toggleFile(e, node)}
+                      checked={node.selected}
+                    />
+                  </div>
+                  <i class="bi bi-file-text-fill me-1"></i>
+                {/if}
+                {node.name}
+                <!-- <button class="btn btn-link" on:click={() => revealInExplorer(node.abs)}
                 ><i class="bi bi-folder2-open"></i></button
-              >
+              > -->
 
-              <a
-                href={`https://github.com/${userRepoInfo}/tree/${commit.hash}/${node.rel}`}
-                target="_blank"
-              >
-                <i class="bi bi-github"></i>
-              </a>
-            {/if}
-          </div>
-        </Tree>
-      {/await}
-    </details>
-  </div>
+                <a
+                  href={`https://github.com/${userRepoInfo}/tree/${commit.hash}/${node.rel}`}
+                  target="_blank"
+                >
+                  <i class="bi bi-github"></i>
+                </a>
+              {/if}
+            </div>
+          </Tree>
+        {/await}
+      </details>
+    </div>
+  {/if}
 
-  <div class="card-footer d-flex d-flex flex-grow-0 align-items-center">
+  <div class="card-footer d-flex d-flex flex-grow-0 align-items-center overflow-auto">
     <div class="mt-1">
       <div class="form-check form-switch">
         <input
@@ -252,7 +286,7 @@
     </div>
   </div>
 
-  <div class="card-footer d-flex d-flex flex-grow-0 align-items-center">
+  <div class="card-footer d-flex d-flex flex-grow-0 align-items-center overflow-auto">
     <CodeSelect
       initialOptions={$codeOptions}
       initialValues={getAllCodesForThisCommit()}

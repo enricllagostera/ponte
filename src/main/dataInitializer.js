@@ -3,9 +3,11 @@ import { join, resolve, relative } from 'path'
 import AdmZip from 'adm-zip'
 import { glob } from 'glob'
 
-import GitLoader from './gitLogLoader'
+import GitManager from './gitManager'
 import utils from './helpers'
 import * as files from './fileSystemHandling'
+
+import { Cache } from 'file-system-cache'
 
 class DataInitializer {
   /**
@@ -24,17 +26,31 @@ class DataInitializer {
     this.repoPath = inputPath
     this.zipsPath = files.getRepoZipsPath(this.userName, this.repoName)
     this.clonePath = files.getRepoClonePath(this.userName, this.repoName)
-    this.gitLoader = new GitLoader(this.clonePath)
+    this.gitManager = new GitManager(this.clonePath)
+    this.cache = new Cache({
+      basePath: files.getAppFileCachePath(),
+      ns: repoInfo,
+      ttl: 60 * 60 // 1h
+    })
   }
 
-  async loadCommitsFromGit() {
-    let res
-    res = await this.gitLoader.loadFrom(this.repoInfo, this.clonePath)
+  async loadCommitsFromGit(progressNotification, forceClear = false) {
+    if (forceClear) {
+      await this.cache.clear()
+    }
+    let res = await this.cache.get(`${this.repoInfo}`, undefined)
+    if (!res) {
+      progressNotification('Refreshing commit data from Git repo...')
+      res = await this.gitManager.loadFrom(this.repoInfo, progressNotification)
+      progressNotification('Saving commit data to cache...')
+      await this.cache.set(`${this.repoInfo}`, res)
+    }
+    progressNotification('Loading commit data from cache...')
     return res
   }
 
   async getFileList(commitTree) {
-    return this.gitLoader.getFileList(commitTree)
+    return this.gitManager.getFileList(commitTree)
   }
 
   async convertToFileTree(fileList, baseAbsPath, commitHash) {
@@ -123,11 +139,13 @@ class DataInitializer {
   }
 
   async readFileAtCommit(filePath, commitHash) {
-    const fullPathAtCommit = join(
-      files.getPathForCommit(this.userName, this.repoName, commitHash),
-      filePath
-    )
-    return await fs.readFile(fullPathAtCommit, 'utf-8')
+    let res = await this.cache.get(`${commitHash}:${filePath}`, undefined)
+    if (!res) {
+      // TODO change here to make this text or binary agnostic
+      res = await this.gitManager.getTextFileAt(filePath, commitHash)
+      await this.cache.set(`${commitHash}:${filePath}`, res)
+    }
+    return res
   }
 
   showFilesAsTree(files, commitHash) {
@@ -138,6 +156,11 @@ class DataInitializer {
 
     return tree
   }
+}
+
+export async function clearCache() {
+  // await this.cache.clear()
+  fs.emptyDirSync(files.getAppFileCachePath())
 }
 
 export default DataInitializer

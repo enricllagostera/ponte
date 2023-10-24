@@ -1,5 +1,19 @@
 # Process journal
 
+## 2023-10-24 Implemented file system
+
+I'm glad I did all the research on caching and file system. The app feels snappier and better organized in general. I hope this will work well with other folk's computers as well. There are of course a few bugs around, but the performance feels faster and saving / loading / exporting seem to be working well.
+
+## 2023-10-23 File system redesign
+
+The basic idea is to have something along the general lines below.
+
+![](media/Pasted%20image%2020231023192545.png)
+
+By doing this indirection, it might be possible to keep local file copying to a minimum. This would be particularly important for more long-lived projects, that get tweaked often and re-exported.
+
+Maybe by using `file-system-cache` library I might be able to bypass the *Local file system* node? Hmm...
+
 ## 2023-10-21 & 22 Changing Git system
 
 I'm changing the underlying Git system to isomorphic-git. The hope is that it will make the cross-platform packaging and installation more seamless and consistent. The potential downgrade is in performance and having a much more limited API to work with. Let's see how that goes.

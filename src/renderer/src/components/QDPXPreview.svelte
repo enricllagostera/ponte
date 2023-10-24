@@ -1,6 +1,8 @@
-<script>
+<script lang="ts">
   import TextSourcePreview from './TextSourcePreview.svelte'
   import Pane from './Pane.svelte'
+  import type { Commit } from '../../../types'
+  import { repo } from '../stores'
 
   export let qdpxData
 
@@ -14,6 +16,10 @@
       title: `Save QDPX file...`
     }
     await window.loader.exportQDPX(qdpxData, qdpxExportOptions)
+  }
+
+  function getCommit(hash: string): Commit {
+    return $repo.commits.find((c) => c.hash == hash)
   }
 </script>
 
@@ -64,11 +70,14 @@
         {#each qdpxData.codes as code}
           <li>
             <span class="text-bg-success rounded-1 p-1"
-              ><i class="bi bi-tag-fill"></i> <b>{code.name}</b></span
+              ><i class="bi bi-tag-fill"></i> <b>{code.code.value}</b></span
             >, applied to:
             <ul class="list-unstyled m-2">
-              {#each code.commits as commit}
-                <li><i class="bi bi-git"></i> #{commit.hashAbbrev} - {commit.subject}</li>
+              {#each code.commitHashes as hash}
+                <li>
+                  <i class="bi bi-git"></i> #{getCommit(hash).hashAbbrev} - {getCommit(hash)
+                    .subject}
+                </li>
               {/each}
             </ul>
           </li>
