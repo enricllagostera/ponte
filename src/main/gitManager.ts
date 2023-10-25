@@ -150,6 +150,11 @@ class GitManager {
         })
       }
     }
+    res.sort((a, b) => {
+      if (a.children && !b.children) return -1
+      if (!a.children && b.children) return 1
+      return a < b ? 1 : 1
+    })
     return res
   }
 

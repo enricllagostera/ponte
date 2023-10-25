@@ -1,5 +1,9 @@
 # Process journal
 
+## 2023-10-25 Small fixes on previewing files
+
+Just some way to see the depth of the hierarchy (left border) and sorting the entries so that folders are shown before files.
+
 ## 2023-10-24 Implemented file system
 
 I'm glad I did all the research on caching and file system. The app feels snappier and better organized in general. I hope this will work well with other folk's computers as well. There are of course a few bugs around, but the performance feels faster and saving / loading / exporting seem to be working well.

@@ -38,7 +38,8 @@
 <style>
   .node .content {
     display: flex;
-    align-items: center;
+    align-items: start;
+    border-left: 3px rgba(39, 126, 232, 0.744) solid;
   }
   .node .content:hover {
     cursor: pointer;
@@ -61,6 +62,7 @@
     font-size: 15px;
   }
   .children {
-    margin-left: 20px;
+    padding-left: 20px;
+    border-left: 3px rgba(39, 126, 232, 0.744) solid;
   }
 </style>

@@ -193,24 +193,16 @@
   </div>
   {#if isInView}
     <div class="card-body overflow-auto">
-      <details
-        class:animate={isInView}
-        class:border-end={showFileTree}
-        class:border-2={showFileTree}
-        class:border-primary={showFileTree}
-        class="pe-2 overflow-auto"
-        bind:open={showFileTree}
-      >
+      <details class:animate={isInView} class="pe-2 overflow-auto" bind:open={showFileTree}>
         <summary class="mb-2 btn btn-outline-primary"
           ><i class="bi bi-eye"></i> Preview files in this commit</summary
         >
         {#await promise then}
           <Tree tree={commit.fileTree} let:node>
             <div
-              class="d-flex align-items-center p-1 rounded-1 fs-6 text-red"
+              class="d-flex align-items-start p-1 rounded-1 fs-6 text-red"
               class:text-secondary={isUnsupported(node)}
               class:my-1={isUnsupported(node)}
-              style:margin-left={isUnsupported(node) ? '-1em' : ''}
               style:background-color={isUnsupported(node) ? '#f0f0f0' : 'transparent'}
             >
               {#if node.children}
@@ -249,8 +241,7 @@
                 <a
                   href={`https://github.com/${userRepoInfo}/tree/${commit.hash}/${node.rel}`}
                   target="_blank"
-                >
-                  <i class="bi bi-github"></i>
+                  ><i class="bi bi-github ms-1"></i>
                 </a>
               {/if}
             </div>

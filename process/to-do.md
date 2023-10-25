@@ -23,6 +23,7 @@ kanban-plugin: basic
 
 ## High priority
 
+- [ ] Separate commands **compile folder** from **hierarchy selection** in file preview, showing them as diff GUI elements
 
 
 ## In progress
@@ -38,6 +39,7 @@ kanban-plugin: basic
 
 ## Archive
 
+- [x] 2023-10-25T13:54:32-04:00 -- Sort file previews by folders first
 - [x] 2023-10-24T16:06:38-04:00 -- Load components only when in view to optimize performance
 - [x] 2023-10-24T16:06:38-04:00 -- Research options to optimize disk space use and download times
 - [x] 2023-10-24T16:06:38-04:00 -- Fix exported files
