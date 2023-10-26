@@ -140,19 +140,8 @@
     dispatch('commitEncoded', { codes: commit.appliedCodes, commit: commit.hash })
   }
 
-  // function revealInExplorer(abs: string): void {
-  //   window.files.showInExplorer(abs)
-  // }
-
   function checkTextSourceExt(filename: string): boolean {
     return $settings.supportedTextExts.indexOf(getExt(filename)) > -1
-  }
-
-  function isSupportedFile(node): boolean {
-    if (!node.children && checkTextSourceExt(node.name)) {
-      return true
-    }
-    return false
   }
 
   function isUnsupported(node): boolean {
@@ -234,10 +223,6 @@
                   <i class="bi bi-file-text-fill me-1"></i>
                 {/if}
                 {node.name}
-                <!-- <button class="btn btn-link" on:click={() => revealInExplorer(node.abs)}
-                ><i class="bi bi-folder2-open"></i></button
-              > -->
-
                 <a
                   href={`https://github.com/${userRepoInfo}/tree/${commit.hash}/${node.rel}`}
                   target="_blank"

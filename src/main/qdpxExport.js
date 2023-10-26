@@ -43,7 +43,7 @@ class QdpxExporter {
         ],
         CodeBook: {
           Codes: {
-            Code: [this.createCode('')]
+            Code: [this.createCode('Sample code')]
           }
         },
         Sources: { TextSource: [] }
