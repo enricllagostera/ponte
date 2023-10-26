@@ -18,7 +18,7 @@ I'm glad I did all the research on caching and file system. The app feels snappi
 
 The basic idea is to have something along the general lines below.
 
-![](media/Pasted%20image%2020231023192545.png)
+![](media/20231023T192545-0400--file_handling_diagram.png)
 
 By doing this indirection, it might be possible to keep local file copying to a minimum. This would be particularly important for more long-lived projects, that get tweaked often and re-exported.
 
@@ -40,29 +40,29 @@ We had a pretty good discussion over visualizations and the tool. Lots of useful
 
 Pre-meeting notes.
 
-![](media/20231020120408_pre_meeting_notes.png)
+![](media/20231020T120408-0400--pre_meeting_notes.png)
 
 Notes from the brainstorming session on 2023-10-20.
 
-![](media/20231020120425_meeting_notes.png)
+![](media/20231020T120425-0400--meeting_notes.png)
 
 ## 2023-10-19 Some more viz and meeting prep
 
 Now one that shows the [branching of commits](https://svelte.dev/repl/0302d29e5426419f97d24e2abe389f11?version=4.2.2).
 
-![](media/20231019_viz_branches.mp4)
+![](media/20231019T000000-0400--viz_branches.mp4)
 
 After some more refinements:
 
-![](media/20231019184213_viz_branch_icons.png)
+![](media/20231019T184213-0400--viz_branch_icons.png)
 
 ## 2023-10-17 Visualization tests
 
-I decided to experiment a bit with viz for commits. I didn't want to have to completely integrate it into the app for now, so I made use of the Svelte REPL tool. I created a [small app there](https://svelte.dev/repl/b8366d3e58024016a655fc7601d58054?version=4.2.1) that uses d3 and Svelte to summarize file changes in commits. Also added [a zipped version fo the test here](media/20231017_svelte_repl_viz_01.zip). It was tricky setting it up, as I kind of have to (re)learn d3 to do that, but it did work out in the end. 
+I decided to experiment a bit with viz for commits. I didn't want to have to completely integrate it into the app for now, so I made use of the Svelte REPL tool. I created a [small app there](https://svelte.dev/repl/b8366d3e58024016a655fc7601d58054?version=4.2.1) that uses d3 and Svelte to summarize file changes in commits. Also added [a zipped version fo the test here](media/20231017T000000-0400--svelte_repl_viz_01.zip). It was tricky setting it up, as I kind of have to (re)learn d3 to do that, but it did work out in the end. 
 
 Here is a small video showing it:
 
-![](media/20231017_viz_file_changes.mp4)
+![](media/20231017T000000-0400--viz_file_changes.mp4)
 
 I think this is an interesting data change to highlight, but it should not be fully equated to significance. Lots of changes in files might be connected to re-versioning and changes in dependencies, for instance. It is a start though.
 
@@ -129,7 +129,7 @@ When I was doing the last batch of features, I realized that the code is very me
 
 I added a first version of the [related_work](related_work.md) notes. Also, I fixed some bugs with the saving and loading of the config file (it was generating a 40MB JSON before for some reason). Now that works OK, together with manually ignoring commits. Made a small change to improve the import of text sources in NVivo, should be working fine now, both with text sources and codes.
 
-![Video update](media/20230922-repo-to-qda.mp4)
+![Video update](media/20230922T000000-0400--repo_to_qda.mp4)
 
 ## 2023-09-21 File visualizations
 
@@ -155,7 +155,7 @@ I finally finished doing this, downloading things to a better organized temp fol
 
 After I talked about how design is more of a distributed process than just the integration on one folder/tool, and that this might need a combination of methodologies for analysis, Danny mentioned that even though automating some of that would be beneficial, it was important to not lose sight of the process, and that journaling / practices like that could support that. I sent the message below on Zoom as a clarification.
 
-![](media/20230915115024.png)
+![](media/20230915T115024-0400--screenshot.png)
 
 ## 2023-09-08 GaR meeting
 

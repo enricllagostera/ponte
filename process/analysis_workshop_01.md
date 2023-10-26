@@ -52,7 +52,7 @@ Overall, the workshop went quite well. I ended up doing a longer demo at the sta
 5. C: Issues with case-sensitive pattern searches, which made filters seem more strict than expected.
 6. L: File preview being expanded by default makes it hard to have an overview.
 
-### Debriefing (starts at aprox. 45:00)
+### Debriefing summary (starts at aprox. 45:00)
 
 1. _Q. Did your perception of the main characteristics you associate with the repo data change in any way?_
    1. F.: Noticed the tone differences between journal notes and commit msgs. R. noted that seeing both in the same UI helps that to happen.
@@ -77,6 +77,6 @@ Overall, the workshop went quite well. I ended up doing a longer demo at the sta
 
 > Enric Granzotto Llagostera, here are both a screenshot of the tool with some observations of snags/bugs I encountered, and a sketch of a tool structure that, at least I, would find schematically easier to use. Effectively, instead of thinking about the repo contents as a series of commit "baskets" each containing loosely analogous versions of a set of files, being able to structure contents as a set of files changing over time with changes being seen by commits would be helpful for examining specific files across their lifetime, and for extracting relevant altered files from a commit snapshot. To my mind, this gives a much more direct view of longitudinal relationships between commits and cross-sectional relationships between files.
 
-![](media/20231010173050_chip_notes_01.png)
+![](media/20231010T173050-0400--c_notes_01.png)
 
-![](media/20231010173135_chip_notes_02.png)
+![](media/20231010T173135-0400--c_notes_02.png)
