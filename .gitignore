@@ -7,3 +7,5 @@ process/ref_materials/samples/nvivo-export.qdpx
 process/ref_materials/samples/**/
 *.log*
 .pandoc/
+process/_external/*
+!process/_external/README.md

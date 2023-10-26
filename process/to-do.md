@@ -6,13 +6,13 @@ kanban-plugin: basic
 
 ## Backlog
 
-- [ ] Visualize a timeline of commits showing passage of time between them
-- [ ] Visualize commits in an ordered topological timeline (usual git charts)
 - [ ] Allow importing from wiki as individual files or as folder compilations
 - [ ] Load commits from wiki repo and display in commit feed
+- [ ] Compile devlogs with advanced options (git trailers)
+- [ ] Visualize a timeline of commits showing passage of time between them
+- [ ] Visualize commits in an ordered topological timeline (usual git charts)
 - [ ] Encode manually selected files
 - [ ] Ignore commits from subject (simple string pattern)
-- [ ] Compile devlogs with advanced options (git footer)
 - [ ] Compile folders from glob pattern
 - [ ] Copy file as sources and encode from filename (glob pattern)
 - [ ] Encode files from text content (glob pattern, aka auto-code)
@@ -23,7 +23,7 @@ kanban-plugin: basic
 
 ## High priority
 
-- [ ] Separate commands **compile folder** from **hierarchy selection** in file preview, showing them as diff GUI elements
+- [ ] Separate commands **compile folder** from **individual and hierarchical file selection** in file preview, showing them as diff GUI elements
 
 
 ## In progress

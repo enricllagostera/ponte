@@ -1,5 +1,11 @@
 # Process journal
 
+## 2023-10-26 Crash fix and creating an `external` folder
+
+I made a patch build to fix a crash that was happening in Atlas.ti when it tried to import a code with a blank name. So I just added `Sample code` as a name for now, but I'll figure out a better fix later.
+
+On other front, I decided to create an untracked folder for files that are stored elsewhere (Google Drive for now) that are too large or that probably should be private. The `process/external` folder stores only a list of what are these files. That's a way of having an idea of what they are and where to find / request to access them, but still not having them completely out in the open.
+
 ## 2023-10-25 Small fixes on previewing files
 
 Just some way to see the depth of the hierarchy (left border) and sorting the entries so that folders are shown before files.
