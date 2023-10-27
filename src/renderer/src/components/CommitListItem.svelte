@@ -9,21 +9,21 @@
 
   import { inview } from 'svelte-inview'
   import Tree from './Tree.svelte'
-  import type { Action, AppliedCode, CodeOption } from '../../../types'
-  // import { fade } from 'svelte/transition'
+  import type { Action, AppliedCode, CodeOption, Commit } from '../../../types'
+  import { GitCommit, Github, Tags } from 'lucide-svelte'
 
   export let encodingAction: Action
   export let activeAtStart = true
-  export let commit
-  export let userRepoInfo
-  export let promise
+  export let commit: Commit
+  export let userRepoInfo: string
+  export let promise: Promise<any>
   let active = activeAtStart
 
   let showFileTree = false
   let isInView = false
   let inViewOptions = {
-    rootMargin: '50px',
-    unobserveOnEnter: true
+    rootMargin: '100px',
+    unobserveOnEnter: false
   }
 
   const dispatch = createEventDispatcher()
@@ -153,7 +153,7 @@
 </script>
 
 <div
-  class="card my-3 overflow-auto"
+  class="flex flex-col border-indigo-200 dark:border-indigo-900 border-t-0 border-b-3 border-r-3 border-l-3 border-2 mb-4 rounded-lg"
   class:text-bg-secondary={!active}
   use:inview={inViewOptions}
   on:inview_enter={(event) => {
@@ -163,71 +163,87 @@
   on:inview_leave={(event) => {
     const { inView } = event.detail
     isInView = inView
-  }}
->
-  <div class="card-header">
-    <i class="bi bi-git"></i> #{commit.hashAbbrev} <i class="bi bi-calendar-event"></i>
-    {DateTime.fromMillis(commit.author.timestamp).toISODate()}, approx. {DateTime.fromMillis(
-      commit.author.timestamp
-    ).toRelative()}
+  }}>
+  <div class="flex items-center justify-between rounded-t-lg bg-indigo-100 dark:bg-indigo-700">
+    <span
+      class="bg-indigo-200 text-indigo-800 rounded-tl-lg text-sm font-medium me-2 p-2 dark:bg-indigo-900 dark:text-indigo-300"
+      ><GitCommit class="inline" /> #{commit.hashAbbrev}</span>
+    <time class="inline text-sm font-normal text-zinc-500 dark:text-zinc-400"
+      >{DateTime.fromMillis(commit.author.timestamp).toISODate()}, approx. {DateTime.fromMillis(
+        commit.author.timestamp
+      ).toRelative()}</time>
+    <a
+      class=" ms-auto w-fit h-fit text-sm text-indigo-700 dark:text-indigo-300 cursor-pointer me-4"
+      href={`https://github.com/${userRepoInfo}/tree/${commit.hash}`}
+      target="_blank"
+      role="button">
+      <Github class="inline" /> Browse on Github</a>
   </div>
-  <div class="card-body">
-    <h6 class="card-title">{commit.subject}</h6>
-    {#if commit.body != ''}
-      <div class="commitBody text-body-secondary">
-        <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-        {@html marked.parse(commit.body)}
-      </div>
-    {/if}
-  </div>
+  <!-- <div class="mt-1">
+          <div class="form-check form-switch">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              role="switch"
+              bind:checked={active}
+              on:change={onToggleIncluded}
+              id="includeCheckbox_{commit.hash}" />
+            <label for="includeCheckbox_{commit.hash}">Include in QDPX</label>
+          </div>
+        </div> -->
+  <h3 class="flex items-center my-4 p-4 text-lg font-semibold text-zinc-900 dark:text-white">
+    {commit.subject}
+  </h3>
+
+  {#if commit.body != ''}
+    <div class="prose prose-base dark:prose-invert prose-zinc mb-4 px-4">
+      <!-- eslint-disable-next-line svelte/no-at-html-tags -->
+      {@html marked.parse(commit.body)}
+    </div>
+  {/if}
+
   {#if isInView}
-    <div class="card-body overflow-auto">
+    <div class="overflow-auto px-4">
       <details class:animate={isInView} class="pe-2 overflow-auto" bind:open={showFileTree}>
-        <summary class="mb-2 btn btn-outline-primary"
-          ><i class="bi bi-eye"></i> Preview files in this commit</summary
-        >
+        <summary
+          class="w-fit text-indigo-700 hover:text-white border border-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:border-indigo-500 dark:text-indigo-500 dark:hover:text-white dark:hover:bg-indigo-500 dark:focus:ring-indigo-800 text-center cursor-pointer"
+          ><i class="bi bi-eye"></i> Preview files in this commit</summary>
         {#await promise then}
           <Tree tree={commit.fileTree} let:node>
             <div
-              class="d-flex align-items-start p-1 rounded-1 fs-6 text-red"
-              class:text-secondary={isUnsupported(node)}
-              class:my-1={isUnsupported(node)}
-              style:background-color={isUnsupported(node) ? '#f0f0f0' : 'transparent'}
-            >
+              class="flex items-start align-middle p-1 text-sm"
+              class:italic={isUnsupported(node)}
+              class:opacity-50={isUnsupported(node)}>
               {#if node.children}
-                <div class="form-check form-switch">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    role="switch"
-                    id="folderSwitch"
-                    on:change={(e) => toggleFolder(e, node)}
-                    checked={node.selected}
-                  />
-                </div>
+                <input
+                  type="checkbox"
+                  role="switch"
+                  id="folderSwitch_{node.name}"
+                  on:change={(e) => toggleFolder(e, node)}
+                  checked={node.selected} />
+
                 <i class="bi bi-folder me-1"></i>
-                {node.name}
+                <label for="folderSwitch_{node.name}">{node.name}</label>
               {:else}
                 {#if checkTextSourceExt(node.name)}
-                  <div class="form-check form-switch">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      role="switch"
-                      id="flexSwitchCheckDefault"
-                      disabled={!checkTextSourceExt(node.name)}
-                      on:change={(e) => toggleFile(e, node)}
-                      checked={node.selected}
-                    />
-                  </div>
+                  <input
+                    type="checkbox"
+                    role="switch"
+                    id="fileSwitch_{node.name}_{commit.hashAbbrev}"
+                    disabled={!checkTextSourceExt(node.name)}
+                    on:change={(e) => toggleFile(e, node)}
+                    checked={node.selected} />
                   <i class="bi bi-file-text-fill me-1"></i>
+                  <label for="fileSwitch_{node.name}_{commit.hashAbbrev}">{node.name}</label>
+                {:else}
+                  {node.name}
                 {/if}
-                {node.name}
                 <a
                   href={`https://github.com/${userRepoInfo}/tree/${commit.hash}/${node.rel}`}
                   target="_blank"
-                  ><i class="bi bi-github ms-1"></i>
-                </a>
+                  title="See file in GitHub"
+                  class="mx-2 items-start align-middle text-indigo-600"
+                  ><Github class="w-4 h-4" /></a>
               {/if}
             </div>
           </Tree>
@@ -236,38 +252,11 @@
     </div>
   {/if}
 
-  <div class="card-footer d-flex d-flex flex-grow-0 align-items-center overflow-auto">
-    <div class="mt-1">
-      <div class="form-check form-switch">
-        <input
-          class="form-check-input"
-          type="checkbox"
-          role="switch"
-          bind:checked={active}
-          on:change={onToggleIncluded}
-          id="includeCheckbox_{commit.hash}"
-        />
-        <label for="includeCheckbox_{commit.hash}">Include in QDPX</label>
-      </div>
-    </div>
-    <div class="ms-auto">
-      <a
-        class="btn btn-primary"
-        href={`https://github.com/${userRepoInfo}/tree/${commit.hash}`}
-        target="_blank"
-        role="button"
-      >
-        <i class="bi bi-github"></i> Browse on Github</a
-      >
-    </div>
-  </div>
-
-  <div class="card-footer d-flex d-flex flex-grow-0 align-items-center overflow-auto">
+  <div class="p-4">
     <CodeSelect
       initialOptions={$codeOptions}
       initialValues={getAllCodesForThisCommit()}
-      on:codesChanged={codesChanged}
-    />
+      on:codesChanged={codesChanged} />
   </div>
 </div>
 

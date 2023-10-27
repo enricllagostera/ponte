@@ -1,21 +1,22 @@
 <script lang="ts">
+  export let title: string
   export let id: string = ''
   export let successClass: boolean = false
 </script>
 
-<div class="row flex-grow-1 mw-100">
-  <div class="col d-flex">
-    <div class="card rounded-0 m-1 flex-grow-1" class:text-bg-success={successClass}>
-      <div class="card-header d-flex flex-grow-0 w-100" style="height:2.5rem">
-        <slot name="header" />
-      </div>
-      <div class="card-body flexOverflow overflow-auto mw-100" {id}>
-        <slot name="body" />
-      </div>
-      <div class="card-footer overflow-auto">
-        <slot name="footer" />
-      </div>
-    </div>
+<!-- Panel -->
+<div
+  class="flex flex-col grow m-2 border-x-2 border-b-4 border-zinc-50 dark:border-zinc-900 {$$restProps.class ||
+    ''}"
+  class:text-bg-success={successClass}>
+  <div class="flex grow-0 w-full font-bold px-4 py-2 bg-zinc-50 dark:bg-zinc-900">
+    {title}
+  </div>
+  <div class="flex grow shrink w-full overflow-auto px-4 py-2 scrollbar-thin" {id}>
+    <slot name="body" />
+  </div>
+  <div class="flex grow-0 w-full h-auto px-4 py-2">
+    <slot name="footer" />
   </div>
 </div>
 

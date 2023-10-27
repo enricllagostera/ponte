@@ -1,10 +1,36 @@
 # Process journal
 
+## 2023-10-27 GUI redesigns and meeting notes
+
+Re-implementing the GUI via TailwindCSS and Lucide icons, removing Bootstrap (it's CSS and icons). Now with dark theme.
+
+![](media/20231027T111147-0400--journal.png)
+
+![](media/20231027T111201-0400--journal.png)
+
+(ts::2023-10-27T17:59:07-04:00) With better scrollbars now.
+
+![](media/20231027T175904-0400--journal.png)
+
+### Meeting notes
+
+(ts::2023-10-27T11:25:21-04:00)
+
+- Coding together from one data set (gambi_abo's `logs.md`).
+- An asynchronous familiarization step of reading through / getting a sense of the corpus is needed for this kind of workshop, maybe?
+- Triangulation and correlation ("intercoder reliability") of tagging is really important here. Maybe it should be a mandatory or at least recommended part of the analysis process? Particularly in combining designer and non-designer perspectives.
+
 ## 2023-10-26 Crash fix and creating an `external` folder
 
 I made a patch build to fix a crash that was happening in Atlas.ti when it tried to import a code with a blank name. So I just added `Sample code` as a name for now, but I'll figure out a better fix later.
 
 On other front, I decided to create an untracked folder for files that are stored elsewhere (Google Drive for now) that are too large or that probably should be private. The `process/external` folder stores only a list of what are these files. That's a way of having an idea of what they are and where to find / request to access them, but still not having them completely out in the open.
+
+(ts::2023-10-26T18:59:35-04:00)
+
+Here is how the TailwindCSS styles and Lucide iconography are turning out.
+
+![](media/20231026T185936-0400--journal.png)
 
 ## 2023-10-25 Small fixes on previewing files
 
@@ -22,7 +48,7 @@ The basic idea is to have something along the general lines below.
 
 By doing this indirection, it might be possible to keep local file copying to a minimum. This would be particularly important for more long-lived projects, that get tweaked often and re-exported.
 
-Maybe by using `file-system-cache` library I might be able to bypass the *Local file system* node? Hmm...
+Maybe by using `file-system-cache` library I might be able to bypass the _Local file system_ node? Hmm...
 
 ## 2023-10-21 & 22 Changing Git system
 
@@ -32,11 +58,11 @@ I'm changing the underlying Git system to isomorphic-git. The hope is that it wi
 
 I think I'll just make the change to use simple-git only, removing the `git2json` dependency and making all the Git calls through the same system. It still depends on the terminal, but it is generally fast and allows for the whole of Git's API.
 
-2023-10-22T10:57:25-04:00 OK, finished removing the `git2json` library.
+(ts::2023-10-22T10:57:25-04:00) OK, finished removing the `git2json` library.
 
 ## 2023-10-20 Meeting notes
 
-We had a pretty good discussion over visualizations and the tool. Lots of useful insight and observations. 
+We had a pretty good discussion over visualizations and the tool. Lots of useful insight and observations.
 
 Pre-meeting notes.
 
@@ -58,7 +84,7 @@ After some more refinements:
 
 ## 2023-10-17 Visualization tests
 
-I decided to experiment a bit with viz for commits. I didn't want to have to completely integrate it into the app for now, so I made use of the Svelte REPL tool. I created a [small app there](https://svelte.dev/repl/b8366d3e58024016a655fc7601d58054?version=4.2.1) that uses d3 and Svelte to summarize file changes in commits. Also added [a zipped version fo the test here](media/20231017T000000-0400--svelte_repl_viz_01.zip). It was tricky setting it up, as I kind of have to (re)learn d3 to do that, but it did work out in the end. 
+I decided to experiment a bit with viz for commits. I didn't want to have to completely integrate it into the app for now, so I made use of the Svelte REPL tool. I created a [small app there](https://svelte.dev/repl/b8366d3e58024016a655fc7601d58054?version=4.2.1) that uses d3 and Svelte to summarize file changes in commits. Also added [a zipped version fo the test here](media/20231017T000000-0400--svelte_repl_viz_01.zip). It was tricky setting it up, as I kind of have to (re)learn d3 to do that, but it did work out in the end.
 
 Here is a small video showing it:
 
@@ -72,9 +98,9 @@ I've been mostly trying to better elaborate the [architecture of the app](devlog
 
 ## 2023-10-13 Meeting with Rilla and TS conversion
 
-In the morning I discussed the workshop notes and insight with Rilla. We agreed on me continuing the work of optimizing and the system for medium sized projects and better disk storage and use. We also discussed different forms of presenting the repository to facilitate analysis, with mentions of concepts such as views, filters, and timelines. Another point was about how organizing data and familiarizing yourself with it allows for the development of an intuition about where meaningful aspects can be found. Choosing, pattern-identification, moving are key actions. 
+In the morning I discussed the workshop notes and insight with Rilla. We agreed on me continuing the work of optimizing and the system for medium sized projects and better disk storage and use. We also discussed different forms of presenting the repository to facilitate analysis, with mentions of concepts such as views, filters, and timelines. Another point was about how organizing data and familiarizing yourself with it allows for the development of an intuition about where meaningful aspects can be found. Choosing, pattern-identification, moving are key actions.
 
-A few concrete things from the meeting: 
+A few concrete things from the meeting:
 
 - **Focusing on the action of "picking" or "adding" sources from the larger visualization as triggers for reflection.** This is a good moment to prompt the researcher for a memo note about why these materials are being picked. This would be a way to start of the projects with some memos over the choice of analysis data.
 - **Different lenses lead to different GT analysis (or quali in general).**

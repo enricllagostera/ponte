@@ -3,6 +3,8 @@
   import Pane from './Pane.svelte'
   import type { Commit } from '../../../types'
   import { repo } from '../stores'
+  import Button from './Button.svelte'
+  import { Files, GitCommit, Tag, Tags } from 'lucide-svelte'
 
   export let qdpxData
 
@@ -23,66 +25,55 @@
   }
 </script>
 
-<Pane>
-  <div slot="header" class="d-flex flex-grow-0 align-items-center w-100">
-    <div class="mt-1">
-      <b>QDPX Preview</b>
-    </div>
-    <div class="ms-auto">
-      <button
-        class="btn btn-primary btn-sm"
-        type="button"
-        disabled={qdpxData.commits.length <= 0}
-        on:click={exportQDPX}>Export QDPX</button
-      >
-    </div>
-  </div>
-
-  <div slot="body">
-    <div class="text-primary">
-      <h3><i class="bi bi-archive"></i> Sources</h3>
-      <ul class=" list-unstyled my-2">
-        {#each qdpxData.sources as source}
-          {#if source.parent == 'repository' || source.parent == 'copyTextSource' || source.parent == 'compilationSource' || source.parent == 'devlog'}
-            <li class="ms-2">
-              <TextSourcePreview {source} />
-            </li>
-          {/if}
-        {/each}
-        {#if qdpxData.commits}
-          {#each qdpxData.commits as commit (commit.hash)}
-            {#if findDevlogForCommit(commit.hash) != null}
-              <li><i class="bi bi-git"></i> #{commit.hashAbbrev}</li>
-              <ul class="list-unstyled ps-1">
-                {#each [findDevlogForCommit(commit.hash)] as source}
-                  <li><TextSourcePreview {source} /></li>
-                {/each}
-              </ul>
-            {/if}
-          {/each}
+<Pane title="QDPX Preview" class={$$restProps.class || ''}>
+  <div slot="body" class="max-w-full">
+    <h3><Files class="inline me-1" /> Sources</h3>
+    <ul class=" my-2">
+      {#each qdpxData.sources as source}
+        {#if source.parent == 'repository' || source.parent == 'copyTextSource' || source.parent == 'compilationSource' || source.parent == 'devlog'}
+          <li class="ms-2">
+            <TextSourcePreview {source} />
+          </li>
         {/if}
-      </ul>
-    </div>
-
-    <div class="text-success">
-      <h3><i class="bi bi-tags"></i> Codes</h3>
-      <ul class="my-2 list-unstyled">
-        {#each qdpxData.codes as code}
-          <li>
-            <span class="text-bg-success rounded-1 p-1"
-              ><i class="bi bi-tag-fill"></i> <b>{code.code.value}</b></span
-            >, applied to:
-            <ul class="list-unstyled m-2">
-              {#each code.commitHashes as hash}
-                <li>
-                  <i class="bi bi-git"></i> #{getCommit(hash).hashAbbrev} - {getCommit(hash)
-                    .subject}
-                </li>
+      {/each}
+      {#if qdpxData.commits}
+        {#each qdpxData.commits as commit (commit.hash)}
+          {#if findDevlogForCommit(commit.hash) != null}
+            <li><i class="bi bi-git"></i> #{commit.hashAbbrev}</li>
+            <ul class="ps-1">
+              {#each [findDevlogForCommit(commit.hash)] as source}
+                <li><TextSourcePreview {source} /></li>
               {/each}
             </ul>
-          </li>
+          {/if}
         {/each}
-      </ul>
-    </div>
+      {/if}
+    </ul>
+
+    <h3><Tags class="inline me-1" /> Codes</h3>
+    <ul class="my-2">
+      {#each qdpxData.codes as code}
+        <li>
+          <span class="bg-blue-300 text-zinc-800 rounded p-1 items-center"
+            ><Tag class="inline me-1 w-5 h-5" /> <b>{code.code.value}</b></span
+          >, applied to:
+          <ul class="m-2">
+            {#each code.commitHashes as hash}
+              <li class="ps-2">
+                <GitCommit class="inline me-1" /> #{getCommit(hash).hashAbbrev} - {getCommit(hash)
+                  .subject}
+              </li>
+            {/each}
+          </ul>
+        </li>
+      {/each}
+    </ul>
+  </div>
+  <div slot="footer">
+    <Button
+      class="btn btn-primary btn-sm"
+      type="button"
+      disabled={qdpxData.commits.length <= 0}
+      on:click={exportQDPX}>Export QDPX</Button>
   </div>
 </Pane>

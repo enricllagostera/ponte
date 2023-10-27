@@ -8,11 +8,11 @@ I found some tools, like MergeStat, that provide a SQL (so database-like) queryi
 
 ### Via a Git terminal
 
-The current system in the tool uses the [simple-git](https://github.com/steveukx/git-js) library, which is an interface to running Git commands on the local terminal. Some of its pros:  1) ease to code; 2) allows for running raw Git commands; 3) actively maintained and documented; 4) Quite fast. Cons: 1) fragile setup (needs previous installation of Git by the users).
+The current system in the tool uses the [simple-git](https://github.com/steveukx/git-js) library, which is an interface to running Git commands on the local terminal. Some of its pros: 1) ease to code; 2) allows for running raw Git commands; 3) actively maintained and documented; 4) Quite fast. Cons: 1) fragile setup (needs previous installation of Git by the users).
 
 ### Via JavaScript implementations of Git
 
-In researching options to alleviate the simple-git installation complexity, I found out there are a few pure-JS implementations of Git. One of the options is [isomorphic-git](https://isomorphic-git.org/), which allows for running Git commands on a `.git` folder without terminal tools. Pros: 1) no need for installing Git; 2) everything lives on JS; 3) Promise-based API.  Con: 1) API is different from Git; 2) Less maintained and documented than simple-git with an older codebase, it seems; 3) I'd need to test out the performance, but seems ok?
+In researching options to alleviate the simple-git installation complexity, I found out there are a few pure-JS implementations of Git. One of the options is [isomorphic-git](https://isomorphic-git.org/), which allows for running Git commands on a `.git` folder without terminal tools. Pros: 1) no need for installing Git; 2) everything lives on JS; 3) Promise-based API. Con: 1) API is different from Git; 2) Less maintained and documented than simple-git with an older codebase, it seems; 3) I'd need to test out the performance, but seems ok?
 
 ## Git commands
 

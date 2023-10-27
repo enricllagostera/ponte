@@ -2,7 +2,7 @@
 
 As I deal with the scale and performance issues that happened during the 1st workshop, I'm also doing some architectural sketches of the system. I want to be able to have separate modules for storage of data and for presenting it, so that any changes needed in those system areas are more encapsulated. So far, the app software architecture was more focused on getting nasic versions of functionality going, to test them out and validate the design. It is not very robust.
 
-I'm using the book @brown2012 as a basis, ant the following diagrams use the [C4 model](https://c4model.com/) Brown proposes. I think it is a clear modelling system with boundaries that make sense to me (internal / external systems, then  executable processes, then major functionality responsibilities).
+I'm using the book @brown2012 as a basis, ant the following diagrams use the [C4 model](https://c4model.com/) Brown proposes. I think it is a clear modelling system with boundaries that make sense to me (internal / external systems, then executable processes, then major functionality responsibilities).
 
 ## System context diagram
 

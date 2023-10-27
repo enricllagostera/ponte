@@ -84,8 +84,7 @@
             bind:checked={action.active}
             name={`${action.name}-${action.guid}`}
             on:change={onChanged}
-            id={`${action.name}-${action.guid}`}
-          />
+            id={`${action.name}-${action.guid}`} />
           <h5 style:display="inline">
             {action.title}
           </h5>
@@ -93,8 +92,7 @@
             class="btn btn-danger"
             type="button"
             id="applyCodeCommitGlob-execute"
-            on:click={onDeleted}><i class="bi bi-trash3-fill"></i></button
-          >
+            on:click={onDeleted}><i class="bi bi-trash3-fill"></i></button>
         </div>
       </div>
     </div>
@@ -113,16 +111,14 @@
         on:input={matchCommitBySubjectAndBody}
         value={action.searchPattern}
         class="form-control"
-        placeholder="Type pattern to select commits (e.g. fix)"
-      />
+        placeholder="Type pattern to select commits (e.g. fix)" />
     </div>
 
     <!-- <label for="tags">Codes to apply</label> -->
     <CodeSelect
       initialOptions={$codeOptions}
       initialValues={action.codesToApply}
-      on:codesChanged={codesChanged}
-    />
+      on:codesChanged={codesChanged} />
 
     <div class="card text-bg-secondary-subtle">
       <div class="card-header">

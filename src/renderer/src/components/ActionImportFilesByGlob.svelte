@@ -66,8 +66,7 @@
             bind:checked={action.active}
             name={`${action.name}-${action.guid}`}
             on:change={onChanged}
-            id={`${action.name}-${action.guid}`}
-          />
+            id={`${action.name}-${action.guid}`} />
           <h5 style:display="inline">
             {action.title}
           </h5>
@@ -75,8 +74,7 @@
             class="btn btn-danger"
             type="button"
             id="applyCodeCommitGlob-execute"
-            on:click={onDeleted}><i class="bi bi-trash3-fill"></i></button
-          >
+            on:click={onDeleted}><i class="bi bi-trash3-fill"></i></button>
         </div>
       </div>
     </div>
@@ -92,8 +90,7 @@
           value={'latest'}
           bind:group={action.inputCommitOption}
           type="radio"
-          on:change={onCommitOptionChanged}
-        />
+          on:change={onCommitOptionChanged} />
         Pick from latest commit
       </label>
       <label>
@@ -102,8 +99,7 @@
           value={'any'}
           bind:group={action.inputCommitOption}
           type="radio"
-          on:change={onCommitOptionChanged}
-        />
+          on:change={onCommitOptionChanged} />
         Pick all possible commits
       </label>
     </div>
@@ -118,8 +114,7 @@
         on:input={onFilePatternChanged}
         value={action.searchPattern}
         class="form-control"
-        placeholder={`Type to pick files from ${action.inputCommitOption} commit`}
-      />
+        placeholder={`Type to pick files from ${action.inputCommitOption} commit`} />
     </div>
 
     <div class="card text-bg-secondary-subtle">

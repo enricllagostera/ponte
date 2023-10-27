@@ -8,7 +8,7 @@ As I started the viz sketches I mention in the journal (see [2023-10-17 Visualiz
 
 This might indicate groups of ideas or very active periods in the process.
 
-### Commits with most deletions (or  "cleanups")
+### Commits with most deletions (or "cleanups")
 
 It might indicate big redesigns or changes in design direction. Also a good place to check the journal and in-process notes.
 

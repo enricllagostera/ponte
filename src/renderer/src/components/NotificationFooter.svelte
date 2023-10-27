@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { slide } from 'svelte/transition'
+
   let message = ''
 
   export function setup(): void {
@@ -31,12 +33,10 @@
   }
 </script>
 
-<div
-  class="row container-fluid vw-100 flex-grow-0 p-2"
-  class:text-bg-secondary={message == ''}
-  class:text-bg-warning={message != ''}
->
-  <div class="col">
+{#if message != ''}
+  <div
+    transition:slide
+    class="flex flex-col grow-0 w-screen p-4 text-center bg-amber-500 text-zinc-800">
     {#if message != ''}
       <div class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></div>
       {message}
@@ -44,4 +44,4 @@
       Footer
     {/if}
   </div>
-</div>
+{/if}

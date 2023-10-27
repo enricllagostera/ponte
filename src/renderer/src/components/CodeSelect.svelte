@@ -2,6 +2,8 @@
   import { createEventDispatcher, onMount } from 'svelte'
   import Select from 'svelte-select'
   import type { CodeOption } from '../../../types'
+  import { Tags } from 'lucide-svelte'
+  import { settings } from '../stores'
 
   export let initialOptions: CodeOption[]
   export let initialValues: CodeOption[]
@@ -49,34 +51,55 @@
   }
 </script>
 
-<div class="input-group mb-3">
-  <div class="input-group-text"><i class="bi bi-tags"></i></div>
-  <div class="form-control fc-select">
-    <Select
-      on:change={handleChange}
-      multiple
-      on:filter={handleFilter}
-      on:clear={handleClear}
-      bind:filterText
-      bind:value
-      {items}
-      clearable
-      multiFullItemClearable
-      --border-radius="0px"
-      --border="0"
-      --border-hover="0"
-      --padding="0"
-    >
-      <div slot="item" let:item>
-        {item.created ? 'Add new: ' : ''}
-        {item.label}
-      </div>
-    </Select>
+<div class="flex items-center border-2 my-2 w-100 dark:bg-zinc-800 dark:text-zinc-200">
+  <div class="m-2"><Tags class="inline" /></div>
+  <div class="flex fc-select w-full max-w-full">
+    {#if $settings.darkTheme}
+      <Select
+        on:change={handleChange}
+        multiple
+        on:filter={handleFilter}
+        on:clear={handleClear}
+        bind:filterText
+        bind:value
+        {items}
+        clearable
+        multiFullItemClearable
+        --multi-item-bg="rgb(59, 130, 246)"
+        --background="rgb(39, 39, 42)"
+        --input-color="rgb(228, 228, 231)"
+        --border-radius="0px"
+        --border="0"
+        --border-hover="0"
+        --padding="0">
+        <div slot="item" let:item>
+          {item.created ? 'Add new: ' : ''}
+          {item.label}
+        </div>
+      </Select>
+    {:else}
+      <Select
+        on:change={handleChange}
+        multiple
+        on:filter={handleFilter}
+        on:clear={handleClear}
+        bind:filterText
+        bind:value
+        {items}
+        clearable
+        multiFullItemClearable
+        --background="rgb(228, 228, 231)"
+        --input-color="rgb(39, 39, 42)"
+        --multi-item-bg="rgb(59, 130, 246)"
+        --multi-item-color="rgb(228, 228, 231)"
+        --border-radius="0px"
+        --border="0"
+        --border-hover="0"
+        --padding="0">
+        <div slot="item" let:item>
+          {item.created ? 'Add new: ' : ''}
+          {item.label}
+        </div>
+      </Select>{/if}
   </div>
 </div>
-
-<style>
-  .form-control.fc-select {
-    padding: 0;
-  }
-</style>

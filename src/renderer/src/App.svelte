@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { Modal } from 'bootstrap'
+  import { FilePlus, FolderOpen, Save, SunMoon, Trash2 } from 'lucide-svelte'
 
   import QdpxPreview from './components/QDPXPreview.svelte'
   import RepoLoader from './components/RepoLoader.svelte'
@@ -19,6 +20,7 @@
   import { fs } from './fileSystem'
   import NotificationFooter from './components/NotificationFooter.svelte'
   import type { PathLike } from 'fs-extra'
+  import Button from './components/Button.svelte'
 
   const defaultQdpx = { sources: [], codes: [], commits: [] }
 
@@ -31,6 +33,7 @@
   let repoLoadingPromise = null
   let userRepoInfo = ''
   let footer: NotificationFooter
+  $settings.darkTheme = false
 
   function onLoadedRepoData(): void {
     // called when repo data is loaded via the repo loader gui
@@ -295,7 +298,7 @@
 
   function resetConfig(): void {
     userRepoInfo = ''
-    $repo.userRepoInfo = ''
+    $repo.userRepoInfo = 'enricllagostera/repo-to-qda'
     $repo.commits = []
     repoLoader = {}
     repoInfoReady = false
@@ -377,6 +380,16 @@
     actionDropdown = !actionDropdown
   }
 
+  function toggleTheme(): void {
+    $settings.darkTheme = !$settings.darkTheme
+
+    if ($settings.darkTheme) {
+      document.querySelector('html').classList.add('dark')
+    } else {
+      document.querySelector('html').classList.remove('dark')
+    }
+  }
+
   onMount(() => {
     console.log('Starting app...')
     footer.setup()
@@ -386,14 +399,13 @@
 <svelte:head>
   <meta
     http-equiv="Content-Security-Policy"
-    content="default-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'"
-  />
+    content="default-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'" />
 </svelte:head>
 
 <!-- Main app structure -->
-<main class="container-fluid d-flex vh-100 max-vh100 flex-column" style="max-height: 100vh">
+<main class="flex flex-col w-screen h-screen">
   <!-- Modals -->
-  <StaticAlert
+  <!-- <StaticAlert
     dialog={{
       id: 'newConfig',
       title: 'Are you sure you want to start a new config?',
@@ -418,182 +430,142 @@
       title: 'Loading repository data...',
       message: 'Please wait, downloading commit information can take a few minutes...'
     }}
-  />
+  /> -->
 
   <!-- Navbar row -->
-  <div class="row container-fluid vw-100 flex-grow-0">
+  <div class="flex grow-0 w-screen">
     <!-- Navbar col -->
-    <div class="col">
-      <nav class="navbar border-bottom border-body">
-        <div class="container-fluid justify-content-start">
-          <span class="navbar-brand"><h3>RepoToQDA</h3></span>
+    <nav class="flex w-screen p-2 items-center">
+      <h3 class="font-black text-3xl ps-4 me-20">RepoToQDA</h3>
+      {#if $repo.commits.length == 0}
+        <Button on:click={() => window.files.forceClearCache()}>
+          <Trash2 class="me-2" />Clear local caches (all repos)
+        </Button>
+      {/if}
 
-          {#if $repo.commits.length == 0}
-            <button
-              type="button"
-              class="btn btn-outline-primary ms-2"
-              on:click={() => window.files.forceClearCache()}
-              ><i class="bi bi-trash3-fill"></i> Clear local caches (all repos)</button
-            >
-          {/if}
+      <Button on:click={toggleTheme} class="ms-auto"><SunMoon class="me-2" />Toggle theme</Button>
 
-          <button
-            data-bs-toggle="modal"
-            data-bs-target="#newConfig"
-            class="btn btn-outline-primary ms-auto"
-            type="button"
-            ><i class="bi bi-file-plus-fill"></i> New config
-          </button>
+      <!-- <button data-bs-toggle="modal" data-bs-target="#newConfig" class="ms-auto" type="button">
+        New config</button> -->
+      <Button on:click={resetConfig}><FilePlus class="me-2" />New config</Button>
 
-          <button
-            class="btn btn-outline-primary ms-2"
-            data-bs-toggle="modal"
-            data-bs-target="#loadConfig"
-            type="button"><i class="bi bi-file-arrow-up-fill"></i> Load config</button
-          >
+      <Button on:click={saveConfig}><Save class="me-2" />Save config</Button>
+      <!-- <button class="ms-2" type="button" on:click={saveConfig}
+        ><i class="bi bi-file-arrow-down-fill"></i> Save config</button
+      > -->
 
-          <button class="btn btn-outline-primary ms-2" type="button" on:click={saveConfig}
-            ><i class="bi bi-file-arrow-down-fill"></i> Save config</button
-          >
+      <Button data-bs-toggle="modal" data-bs-target="#loadConfig"
+        ><FolderOpen class="me-2" />Open config</Button>
+      <!-- <button class="ms-2" data-bs-toggle="modal" data-bs-target="#loadConfig" type="button"
+        ><i class="bi bi-file-arrow-up-fill"></i> Load config</button
+      > -->
 
-          {#if $repo.commits.length > 0}
-            <button
-              type="button"
-              class="btn btn-outline-primary ms-2"
-              on:click={() => navigator.clipboard.writeText(JSON.stringify($repo.commits))}
-              ><i class="bi bi-clipboard-plus"></i> Copy commit data to clipboard</button
-            >
-          {/if}
-        </div>
-      </nav>
-    </div>
+      {#if $repo.commits.length > 0}
+        <Button
+          on:click={() => navigator.clipboard.writeText(JSON.stringify($repo.commits))}
+          title="">Copy commit data to clipboard</Button>
+      {/if}
+    </nav>
   </div>
+
   <!-- Main content row -->
-  <div class="row flex-grow-1 py-2 g-2">
+  <div class="flex px-2 w-screen h-full overflow-hidden">
     <!-- Left col -->
-    <div class="col d-flex flex-column">
+    <div class="flex flex-col h-100 w-1/4 min-w-[200px]">
       <!-- Top left row+col -->
-      <div class="row" style:height={repoInfoReady ? '23%' : '35%'}>
-        <div class="col d-flex">
-          {#key repoLoader}
-            <RepoLoader
-              on:repoDataLoaded={onLoadedRepoData}
-              bind:loadPromise={repoLoadingPromise}
-            />
-          {/key}
-        </div>
-      </div>
+      {#key repoLoader}
+        <RepoLoader
+          on:repoDataLoaded={onLoadedRepoData}
+          bind:loadPromise={repoLoadingPromise}
+          class="grow-0 h-auto" />
+      {/key}
 
       <!-- Bottom left row+col -->
       {#if repoInfoReady}
-        <div class="row flex-grow-1">
-          <div class="col d-flex">
-            <Pane>
-              <div slot="header" class="d-flex flex-grow-0 align-items-center w-100">
-                <div class="mt-1">
-                  <b>Actions</b>
-                </div>
-                <div class="ms-auto">
-                  <div class="dropdown">
-                    <button
-                      id="addActionDropdownBtn"
-                      class="btn btn-primary btn-sm dropdown-toggle"
-                      type="button"
-                      aria-expanded={actionDropdown}
-                      on:click={toggleDropdown}
-                    >
-                      <i class="bi bi-plus-circle"></i> Add action
-                    </button>
-                    <ul
-                      class="dropdown-menu"
-                      use:clickOutside
-                      on:click_outside={dismissAddActionsDropdown}
-                      class:show={actionDropdown}
-                    >
-                      <li>
-                        <button
-                          class="dropdown-item"
-                          type="button"
-                          on:click={() => {
-                            actions.current = actions.addApplyCodeCommitGlobTo()
-                            actionDropdown = false
-                          }}>Apply codes to commits by pattern</button
-                        >
-                      </li>
-                      <!-- <li>
-                        <button
-                          class="dropdown-item"
-                          type="button"
-                          on:click={() => {
-                            actions.current = actions.addImportFilesByGlobTo()
-                            actionDropdown = false
-                          }}>Import files by glob pattern</button
-                        >
-                      </li> -->
-                    </ul>
-                  </div>
-                </div>
-              </div>
-              <div slot="body">
-                <div class="list-group">
-                  {#each [actions.manualIgnoreCommits, actions.manualImportFiles, actions.manualImportFolderText, actions.devlogCompilation, actions.individualCommitDevlog, actions.manualEncodeCommits] as action (action.guid)}
-                    <ActionListitem {action} on:actionUpdated={updateQdpx} />
-                  {/each}
+        <!-- The min-h-0 is needed for fbody and footer sizing -->
+        <Pane title="Actions" class="grow min-h-0">
+          <div slot="body">
+            {#each [actions.manualIgnoreCommits, actions.manualImportFiles, actions.manualImportFolderText, actions.devlogCompilation, actions.individualCommitDevlog, actions.manualEncodeCommits] as action (action.guid)}
+              <ActionListitem {action} on:actionUpdated={updateQdpx} />
+            {/each}
 
-                  {#each actions.getAll('applyCodeCommitGlob') as action (action.guid)}
-                    <ActionApplyCodeCommitGlob
-                      {action}
-                      {commitsToProcess}
-                      on:actionUpdated={updateQdpx}
-                      on:actionDeleted={deleteActionFromList}
-                    />
-                  {/each}
-
-                  <!-- {#each actions.getAll('importFilesByGlob') as action (action.guid)}
-                    <ActionImportFilesByGlob
-                      {action}
-                      on:actionUpdated={updateQdpx}
-                      on:actionDeleted={deleteActionFromList}
-                    />
-                  {/each} -->
-                </div>
-              </div>
-            </Pane>
+            {#each actions.getAll('applyCodeCommitGlob') as action (action.guid)}
+              <ActionApplyCodeCommitGlob
+                {action}
+                {commitsToProcess}
+                on:actionUpdated={updateQdpx}
+                on:actionDeleted={deleteActionFromList} />
+            {/each}
           </div>
-        </div>
+          <div slot="footer">
+            <Button
+              id="addActionDropdownBtn"
+              class="btn btn-primary btn-sm dropdown-toggle my-2"
+              type="button"
+              aria-expanded={actionDropdown}
+              on:click={toggleDropdown}>
+              <i class="bi bi-plus-circle"></i>
+              Add action
+            </Button>
+            <ul
+              class="dropdown-menu"
+              use:clickOutside
+              on:click_outside={dismissAddActionsDropdown}
+              class:show={actionDropdown}>
+              <li>
+                <Button
+                  class="dropdown-item my-2"
+                  type="button"
+                  on:click={() => {
+                    actions.current = actions.addApplyCodeCommitGlobTo()
+                    actionDropdown = false
+                  }}>
+                  Apply codes to commits by pattern
+                </Button>
+              </li>
+              <!-- <li>
+                      <button
+                        class="dropdown-item"
+                        type="button"
+                        on:click={() => {
+                          actions.current = actions.addImportFilesByGlobTo()
+                          actionDropdown = false
+                        }}>Import files by glob pattern</button
+                      >
+                    </li> -->
+            </ul>
+          </div>
+        </Pane>
       {/if}
     </div>
 
     <!-- Center col -->
-    <div class="col d-flex overflow-hidden">
-      <Pane>
-        <div slot="header"><b>Source commits</b></div>
-        <div slot="body">
-          {#if repoInfoReady}
-            {#each $repo.commits as commit (commit.hash)}
-              <CommitListItem
-                {commit}
-                {userRepoInfo}
-                encodingAction={actions.manualEncodeCommits}
-                activeAtStart={checkIfActiveAtStart(commit.hash)}
-                on:toggleIncluded={toggleIncludedCommit}
-                on:fileToggled={updateQdpx}
-                on:folderToggled={updateQdpx}
-                on:commitEncoded={commitEncoded}
-                promise={repoLoadingPromise}
-              />
-            {/each}
-          {:else}
-            <p id="gitData">Waiting for repo data.</p>
-          {/if}
-        </div>
-      </Pane>
-    </div>
+
+    <Pane
+      title="Commits{$repo.commits.length > 0 ? ` for ${userRepoInfo}` : ''}"
+      class="h-100 w-1/2 max-w-full">
+      <div slot="body" class="flex flex-col">
+        {#if repoInfoReady}
+          {#each $repo.commits as commit (commit.hash)}
+            <CommitListItem
+              {commit}
+              {userRepoInfo}
+              encodingAction={actions.manualEncodeCommits}
+              activeAtStart={checkIfActiveAtStart(commit.hash)}
+              on:toggleIncluded={toggleIncludedCommit}
+              on:fileToggled={updateQdpx}
+              on:folderToggled={updateQdpx}
+              on:commitEncoded={commitEncoded}
+              promise={repoLoadingPromise} />
+          {/each}
+        {:else}
+          <p id="gitData">Waiting for repo data.</p>
+        {/if}
+      </div>
+    </Pane>
 
     <!-- Right col -->
-    <div class="col d-flex flex-column">
-      <QdpxPreview qdpxData={qdpx} />
-    </div>
+    <QdpxPreview qdpxData={qdpx} class="h-100 w-1/4 min-w-[200px]" />
   </div>
 
   <!-- Footer row: notifications area -->

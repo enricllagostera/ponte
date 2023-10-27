@@ -24,8 +24,7 @@
             bind:checked={action.active}
             name={`${action.name}-${action.guid}`}
             on:change={onChanged}
-            id={`${action.name}-${action.guid}`}
-          />
+            id={`${action.name}-${action.guid}`} />
           <h5 style:display="inline">
             {action.title}
           </h5>

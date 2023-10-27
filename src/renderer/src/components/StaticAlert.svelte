@@ -9,8 +9,7 @@
   data-bs-keyboard="false"
   tabindex="-1"
   aria-labelledby="staticBackdropLabel"
-  aria-hidden="true"
->
+  aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -29,15 +28,13 @@
             class="btn btn-danger"
             data-bs-toggle="modal"
             data-bs-target={`#${dialog.showNextModalWithId}`}
-            on:click={dialog.executeOnConfirm}>{dialog.confirm}</button
-          >
+            on:click={dialog.executeOnConfirm}>{dialog.confirm}</button>
         {:else}
           <button
             type="button"
             class="btn btn-danger"
             data-bs-dismiss="modal"
-            on:click={dialog.executeOnConfirm}>{dialog.confirm}</button
-          >
+            on:click={dialog.executeOnConfirm}>{dialog.confirm}</button>
         {/if}
       </div>
     </div>

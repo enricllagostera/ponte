@@ -12,5 +12,6 @@ const allCodeOptions: CodeOption[] = []
 export const codeOptions = writable(allCodeOptions)
 
 export const settings = writable({
-  supportedTextExts: ['md', 'txt', 'js', 'css', 'html', 'cs']
+  supportedTextExts: ['md', 'txt', 'js', 'css', 'html', 'cs'],
+  darkTheme: false
 })
