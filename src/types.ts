@@ -77,6 +77,7 @@ export type Commit = {
   branches: string[]
   fileTree: RepoDirent[]
   fileChangeStats: { operation: string; filepath: string }[]
+  trailers?: string
 }
 
 export type CommitAuthor = {

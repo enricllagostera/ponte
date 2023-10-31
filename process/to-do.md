@@ -1,5 +1,7 @@
 ---
+
 kanban-plugin: basic
+
 ---
 
 ## Backlog
@@ -7,7 +9,6 @@ kanban-plugin: basic
 - [ ] Separate commands **compile folder** from **individual and hierarchical file selection** in file preview, showing them as diff GUI elements
 - [ ] Allow importing from wiki as individual files or as folder compilations
 - [ ] Load commits from wiki repo and display in commit feed
-- [ ] Compile devlogs with advanced options (git trailers)
 - [ ] Visualize a timeline of commits showing passage of time between them
 - [ ] Visualize commits in an ordered topological timeline (usual git charts)
 - [ ] Encode manually selected files
@@ -19,21 +20,27 @@ kanban-plugin: basic
 - [ ] Encode commits from full text content (glob pattern)
 - [ ] Create a URI handler (see Electron Deep Link feature) that will open a specific version of the app that can run web-based playable builds from the local commits. Alternatively, show a list of build folders per commit.
 
+
 ## High priority
 
 - [ ] Use MeltUI to generate components
 - [ ] Re-implement modals
 
+
 ## In progress
+
+
 
 ## Done
 
 **Complete**
 
----
+
+***
 
 ## Archive
 
+- [x] 2023-10-31T12:34:51-04:00 -- Compile devlogs with advanced options (git trailers)
 - [x] 2023-10-27T17:53:44-04:00 -- Adds styled scrollbars
 - [x] 2023-10-27T16:23:48-04:00 -- Remove Bootstrap and Bootstrap icons
 - [x] 2023-10-26T18:59:22-04:00 -- Use lucide-svelte icons
@@ -50,9 +57,7 @@ kanban-plugin: basic
 - [x] 2023-10-06T13:07:32-04:00 -- Prepare MAC build
 
 %% kanban:settings
-
 ```
 {"kanban-plugin":"basic"}
 ```
-
 %%

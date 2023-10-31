@@ -1,6 +1,7 @@
 import * as Git from 'simple-git'
 import * as path from 'path'
 import fs from 'fs-extra'
+
 import utils from './helpers'
 import { Commit, RepoDirent } from '../types'
 
@@ -174,3 +175,17 @@ class GitManager {
   }
 }
 export default GitManager
+
+export function parseTrailers(trailers: string = ''): Array<{ key: string; value: string }> {
+  if (trailers == '') {
+    return []
+  }
+  const res: { key: string; value: string }[] = []
+  const all = trailers.split('\n')
+  for (const trailer of all) {
+    const key = trailer.split(':')[0].trim()
+    const value = trailer.split(':')[1].trim()
+    res.push({ key, value })
+  }
+  return res
+}

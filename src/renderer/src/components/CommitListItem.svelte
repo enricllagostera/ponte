@@ -150,6 +150,11 @@
     }
     return checkTextSourceExt(node.name) == false
   }
+
+  async function devlogWithTrailerContent(): Promise<string> {
+    const dv = await window.loader.getDevlogForCommit(commit.hash, {})
+    return dv.content
+  }
 </script>
 
 <div
@@ -197,8 +202,10 @@
 
   {#if commit.body != ''}
     <div class="prose prose-base dark:prose-invert prose-zinc mb-4 px-4">
-      <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-      {@html marked.parse(commit.body)}
+      {#await devlogWithTrailerContent() then dlog}
+        <!-- eslint-disable-next-line svelte/no-at-html-tags -->
+        {@html marked.parse(dlog)}
+      {/await}
     </div>
   {/if}
 

@@ -2,6 +2,7 @@ import * as fs from 'fs-extra'
 import { join, resolve, relative } from 'path'
 import AdmZip from 'adm-zip'
 import { glob } from 'glob'
+import * as matter from 'gray-matter'
 
 import GitManager from './gitManager'
 import utils from './helpers'
@@ -155,6 +156,11 @@ class DataInitializer {
     }
 
     return tree
+  }
+
+  parseFrontmatter(raw) {
+    if (matter.test(raw)) return matter.default(raw)
+    return undefined
   }
 }
 

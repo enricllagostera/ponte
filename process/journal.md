@@ -1,5 +1,19 @@
 # Process journal
 
+## 2023-10-31 Devlogs from Git trailers
+
+This is a useful feature for the kind of MDM that I often do, where notes are in separate files instead of commit messages. Basically, it loads devlogs from files defined on the last lines of Git messages. That way, I can keep the commit messages themselves quite clean and can also have the option to load the devlogs from the commit as it was in the committing time or from the latest commit (which would allow for properly tracked corrections / typos / standardization). Here is an example of what such trailers look like:
+
+```bash
+devlog: process/devlog/some_filename.md
+```
+
+And how the content of that file is rendered: 
+
+![](media/20231031T124101-0400--journal.png)
+
+There are still refinements, particularly to styling / customziation, but the base feature is there and does not stand in the way of users who aren't using Git trailers.
+
 ## 2023-10-27 GUI redesigns and meeting notes
 
 Re-implementing the GUI via TailwindCSS and Lucide icons, removing Bootstrap (it's CSS and icons). Now with dark theme.

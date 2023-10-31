@@ -21,6 +21,7 @@ import { clearCache } from './dataInitializer'
 import { formatCodeAsHTML } from './docxBuilder'
 
 import type { Commit, Devlog } from '../types'
+import { parseTrailers } from './gitManager'
 
 let initializer: DataInitializer
 let allCommits: Commit[]
@@ -210,6 +211,25 @@ async function getDevlogForCommit(_event: IpcMainInvokeEvent, commitHash: string
   const commitData = allCommits.filter((c) => c.hash == commitHash)[0]
   // basic devlog from commit message
   const commitISODate = DateTime.fromMillis(commitData.author.timestamp).toISODate()
+
+  const devlogTrailers = parseTrailers(commitData.trailers).filter(
+    ({ key }) => key.toLowerCase() == 'devlog'
+  )
+  let devlogs = []
+  let devlogsContent = ''
+  for (const trailer of devlogTrailers) {
+    const raw = await initializer.readFileAtCommit(trailer.value, commitHash)
+    const newDevlog = initializer.parseFrontmatter(raw)
+    if (!newDevlog) {
+      devlogsContent += `\n\n${raw}`
+      continue
+    }
+    devlogs.push(newDevlog)
+    devlogsContent += `\n\n${newDevlog.data?.title ? '# ' + newDevlog.data?.title + '\n\n' : ''}${
+      newDevlog.content
+    }`
+  }
+
   const devlog: Devlog = {
     hashAbbrev: commitData.hashAbbrev,
     name: `Devlog for #${commitData.hashAbbrev} on ${commitISODate}`,
@@ -218,7 +238,7 @@ async function getDevlogForCommit(_event: IpcMainInvokeEvent, commitHash: string
       commitData.subject
     }\n\nCommit date: ${DateTime.fromMillis(commitData.author.timestamp).toISO()}\n\nMessage:\n\n${
       commitData.body || 'Empty commit message.'
-    }`
+    }\n\n${devlogsContent}`.trim()
   }
   return devlog
 }
