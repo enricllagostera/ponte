@@ -23,8 +23,6 @@ kanban-plugin: basic
 
 ## High priority
 
-- [ ] Use MeltUI to generate components
-- [ ] Re-implement modals
 
 
 ## In progress
@@ -40,6 +38,8 @@ kanban-plugin: basic
 
 ## Archive
 
+- [x] 2023-10-31T17:24:43-04:00 -- Re-implement modals
+- [x] 2023-10-31T17:24:43-04:00 -- Use MeltUI to generate components (dialogs)
 - [x] 2023-10-31T12:34:51-04:00 -- Compile devlogs with advanced options (git trailers)
 - [x] 2023-10-27T17:53:44-04:00 -- Adds styled scrollbars
 - [x] 2023-10-27T16:23:48-04:00 -- Remove Bootstrap and Bootstrap icons

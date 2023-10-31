@@ -21,6 +21,8 @@
   import NotificationFooter from './components/NotificationFooter.svelte'
   import type { PathLike } from 'fs-extra'
   import Button from './components/Button.svelte'
+  import Dialog from './components/Dialog.svelte'
+  import { createDialog } from '@melt-ui/svelte'
 
   const defaultQdpx = { sources: [], codes: [], commits: [] }
 
@@ -33,6 +35,12 @@
   let repoLoadingPromise = null
   let userRepoInfo = ''
   let footer: NotificationFooter
+
+  // let showNewConfigDialog: boolean = false
+
+  let newConfigDialog: Dialog
+  let loadConfigDialog: Dialog
+
   $settings.darkTheme = false
 
   function onLoadedRepoData(): void {
@@ -312,12 +320,11 @@
     let loadOptions = {
       title: `Load RepoToQDA config...`
     }
-    let res = JSON.parse(await window.loader.loadDialog(loadOptions))
-    const waitingModal = Modal.getInstance('#waitingLoadData')
-    if (!res) {
-      waitingModal.toggle()
+    let loadReturn = await window.loader.loadDialog(loadOptions)
+    if (!loadReturn) {
       return
     }
+    let res = JSON.parse(loadReturn)
     resetConfig()
     $repo.userRepoInfo = res.userRepoInfo
     $repo.commits = await window.loader.loadRepoData($repo.userRepoInfo)
@@ -351,7 +358,6 @@
     for (const act of allApplyCodeCommitByGlob) {
       $codeOptions = [...$codeOptions, ...act.codesToApply.map((ca) => ca.code)]
     }
-    waitingModal.toggle()
     repoDataIsReady()
     updateQdpx()
   }
@@ -404,34 +410,6 @@
 
 <!-- Main app structure -->
 <main class="flex flex-col w-screen h-screen">
-  <!-- Modals -->
-  <!-- <StaticAlert
-    dialog={{
-      id: 'newConfig',
-      title: 'Are you sure you want to start a new config?',
-      message: 'You will lose any unsaved changes.',
-      confirm: 'Start new config',
-      executeOnConfirm: resetConfig
-    }}
-  />
-  <StaticAlert
-    dialog={{
-      id: 'loadConfig',
-      title: 'Are you sure you want to load config from a file?',
-      message: 'You will lose any unsaved changes.',
-      confirm: 'Load config from a file',
-      showNextModalWithId: 'waitingLoadData',
-      executeOnConfirm: loadConfig
-    }}
-  />
-  <WaitingModal
-    dialog={{
-      id: 'waitingLoadData',
-      title: 'Loading repository data...',
-      message: 'Please wait, downloading commit information can take a few minutes...'
-    }}
-  /> -->
-
   <!-- Navbar row -->
   <div class="flex grow-0 w-screen">
     <!-- Navbar col -->
@@ -445,20 +423,18 @@
 
       <Button on:click={toggleTheme} class="ms-auto"><SunMoon class="me-2" />Toggle theme</Button>
 
-      <!-- <button data-bs-toggle="modal" data-bs-target="#newConfig" class="ms-auto" type="button">
-        New config</button> -->
-      <Button on:click={resetConfig}><FilePlus class="me-2" />New config</Button>
+      <Dialog title="New config?" onConfirm={resetConfig} bind:this={newConfigDialog} />
+      <Button on:click={() => newConfigDialog.trigger()}
+        ><FilePlus class="me-2" />New config</Button>
 
       <Button on:click={saveConfig}><Save class="me-2" />Save config</Button>
-      <!-- <button class="ms-2" type="button" on:click={saveConfig}
-        ><i class="bi bi-file-arrow-down-fill"></i> Save config</button
-      > -->
 
-      <Button data-bs-toggle="modal" data-bs-target="#loadConfig"
+      <Dialog
+        title="Are you sure you want to load config from a file?"
+        onConfirm={loadConfig}
+        bind:this={loadConfigDialog} />
+      <Button on:click={() => loadConfigDialog.trigger()}
         ><FolderOpen class="me-2" />Open config</Button>
-      <!-- <button class="ms-2" data-bs-toggle="modal" data-bs-target="#loadConfig" type="button"
-        ><i class="bi bi-file-arrow-up-fill"></i> Load config</button
-      > -->
 
       {#if $repo.commits.length > 0}
         <Button
@@ -523,16 +499,6 @@
                   Apply codes to commits by pattern
                 </Button>
               </li>
-              <!-- <li>
-                      <button
-                        class="dropdown-item"
-                        type="button"
-                        on:click={() => {
-                          actions.current = actions.addImportFilesByGlobTo()
-                          actionDropdown = false
-                        }}>Import files by glob pattern</button
-                      >
-                    </li> -->
             </ul>
           </div>
         </Pane>
@@ -540,7 +506,6 @@
     </div>
 
     <!-- Center col -->
-
     <Pane
       title="Commits{$repo.commits.length > 0 ? ` for ${userRepoInfo}` : ''}"
       class="h-100 w-1/2 max-w-full">

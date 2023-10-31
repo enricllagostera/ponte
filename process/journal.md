@@ -1,6 +1,6 @@
 # Process journal
 
-## 2023-10-31 Devlogs from Git trailers
+## 2023-10-31 Devlogs from Git trailers and changes to Dialog components
 
 This is a useful feature for the kind of MDM that I often do, where notes are in separate files instead of commit messages. Basically, it loads devlogs from files defined on the last lines of Git messages. That way, I can keep the commit messages themselves quite clean and can also have the option to load the devlogs from the commit as it was in the committing time or from the latest commit (which would allow for properly tracked corrections / typos / standardization). Here is an example of what such trailers look like:
 
@@ -13,6 +13,8 @@ And how the content of that file is rendered:
 ![](media/20231031T124101-0400--journal.png)
 
 There are still refinements, particularly to styling / customziation, but the base feature is there and does not stand in the way of users who aren't using Git trailers.
+
+(timestamp::2023-10-31T17:20:49-04:00) I also re-implemented the *New config* and *Open config* alert dialogs. Now they avoid the old Bootstrap-based implementation and use the [Melt UI](https://www.melt-ui.com/) system. I want to slowly move the other reusable components to this system, as they seem to be more accessible and specific to Svelte. Also, they work well with Tailwind for styling, so it might be a bit easier to make they look consistent with the rest of the app.
 
 ## 2023-10-27 GUI redesigns and meeting notes
 
