@@ -27,7 +27,7 @@
 
 <Pane title="QDPX Preview" class={$$restProps.class || ''}>
   <div slot="body" class="max-w-full">
-    <h3><Files class="inline me-1" /> Sources</h3>
+    <h3><Files class="me-1 inline" /> Sources</h3>
     <ul class=" my-2">
       {#each qdpxData.sources as source}
         {#if source.parent == 'repository' || source.parent == 'copyTextSource' || source.parent == 'compilationSource' || source.parent == 'devlog'}
@@ -50,18 +50,23 @@
       {/if}
     </ul>
 
-    <h3><Tags class="inline me-1" /> Codes</h3>
+    <h3><Tags class="me-1 inline" /> Codes</h3>
     <ul class="my-2">
       {#each qdpxData.codes as code}
         <li>
-          <span class="bg-blue-300 text-zinc-800 rounded p-1 items-center"
-            ><Tag class="inline me-1 w-5 h-5" /> <b>{code.code.value}</b></span
+          <span
+            class="items-center rounded-full border-2 border-c-black bg-app px-2 py-1 dark:border-app dark:bg-c-black dark:text-app"
+            ><Tag class="me-1 inline h-5 w-5" /> <b>{code.code.value}</b></span
           >, applied to:
           <ul class="m-2">
             {#each code.commitHashes as hash}
               <li class="ps-2">
-                <GitCommit class="inline me-1" /> #{getCommit(hash).hashAbbrev} - {getCommit(hash)
-                  .subject}
+                <span
+                  class="m-1 items-center rounded-full border-2 border-c-black p-1 text-c-black dark:border-c-white dark:text-c-white"
+                  ><GitCommit class="me-1 inline" />
+                  #{getCommit(hash).hashAbbrev}
+                </span>
+                {getCommit(hash).subject}
               </li>
             {/each}
           </ul>
@@ -71,6 +76,7 @@
   </div>
   <div slot="footer">
     <Button
+      primary
       class="btn btn-primary btn-sm"
       type="button"
       disabled={qdpxData.commits.length <= 0}

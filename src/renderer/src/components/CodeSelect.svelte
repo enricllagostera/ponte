@@ -51,7 +51,7 @@
   }
 </script>
 
-<div class="flex items-center border-2 my-2 w-100 dark:bg-zinc-800 dark:text-zinc-200">
+<div class="flex items-center border-2 my-2 w-100 dark:bg-neutral-800 dark:text-neutral-200">
   <div class="m-2"><Tags class="inline" /></div>
   <div class="flex fc-select w-full max-w-full">
     {#if $settings.darkTheme}
@@ -65,9 +65,9 @@
         {items}
         clearable
         multiFullItemClearable
-        --multi-item-bg="rgb(59, 130, 246)"
+        --multi-item-bg="#13d44e"
         --background="rgb(39, 39, 42)"
-        --input-color="rgb(228, 228, 231)"
+        --input-color="#101010"
         --border-radius="0px"
         --border="0"
         --border-hover="0"
@@ -90,8 +90,8 @@
         multiFullItemClearable
         --background="rgb(228, 228, 231)"
         --input-color="rgb(39, 39, 42)"
-        --multi-item-bg="rgb(59, 130, 246)"
-        --multi-item-color="rgb(228, 228, 231)"
+        --multi-item-bg="#13d44e"
+        --multi-item-color="#101010"
         --border-radius="0px"
         --border="0"
         --border-hover="0"

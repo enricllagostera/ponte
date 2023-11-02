@@ -1,6 +1,6 @@
 <button
   on:click
   type="button"
-  class="text-indigo-700 hover:text-white border border-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:border-indigo-500 dark:text-indigo-500 dark:hover:text-white dark:hover:bg-indigo-500 dark:focus:ring-indigo-800 {$$restProps.class}">
+  class="text-c-black bg-transparent hover:text-c-white hover:bg-c-black active:bg-transparent disabled:bg-f-grey-200 disabled:text-c-white active:text-c-black active:bg-app active:border-app border-2 border-c-black focus:outline-none focus-visible:ring-2 ring-offset-2 focus-visible:ring-c-black font-medium text-base p-2 text-center inline-flex items-center mr-2 active:hover:ring-0! {$$restProps.class}">
   <slot />
 </button>

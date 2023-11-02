@@ -8,13 +8,13 @@
 
 <div class="node items-start">
   <div
-    class="flex items-start border-l-2 border-blue-500"
+    class="flex items-start border-l-2 border-app"
     on:click={() => {
       showChildren = !showChildren
     }}>
     {#if node.children}
       <div
-        class="w-6 h-6 -rotate-90 transition-transform text-blue-500"
+        class="w-6 h-6 ms-0 -rotate-90 transition-transform text-app"
         class:active={showChildren}>
         <svg focusable="false" viewBox="0 0 24 24">
           <path
@@ -29,7 +29,9 @@
     <slot {node} />
   </div>
   {#if node.children && showChildren}
-    <div class="ps-3 me-2 border-l-2 border-blue-500" transition:slide|local={{ duration: 150 }}>
+    <div
+      class="ps-[0.65rem] me-2 border-l-2 border-f-grey-100"
+      transition:slide|local={{ duration: 150 }}>
       {#each node.children as _node, i}
         <svelte:self node={_node} index={i} let:node>
           <slot {node} />

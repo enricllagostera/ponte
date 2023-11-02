@@ -36,7 +36,7 @@
 {#if message != ''}
   <div
     transition:slide
-    class="flex flex-col grow-0 w-screen p-4 text-center bg-amber-500 text-zinc-800">
+    class="flex flex-col grow-0 w-screen p-4 text-center bg-f-warn text-c-black">
     {#if message != ''}
       <div class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></div>
       {message}

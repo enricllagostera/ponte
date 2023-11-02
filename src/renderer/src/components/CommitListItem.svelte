@@ -11,6 +11,7 @@
   import Tree from './Tree.svelte'
   import type { Action, AppliedCode, CodeOption, Commit } from '../../../types'
   import { GitCommit, Github, Tags } from 'lucide-svelte'
+  import { slide } from 'svelte/transition'
 
   export let encodingAction: Action
   export let activeAtStart = true
@@ -158,7 +159,7 @@
 </script>
 
 <div
-  class="flex flex-col border-indigo-200 dark:border-indigo-900 border-t-0 border-b-3 border-r-3 border-l-3 border-2 mb-4 rounded-lg"
+  class="mb-10 flex flex-col border-2 border-c-black dark:border-f-grey-200"
   class:text-bg-secondary={!active}
   use:inview={inViewOptions}
   on:inview_enter={(event) => {
@@ -169,39 +170,30 @@
     const { inView } = event.detail
     isInView = inView
   }}>
-  <div class="flex items-center justify-between rounded-t-lg bg-indigo-100 dark:bg-indigo-700">
+  <div
+    class="flex items-center justify-between border-b-2 border-c-black bg-c-black p-2 text-sm text-c-white dark:border-b-f-grey-200">
     <span
-      class="bg-indigo-200 text-indigo-800 rounded-tl-lg text-sm font-medium me-2 p-2 dark:bg-indigo-900 dark:text-indigo-300"
+      class="me-2 inline-flex items-center rounded-full border-2 border-c-white p-2 px-2 py-1 text-sm font-medium"
       ><GitCommit class="inline" /> #{commit.hashAbbrev}</span>
-    <time class="inline text-sm font-normal text-zinc-500 dark:text-zinc-400"
+    <time class="text-sm font-normal"
       >{DateTime.fromMillis(commit.author.timestamp).toISODate()}, approx. {DateTime.fromMillis(
         commit.author.timestamp
       ).toRelative()}</time>
     <a
-      class=" ms-auto w-fit h-fit text-sm text-indigo-700 dark:text-indigo-300 cursor-pointer me-4"
+      class="active:hover:ring-0! me-2 ms-auto inline-flex h-fit w-fit cursor-pointer items-center border-2 border-c-black bg-transparent p-2 text-center text-sm font-medium text-c-white underline ring-offset-2 ring-offset-c-white hover:bg-c-black hover:text-app focus:outline-none focus-visible:z-10 focus-visible:border-2 focus-visible:ring-2 focus-visible:ring-c-black active:border-app active:bg-app active:text-c-black active:focus-visible:border-c-white disabled:bg-f-grey-200 disabled:text-c-white"
       href={`https://github.com/${userRepoInfo}/tree/${commit.hash}`}
       target="_blank"
       role="button">
-      <Github class="inline" /> Browse on Github</a>
+      <Github class="me-1 inline h-5 w-5" /> Browse on Github</a>
   </div>
-  <!-- <div class="mt-1">
-          <div class="form-check form-switch">
-            <input
-              class="form-check-input"
-              type="checkbox"
-              role="switch"
-              bind:checked={active}
-              on:change={onToggleIncluded}
-              id="includeCheckbox_{commit.hash}" />
-            <label for="includeCheckbox_{commit.hash}">Include in QDPX</label>
-          </div>
-        </div> -->
-  <h3 class="flex items-center my-4 p-4 text-lg font-semibold text-zinc-900 dark:text-white">
+  <h3
+    class="mb-4 flex items-center border-y-8 border-y-app p-4 py-2 text-xl font-bold dark:text-white">
     {commit.subject}
   </h3>
 
   {#if commit.body != ''}
-    <div class="prose prose-base dark:prose-invert prose-zinc mb-4 px-4">
+    <div
+      class="prose prose-base prose-neutral mb-4 px-4 dark:prose-invert prose-headings:mt-2 prose-headings:text-f-grey-200 prose-h1:border-t-2 prose-h1:pt-4 prose-h1:text-xl prose-h1:text-c-black prose-h1:before:content-['Devlog:_'] dark:prose-headings:text-f-grey-100 dark:prose-h1:text-c-white">
       {#await devlogWithTrailerContent() then dlog}
         <!-- eslint-disable-next-line svelte/no-at-html-tags -->
         {@html marked.parse(dlog)}
@@ -211,19 +203,19 @@
 
   {#if isInView}
     <div class="overflow-auto px-4">
-      <details class:animate={isInView} class="pe-2 overflow-auto" bind:open={showFileTree}>
-        <summary
-          class="w-fit text-indigo-700 hover:text-white border border-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:border-indigo-500 dark:text-indigo-500 dark:hover:text-white dark:hover:bg-indigo-500 dark:focus:ring-indigo-800 text-center cursor-pointer"
-          ><i class="bi bi-eye"></i> Preview files in this commit</summary>
+      <details class:animate={isInView} class="overflow-auto pe-2" bind:open={showFileTree}>
+        <summary class="w-fit"><i class="bi bi-eye"></i> Preview files in this commit</summary>
         {#await promise then}
           <Tree tree={commit.fileTree} let:node>
             <div
-              class="flex items-start align-middle p-1 text-sm"
+              class="flex items-start py-1 align-middle text-sm"
               class:italic={isUnsupported(node)}
               class:opacity-50={isUnsupported(node)}>
               {#if node.children}
                 <input
                   type="checkbox"
+                  class="form-checkbox text-app-accessible focus:outline-none
+                  focus:ring-2 focus:ring-app-accessible focus:ring-offset-c-white dark:focus:ring-app dark:focus:ring-offset-c-black"
                   role="switch"
                   id="folderSwitch_{node.name}"
                   on:change={(e) => toggleFolder(e, node)}
@@ -234,6 +226,8 @@
               {:else}
                 {#if checkTextSourceExt(node.name)}
                   <input
+                    class="form-checkbox text-app-accessible focus:outline-none
+                  focus:ring-2 focus:ring-app focus:ring-offset-c-white dark:focus:ring-offset-c-black"
                     type="checkbox"
                     role="switch"
                     id="fileSwitch_{node.name}_{commit.hashAbbrev}"
@@ -249,8 +243,8 @@
                   href={`https://github.com/${userRepoInfo}/tree/${commit.hash}/${node.rel}`}
                   target="_blank"
                   title="See file in GitHub"
-                  class="mx-2 items-start align-middle text-indigo-600"
-                  ><Github class="w-4 h-4" /></a>
+                  class="mx-2 items-start align-middle text-neutral-600"
+                  ><Github class="h-4 w-4" /></a>
               {/if}
             </div>
           </Tree>

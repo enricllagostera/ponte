@@ -6,10 +6,9 @@ kanban-plugin: basic
 
 ## Backlog
 
-- [ ] Separate commands **compile folder** from **individual and hierarchical file selection** in file preview, showing them as diff GUI elements
 - [ ] Allow importing from wiki as individual files or as folder compilations
 - [ ] Load commits from wiki repo and display in commit feed
-- [ ] Visualize a timeline of commits showing passage of time between them
+- [ ] Improve keyboard accessibility of the tree navigation in file selection
 - [ ] Visualize commits in an ordered topological timeline (usual git charts)
 - [ ] Encode manually selected files
 - [ ] Ignore commits from subject (simple string pattern)
@@ -23,10 +22,14 @@ kanban-plugin: basic
 
 ## High priority
 
+- [ ] Visualize a timeline of commits showing passage of time between them
+- [ ] Separate commands **compile folder** from **individual and hierarchical file selection** in file preview, showing them as diff GUI elements
+- [ ] Convert tag input to Melt UI
 
 
 ## In progress
 
+- [ ] Scroll to a commit in current view when clicks on the commit hash pill
 
 
 ## Done
@@ -38,6 +41,7 @@ kanban-plugin: basic
 
 ## Archive
 
+- [x] 2023-11-02T17:06:47-04:00 -- Change GUI styling to Boosted-inspired version
 - [x] 2023-10-31T17:24:43-04:00 -- Re-implement modals
 - [x] 2023-10-31T17:24:43-04:00 -- Use MeltUI to generate components (dialogs)
 - [x] 2023-10-31T12:34:51-04:00 -- Compile devlogs with advanced options (git trailers)

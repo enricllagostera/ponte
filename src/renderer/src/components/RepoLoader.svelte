@@ -3,7 +3,7 @@
   import { createEventDispatcher } from 'svelte'
   import Pane from './Pane.svelte'
   import Button from './Button.svelte'
-  import { DownloadCloud, FolderCheck, HardDriveDownload } from 'lucide-svelte'
+  import { FolderCheck, HardDriveDownload } from 'lucide-svelte'
 
   const dispatch = createEventDispatcher()
 
@@ -45,7 +45,7 @@
           class:disabled={confirmedRepoInfo != ''}
           disabled={confirmedRepoInfo != ''} />
         {#if confirmedRepoInfo == ''}
-          <Button id="checkRepo" on:click={checkRepoInfo} class="my-2"
+          <Button primary id="checkRepo" on:click={checkRepoInfo} class="my-2"
             ><FolderCheck class="me-2" /> Check repo</Button>
         {/if}
       {/if}
@@ -53,8 +53,8 @@
       {#if confirmPromise != null}
         {#await confirmPromise then}
           {#if loadPromise == null && $repo.commits.length == 0}
-            <Button type="button" id="loadRepo" on:click={loadRepo} class="my-2">
-              <HardDriveDownload /> Load data from {$repo.userRepoInfo}
+            <Button primary type="button" id="loadRepo" on:click={loadRepo} class="my-2">
+              <HardDriveDownload class="me-2" /> Load data
             </Button>
           {/if}
         {:catch error}
@@ -67,12 +67,12 @@
   </div>
   <div slot="footer">
     {#if confirmPromise != null && confirmedRepoInfo == ''}
-      <div class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></div>
-      Checking if repository is available...
+      <div class="bg-f-warn text-c-black px-4 py-2" role="status">
+        Checking if repository is available...
+      </div>
     {/if}
     {#if loadPromise != null && $repo.commits.length == 0}
-      <div class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></div>
-      Preparing repository data...
+      <div class="bg-f-warn text-c-black px-4 py-2" role="status">Preparing repository data...</div>
     {/if}
   </div>
 </Pane>

@@ -23,6 +23,7 @@
   import Button from './components/Button.svelte'
   import Dialog from './components/Dialog.svelte'
   import { createDialog } from '@melt-ui/svelte'
+  import ButtonOutline from './components/ButtonOutline.svelte'
 
   const defaultQdpx = { sources: [], codes: [], commits: [] }
 
@@ -421,23 +422,27 @@
         </Button>
       {/if}
 
-      <Button on:click={toggleTheme} class="ms-auto"><SunMoon class="me-2" />Toggle theme</Button>
+      <Button on:click={toggleTheme} class="ms-auto me-2"
+        ><SunMoon class="me-2" />Toggle theme</Button>
 
-      <Dialog title="New config?" onConfirm={resetConfig} bind:this={newConfigDialog} />
-      <Button on:click={() => newConfigDialog.trigger()}
-        ><FilePlus class="me-2" />New config</Button>
+      <div class="inline-flex p-0 me-2">
+        <Dialog title="New config?" onConfirm={resetConfig} bind:this={newConfigDialog} />
+        <Button class="border-e-0" on:click={() => newConfigDialog.trigger()}
+          ><FilePlus class="me-2" />New config</Button>
 
-      <Button on:click={saveConfig}><Save class="me-2" />Save config</Button>
+        <Dialog
+          title="Are you sure you want to load config from a file?"
+          onConfirm={loadConfig}
+          bind:this={loadConfigDialog} />
+        <Button on:click={() => loadConfigDialog.trigger()}
+          ><FolderOpen class="me-2" />Open config</Button>
 
-      <Dialog
-        title="Are you sure you want to load config from a file?"
-        onConfirm={loadConfig}
-        bind:this={loadConfigDialog} />
-      <Button on:click={() => loadConfigDialog.trigger()}
-        ><FolderOpen class="me-2" />Open config</Button>
+        <Button class="border-s-0" on:click={saveConfig}><Save class="me-2" />Save config</Button>
+      </div>
 
       {#if $repo.commits.length > 0}
         <Button
+          class="me-2"
           on:click={() => navigator.clipboard.writeText(JSON.stringify($repo.commits))}
           title="">Copy commit data to clipboard</Button>
       {/if}
@@ -457,8 +462,8 @@
       {/key}
 
       <!-- Bottom left row+col -->
-      {#if repoInfoReady}
-        <!-- The min-h-0 is needed for fbody and footer sizing -->
+      <!-- The min-h-0 is needed for fbody and footer sizing -->
+      <!-- {#if repoInfoReady}
         <Pane title="Actions" class="grow min-h-0">
           <div slot="body">
             {#each [actions.manualIgnoreCommits, actions.manualImportFiles, actions.manualImportFolderText, actions.devlogCompilation, actions.individualCommitDevlog, actions.manualEncodeCommits] as action (action.guid)}
@@ -502,7 +507,7 @@
             </ul>
           </div>
         </Pane>
-      {/if}
+      {/if} -->
     </div>
 
     <!-- Center col -->
