@@ -2,6 +2,8 @@
 date: 2023-09-27
 ---
 
+# 15 On using GitHub wiki as source
+
 Danny Godin brought up on the Discord an interest in using the GitHub wikis as materials in GDR, and how that could be integrated into the tool. This could be useful for working collaboratively and for journaling purposes, for instance, in a built-in way with GitHub's interface.
 
 A technical issue is that wikis in GitHub are a separate repository, with their own commit history at every change. While this history is then separate from the repo version at that same point in time, it could be possible to establish a joint timeline between them.

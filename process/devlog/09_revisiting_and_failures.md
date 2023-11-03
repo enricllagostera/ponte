@@ -1,6 +1,5 @@
 ---
 date: 2023-08-24
-title: "Revisiting the app's technical infrastructure (and failing)"
 ---
 
 # 09 Revisiting the app's technical infrastructure (and failing)
