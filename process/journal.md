@@ -1,5 +1,15 @@
 # Process journal
 
+## 2023-11-03 GUI for devlogs and clickable commit pills
+
+We had a meeting today. I presented the GUI redesign and folks seemed to approve them. I'll prepare a new build in the next week and then move on to add new views and more functionality.
+
+(ts::2023-11-03T17:35:35-04:00)
+
+One of the things we had discussed after the workshop was a suggestion by Chip of clicking on mentioned commits to see them in the main timeline view. So, I implemented that on the current "blogroll" view. I think this will be very useful in different places of the app.
+
+![](media/20231103T172739-0400--scroll_on_click.mp4)
+
 ## 2023-11-02 GUI redesign continues
 
 Made quite a few changes to the styling and structure of the components. I based on the Boosted design system. I think it looks very readable and helps to de-clutter the interface. I still have to finish refining and converting a few aspects to it, but I think it is looking much more usable.

@@ -1,5 +1,7 @@
 ---
+
 kanban-plugin: basic
+
 ---
 
 ## Backlog
@@ -17,6 +19,7 @@ kanban-plugin: basic
 - [ ] Encode commits from full text content (glob pattern)
 - [ ] Create a URI handler (see Electron Deep Link feature) that will open a specific version of the app that can run web-based playable builds from the local commits. Alternatively, show a list of build folders per commit.
 
+
 ## High priority
 
 - [ ] Visualize a timeline of commits showing passage of time between them
@@ -25,18 +28,21 @@ kanban-plugin: basic
 - [ ] Embed images as base64 in devlogs or link to them on GitHub
 - [ ] Change relative links to GitHub links in devlogs
 
+
 ## In progress
 
-- [ ] Scroll to a commit in current view when clicks on the commit hash pill
+
 
 ## Done
 
 **Complete**
 
----
+
+***
 
 ## Archive
 
+- [x] 2023-11-03T17:35:23-04:00 -- Scroll to a commit in current view when clicks on the commit hash pill
 - [x] 2023-11-02T17:06:47-04:00 -- Change GUI styling to Boosted-inspired version
 - [x] 2023-10-31T17:24:43-04:00 -- Re-implement modals
 - [x] 2023-10-31T17:24:43-04:00 -- Use MeltUI to generate components (dialogs)
@@ -57,9 +63,7 @@ kanban-plugin: basic
 - [x] 2023-10-06T13:07:32-04:00 -- Prepare MAC build
 
 %% kanban:settings
-
 ```
 {"kanban-plugin":"basic"}
 ```
-
 %%

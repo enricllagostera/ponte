@@ -26,6 +26,7 @@
   let repoLoadingPromise = null
   let userRepoInfo = ''
   let footer: NotificationFooter
+  let commitListView: CommitListItem
 
   // let showNewConfigDialog: boolean = false
 
@@ -373,10 +374,6 @@
     return actions.manualIgnoreCommits.ignoredCommits.indexOf(hash) < 0
   }
 
-  function toggleDropdown(): void {
-    actionDropdown = !actionDropdown
-  }
-
   function toggleTheme(): void {
     $settings.darkTheme = !$settings.darkTheme
 
@@ -385,6 +382,12 @@
     } else {
       document.querySelector('html').classList.remove('dark')
     }
+  }
+
+  function onShowCommitOnView(e: CustomEvent): void {
+    document
+      .querySelector(`#commit_${e.detail.hashAbbrev}`)
+      .scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
   onMount(() => {
@@ -504,7 +507,7 @@
     <Pane
       title="Commits{$repo.commits.length > 0 ? ` for ${userRepoInfo}` : ''}"
       class="h-100 w-1/2 max-w-full">
-      <div slot="body" class="flex flex-col">
+      <div slot="body" class="flex flex-col" id="commitListViewContainer">
         {#if repoInfoReady}
           {#each $repo.commits as commit (commit.hash)}
             <CommitListItem
@@ -516,7 +519,8 @@
               on:fileToggled={updateQdpx}
               on:folderToggled={updateQdpx}
               on:commitEncoded={commitEncoded}
-              promise={repoLoadingPromise} />
+              promise={repoLoadingPromise}
+              bind:this={commitListView} />
           {/each}
         {:else}
           <p id="gitData">Waiting for repo data.</p>
@@ -525,7 +529,10 @@
     </Pane>
 
     <!-- Right col -->
-    <QdpxPreview qdpxData={qdpx} class="h-100 w-1/4 min-w-[200px]" />
+    <QdpxPreview
+      qdpxData={qdpx}
+      class="h-100 w-1/4 min-w-[200px]"
+      on:showCommitOnView={onShowCommitOnView} />
   </div>
 
   <!-- Footer row: notifications area -->

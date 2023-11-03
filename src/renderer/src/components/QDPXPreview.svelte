@@ -6,6 +6,10 @@
   import Button from './Button.svelte'
   import { Files, GitCommit, Tag, Tags } from 'lucide-svelte'
 
+  import { createEventDispatcher } from 'svelte'
+  import CommitPillButton from './CommitPillButton.svelte'
+  const dispatch = createEventDispatcher()
+
   export let qdpxData
 
   function findDevlogForCommit(hash) {
@@ -23,6 +27,8 @@
   function getCommit(hash: string): Commit {
     return $repo.commits.find((c) => c.hash == hash)
   }
+
+  function showCommitOnView() {}
 </script>
 
 <Pane title="QDPX Preview" class={$$restProps.class || ''}>
@@ -60,13 +66,9 @@
           >, applied to:
           <ul class="m-2">
             {#each code.commitHashes as hash}
-              <li class="ps-2">
-                <span
-                  class="m-1 items-center rounded-full border-2 border-c-black p-1 text-c-black dark:border-c-white dark:text-c-white"
-                  ><GitCommit class="me-1 inline" />
-                  #{getCommit(hash).hashAbbrev}
-                </span>
-                {getCommit(hash).subject}
+              <li class="my-1 border-2 border-f-grey-100 ps-2 text-sm">
+                <CommitPillButton hashAbbrev={getCommit(hash).hashAbbrev} on:showCommitOnView />
+                <p class="p-2 pt-1">{getCommit(hash).subject}</p>
               </li>
             {/each}
           </ul>
