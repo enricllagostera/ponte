@@ -1,29 +1,19 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { Modal } from 'bootstrap'
   import { FilePlus, FolderOpen, Save, SunMoon, Trash2 } from 'lucide-svelte'
 
   import QdpxPreview from './components/QDPXPreview.svelte'
   import RepoLoader from './components/RepoLoader.svelte'
-  import ActionListitem from './components/ActionListitem.svelte'
   import CommitListItem from './components/CommitListItem.svelte'
-  import ActionApplyCodeCommitGlob from './components/ActionApplyCodeCommitGlob.svelte'
-  import ActionImportFilesByGlob from './components/ActionImportFilesByGlob.svelte'
-  import StaticAlert from './components/StaticAlert.svelte'
-  import WaitingModal from './components/WaitingModal.svelte'
   import Pane from './components/Pane.svelte'
 
   import type { Commit, RepoDirent, AppliedCode, Action } from '../../types'
-  import { clickOutside } from './clickOutside'
   import { ActionDB } from './actions'
   import { repo, codeOptions, settings } from './stores'
-  import { fs } from './fileSystem'
   import NotificationFooter from './components/NotificationFooter.svelte'
   import type { PathLike } from 'fs-extra'
   import Button from './components/Button.svelte'
   import Dialog from './components/Dialog.svelte'
-  import { createDialog } from '@melt-ui/svelte'
-  import ButtonOutline from './components/ButtonOutline.svelte'
 
   const defaultQdpx = { sources: [], codes: [], commits: [] }
 
@@ -410,22 +400,22 @@
 </svelte:head>
 
 <!-- Main app structure -->
-<main class="flex flex-col w-screen h-screen">
+<main class="flex h-screen w-screen flex-col">
   <!-- Navbar row -->
-  <div class="flex grow-0 w-screen">
+  <div class="flex w-screen grow-0">
     <!-- Navbar col -->
-    <nav class="flex w-screen p-2 items-center">
-      <h3 class="font-black text-3xl ps-4 me-20">RepoToQDA</h3>
+    <nav class="flex w-screen items-center p-2">
+      <h3 class="me-20 ps-4 text-3xl font-black">RepoToQDA</h3>
       {#if $repo.commits.length == 0}
         <Button on:click={() => window.files.forceClearCache()}>
           <Trash2 class="me-2" />Clear local caches (all repos)
         </Button>
       {/if}
 
-      <Button on:click={toggleTheme} class="ms-auto me-2"
+      <Button on:click={toggleTheme} class="me-2 ms-auto"
         ><SunMoon class="me-2" />Toggle theme</Button>
 
-      <div class="inline-flex p-0 me-2">
+      <div class="me-2 inline-flex p-0">
         <Dialog title="New config?" onConfirm={resetConfig} bind:this={newConfigDialog} />
         <Button class="border-e-0" on:click={() => newConfigDialog.trigger()}
           ><FilePlus class="me-2" />New config</Button>
@@ -450,15 +440,15 @@
   </div>
 
   <!-- Main content row -->
-  <div class="flex px-2 w-screen h-full overflow-hidden">
+  <div class="flex h-full w-screen overflow-hidden px-2">
     <!-- Left col -->
-    <div class="flex flex-col h-100 w-1/4 min-w-[200px]">
+    <div class="h-100 flex w-1/4 min-w-[200px] flex-col">
       <!-- Top left row+col -->
       {#key repoLoader}
         <RepoLoader
           on:repoDataLoaded={onLoadedRepoData}
           bind:loadPromise={repoLoadingPromise}
-          class="grow-0 h-auto" />
+          class="h-auto grow-0" />
       {/key}
 
       <!-- Bottom left row+col -->

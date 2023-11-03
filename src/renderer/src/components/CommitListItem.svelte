@@ -10,8 +10,7 @@
   import { inview } from 'svelte-inview'
   import Tree from './Tree.svelte'
   import type { Action, AppliedCode, CodeOption, Commit } from '../../../types'
-  import { GitCommit, Github, Tags } from 'lucide-svelte'
-  import { slide } from 'svelte/transition'
+  import { GitCommit, Github } from 'lucide-svelte'
 
   export let encodingAction: Action
   export let activeAtStart = true
@@ -159,7 +158,7 @@
 </script>
 
 <div
-  class="mb-10 flex flex-col border-2 border-c-black dark:border-f-grey-200"
+  class="my-6 flex flex-col border-2 border-c-black dark:border-f-grey-200"
   class:text-bg-secondary={!active}
   use:inview={inViewOptions}
   on:inview_enter={(event) => {
@@ -171,7 +170,7 @@
     isInView = inView
   }}>
   <div
-    class="flex items-center justify-between border-b-2 border-c-black bg-c-black p-2 text-sm text-c-white dark:border-b-f-grey-200">
+    class="flex items-center justify-between border-b-2 border-c-black bg-c-black px-8 py-2 text-sm text-c-white dark:border-b-f-grey-200">
     <span
       class="me-2 inline-flex items-center rounded-full border-2 border-c-white p-2 px-2 py-1 text-sm font-medium"
       ><GitCommit class="inline" /> #{commit.hashAbbrev}</span>
@@ -186,14 +185,13 @@
       role="button">
       <Github class="me-1 inline h-5 w-5" /> Browse on Github</a>
   </div>
-  <h3
-    class="mb-4 flex items-center border-y-8 border-y-app p-4 py-2 text-xl font-bold dark:text-white">
+  <h3 class="mb-4 items-center border-y-8 border-y-app px-8 py-2 text-xl font-bold dark:text-white">
     {commit.subject}
   </h3>
 
   {#if commit.body != ''}
     <div
-      class="prose prose-base prose-neutral mb-4 px-4 dark:prose-invert prose-headings:mt-2 prose-headings:text-f-grey-200 prose-h1:border-t-2 prose-h1:pt-4 prose-h1:text-xl prose-h1:text-c-black prose-h1:before:content-['Devlog:_'] dark:prose-headings:text-f-grey-100 dark:prose-h1:text-c-white">
+      class="prose prose-base prose-neutral mb-4 px-8 text-c-black dark:prose-invert prose-headings:mt-2 prose-headings:text-f-grey-200 prose-h1:border-t-2 prose-h1:pt-4 prose-h1:text-xl prose-h1:text-c-black prose-h1:before:content-['Devlog:_'] dark:text-c-white dark:prose-headings:text-f-grey-100 dark:prose-h1:text-c-white">
       {#await devlogWithTrailerContent() then dlog}
         <!-- eslint-disable-next-line svelte/no-at-html-tags -->
         {@html marked.parse(dlog)}
@@ -202,7 +200,7 @@
   {/if}
 
   {#if isInView}
-    <div class="overflow-auto px-4">
+    <div class="overflow-auto px-8">
       <details class:animate={isInView} class="overflow-auto pe-2" bind:open={showFileTree}>
         <summary class="w-fit"><i class="bi bi-eye"></i> Preview files in this commit</summary>
         {#await promise then}
@@ -253,7 +251,7 @@
     </div>
   {/if}
 
-  <div class="p-4">
+  <div class="px-8 py-4">
     <CodeSelect
       initialOptions={$codeOptions}
       initialValues={getAllCodesForThisCommit()}

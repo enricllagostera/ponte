@@ -5,17 +5,14 @@
 </script>
 
 <!-- Panel -->
-<div
-  class="flex flex-col grow m-2 border-x-2 border-b-4 border-zinc-50 dark:border-zinc-900 {$$restProps.class ||
-    ''}"
-  class:text-bg-success={successClass}>
-  <div class="flex grow-0 w-full font-bold px-4 py-2 bg-zinc-50 dark:bg-zinc-900">
+<div class="m-2 flex grow flex-col {$$restProps.class || ''}" class:text-bg-success={successClass}>
+  <div class="flex w-full grow-0 bg-neutral-200 px-4 py-2 font-bold dark:bg-neutral-800">
     {title}
   </div>
-  <div class="flex grow shrink w-full overflow-auto px-4 py-2 scrollbar-thin" {id}>
+  <div class="flex w-full shrink grow overflow-auto px-4 py-2 scrollbar-thin" {id}>
     <slot name="body" />
   </div>
-  <div class="flex grow-0 w-full h-auto px-4 py-2">
+  <div class="flex h-auto w-full grow-0 px-4 py-2">
     <slot name="footer" />
   </div>
 </div>

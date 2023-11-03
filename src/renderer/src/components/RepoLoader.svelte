@@ -4,6 +4,7 @@
   import Pane from './Pane.svelte'
   import Button from './Button.svelte'
   import { FolderCheck, HardDriveDownload } from 'lucide-svelte'
+  import { slide } from 'svelte/transition'
 
   const dispatch = createEventDispatcher()
 
@@ -41,7 +42,7 @@
           aria-describedby="button-addon2"
           id="repoInfo"
           bind:value={$repo.userRepoInfo}
-          class="dark:bg-stone-800 my-2"
+          class="my-2 dark:bg-stone-800"
           class:disabled={confirmedRepoInfo != ''}
           disabled={confirmedRepoInfo != ''} />
         {#if confirmedRepoInfo == ''}
@@ -67,12 +68,14 @@
   </div>
   <div slot="footer">
     {#if confirmPromise != null && confirmedRepoInfo == ''}
-      <div class="bg-f-warn text-c-black px-4 py-2" role="status">
+      <div transition:slide class="bg-f-warn px-4 py-2 text-c-black" role="status">
         Checking if repository is available...
       </div>
     {/if}
     {#if loadPromise != null && $repo.commits.length == 0}
-      <div class="bg-f-warn text-c-black px-4 py-2" role="status">Preparing repository data...</div>
+      <div transition:slide class="bg-f-warn px-4 py-2 text-c-black" role="status">
+        Preparing repository data...
+      </div>
     {/if}
   </div>
 </Pane>

@@ -215,30 +215,34 @@ async function getDevlogForCommit(_event: IpcMainInvokeEvent, commitHash: string
   const devlogTrailers = parseTrailers(commitData.trailers).filter(
     ({ key }) => key.toLowerCase() == 'devlog'
   )
-  let devlogs = []
+  const devlogs = []
   let devlogsContent = ''
   for (const trailer of devlogTrailers) {
-    const raw = await initializer.readFileAtCommit(trailer.value, commitHash)
+    // loads file from latest commit
+
+    let raw = ''
+    try {
+      raw = await initializer.readFileAtCommit(trailer.value, allCommits[0].hash)
+    } catch (error) {
+      raw = await initializer.readFileAtCommit(trailer.value, commitHash)
+    }
     const newDevlog = initializer.parseFrontmatter(raw)
     if (!newDevlog) {
       devlogsContent += `\n\n${raw}`
       continue
     }
     devlogs.push(newDevlog)
-    devlogsContent += `\n\n${newDevlog.data?.title ? '# ' + newDevlog.data?.title + '\n\n' : ''}${
-      newDevlog.content
-    }`
+    devlogsContent += `\n\n${newDevlog.content}`
   }
 
   const devlog: Devlog = {
     hashAbbrev: commitData.hashAbbrev,
     name: `Devlog for #${commitData.hashAbbrev} on ${commitISODate}`,
     originalExt: 'md',
-    content: `[Devlog] #${commitData.hashAbbrev} : ${
-      commitData.subject
-    }\n\nCommit date: ${DateTime.fromMillis(commitData.author.timestamp).toISO()}\n\nMessage:\n\n${
-      commitData.body || 'Empty commit message.'
-    }\n\n${devlogsContent}`.trim()
+    content: `
+      #${commitData.hashAbbrev} : ${commitData.subject}\n\n**Commit date**\n\n${DateTime.fromMillis(
+        commitData.author.timestamp
+      ).toISO()}\n\n**Commit message**\n\n${commitData.body}\n\n${devlogsContent}`.trim()
   }
   return devlog
 }
