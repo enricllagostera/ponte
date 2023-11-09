@@ -1,5 +1,9 @@
 # Process journal
 
+## 2023-11-09 Adding changelogs
+
+Now that I'm generating more builds for the tool, I think that having a changelog that is up-to-date and that links to particular commits would be beneficial. So, I'm bringing in a tool that I used called `commit-and-tag-version` that automates generating a changelog file.
+
 ## 2023-11-03 GUI for devlogs and clickable commit pills
 
 We had a meeting today. I presented the GUI redesign and folks seemed to approve them. I'll prepare a new build in the next week and then move on to add new views and more functionality.

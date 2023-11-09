@@ -23,10 +23,10 @@ kanban-plugin: basic
 ## High priority
 
 - [ ] Visualize a timeline of commits showing passage of time between them
-- [ ] Separate commands **compile folder** from **individual and hierarchical file selection** in file preview, showing them as diff GUI elements
 - [ ] Convert tag input to Melt UI
 - [ ] Embed images as base64 in devlogs or link to them on GitHub
 - [ ] Change relative links to GitHub links in devlogs
+- [ ] Separate commands **compile folder** from **individual and hierarchical file selection** in file preview, showing them as diff GUI elements
 
 
 ## In progress
@@ -42,6 +42,8 @@ kanban-plugin: basic
 
 ## Archive
 
+- [x] 2023-11-09T18:12:04-05:00 -- Fix dark theme bug on pill buttons
+- [x] 2023-11-09T18:12:04-05:00 -- Generate changelogs between build versions
 - [x] 2023-11-03T17:35:23-04:00 -- Scroll to a commit in current view when clicks on the commit hash pill
 - [x] 2023-11-02T17:06:47-04:00 -- Change GUI styling to Boosted-inspired version
 - [x] 2023-10-31T17:24:43-04:00 -- Re-implement modals
