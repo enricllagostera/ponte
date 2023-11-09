@@ -167,6 +167,7 @@ class DataInitializer {
 export async function clearCache() {
   // await this.cache.clear()
   fs.emptyDirSync(files.getAppFileCachePath())
+  fs.emptyDirSync(files.getAppGitDataPath())
 }
 
 export default DataInitializer
