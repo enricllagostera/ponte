@@ -27,8 +27,6 @@
   function getCommit(hash: string): Commit {
     return $repo.commits.find((c) => c.hash == hash)
   }
-
-  function showCommitOnView() {}
 </script>
 
 <Pane title="QDPX Preview" class={$$restProps.class || ''}>

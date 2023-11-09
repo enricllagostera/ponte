@@ -11,6 +11,7 @@
   import Tree from './Tree.svelte'
   import type { Action, AppliedCode, CodeOption, Commit } from '../../../types'
   import { GitCommit, Github } from 'lucide-svelte'
+  import CommitPillButton from './CommitPillButton.svelte'
 
   export let encodingAction: Action
   export let activeAtStart = true
@@ -172,9 +173,7 @@
   <div
     class="flex items-center justify-between border-b-2 border-c-black bg-c-black px-8 py-2 text-sm text-c-white dark:border-b-f-grey-200"
     id="commit_{commit.hashAbbrev}">
-    <span
-      class="me-2 inline-flex items-center rounded-full border-2 border-c-white p-2 px-2 py-1 text-sm font-medium"
-      ><GitCommit class="inline" /> #{commit.hashAbbrev}</span>
+    <CommitPillButton clickable={false} hashAbbrev={commit.hashAbbrev} forceDarkTheme />
     <time class="text-sm font-normal"
       >{DateTime.fromMillis(commit.author.timestamp).toISODate()}, approx. {DateTime.fromMillis(
         commit.author.timestamp

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { FilePlus, FolderOpen, Save, SunMoon, Trash2 } from 'lucide-svelte'
+  import { Copy, FilePlus, FolderOpen, Save, SunMoon, Trash2 } from 'lucide-svelte'
 
   import QdpxPreview from './components/QDPXPreview.svelte'
   import RepoLoader from './components/RepoLoader.svelte'
@@ -411,7 +411,7 @@
       <h3 class="me-20 ps-4 text-3xl font-black">RepoToQDA</h3>
       {#if $repo.commits.length == 0}
         <Button on:click={() => window.files.forceClearCache()}>
-          <Trash2 class="me-2" />Clear local caches (all repos)
+          <Trash2 class="me-2" /> Clear all local data
         </Button>
       {/if}
 
@@ -437,7 +437,7 @@
         <Button
           class="me-2"
           on:click={() => navigator.clipboard.writeText(JSON.stringify($repo.commits))}
-          title="">Copy commit data to clipboard</Button>
+          title=""><Copy class="me-2" /> Copy commit data to clipboard</Button>
       {/if}
     </nav>
   </div>
