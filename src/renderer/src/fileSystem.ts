@@ -1,33 +1,45 @@
-import { writable } from 'svelte/store'
+import type { RepoDirent } from '../../types'
 
-type SourceFile = {
-  id: string
-  path: string // always relative to repo root
-  contents: string | Buffer | undefined
-  commitHash?: string
+export function getAllSelectedFolders(directory: RepoDirent[]): RepoDirent[] {
+  const selected = []
+  for (const dirent of directory) {
+    if (dirent.children?.length > 0) {
+      // is folder
+      if (dirent.selected) {
+        selected.push(dirent)
+      }
+      selected.push(...getAllSelectedFolders(dirent.children))
+    }
+  }
+  return [...selected]
 }
 
-class Fs {
-  private files: Map<string, SourceFile> = new Map()
-
-  public async get(path: string, commitHash: string = ''): Promise<SourceFile | undefined> {
-    if (commitHash != '') {
-      return {
-        id: crypto.randomUUID(),
-        path,
-        contents: await window.files.readFileAtCommit(path, commitHash)
+export function getAllSelectedFiles(directory: RepoDirent[]): RepoDirent[] {
+  const selected = []
+  for (const dirent of directory) {
+    if (dirent.children?.length > 0) {
+      // is folder
+      selected.push(...getAllSelectedFiles(dirent.children))
+    } else if (!dirent.children) {
+      // is file
+      if (dirent.selected) {
+        selected.push(dirent)
       }
     }
-    return {
-      id: crypto.randomUUID(),
-      path,
-      contents: await window.files.readFile(path)
-    }
   }
-
-  public async set(path: string, jsonContents: string): Promise<SourceFile | undefined> {
-    return undefined
-  }
+  return selected
 }
 
-export const fs = writable(new Fs())
+export function getAllFilesInFolder(folder: RepoDirent): RepoDirent[] {
+  const selected = []
+  for (const dirent of folder.children) {
+    if (dirent.children?.length > 0) {
+      // is folder
+      selected.push(...getAllFilesInFolder(dirent))
+    } else if (!dirent.children) {
+      // is file
+      selected.push(dirent)
+    }
+  }
+  return selected
+}

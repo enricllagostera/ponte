@@ -2,7 +2,7 @@
 
 ## 2023-09-15 Revised research design
 
-The main difference would be to do the case studies based on workshops with the other participants, record / note them using the tool and analysing that.
+The main difference would be to do the case studies based on workshops with the other participants, record / note them using the tool and analyzing that.
 
 1. Present the tool
    1. Related work

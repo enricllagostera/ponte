@@ -1,5 +1,33 @@
 # Process journal
 
+## 2023-11-11 to 22 Commit timeline side-journal
+
+(ts::2023-11-11T18:52:39-05:00) Starting out development.
+
+![](../media/20231111T185300-0500--screenrecording.mp4)
+
+(ts::2023-11-15T16:05:46-05:00) After some more work on this front, I think that the passage of time is being depicted in an OK way. The zoom performance is still pretty bad, but it seems to be functional. I think I'll move on to the other information I want to display. 
+
+![](../media/20231115T161500-0500--timeline.mp4)
+
+(...) Got some branch linking and file change summaries working.
+
+(ts::2023-11-15T19:02:43-05:00) Started thinking more about how to create a minimal version of the commit pill. Maybe something with drawer-like compartments that can be toggled in the top menu? Each drawer could  also be "pinned" so they remain visible even if turned off on the top menu.
+
+![](../media/20231115T190824-0500--20_commits_timeline.jpg)
+
+(ts::2023-11-20T17:14:03-05:00) During the weekend I made a few sketches of other drawers to add to the views. I think this can work quite well. 
+
+![](media/20231123T114951-0500--journal.jpg)
+
+I will begin to implement an expandable drawer now. Here is a file change format:
+
+![](../media/20231122T163643-0500--20_commits_timeline.png)
+
+(ts::2023-11-22T16:27:42-05:00) OK, back to work. I tried to create a small scaling factor to make the commit tiles smaller when zooming out and it looks promising. I think up to 50% scale is still somewhat readable (even if not ideal). I will add the `top 5%` and other relative badges on the same line as the drawer title.
+
+![](../media/20231122T172558-0500--20_commits_timeline.png)
+
 ## 2023-11-09 Adding changelogs
 
 Now that I'm generating more builds for the tool, I think that having a changelog that is up-to-date and that links to particular commits would be beneficial. So, I'm bringing in a tool that I used called `commit-and-tag-version` that automates generating a changelog file.

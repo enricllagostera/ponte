@@ -5,19 +5,18 @@
   import { marked } from 'marked'
 
   import CodeSelect from './CodeSelect.svelte'
-  import { codeOptions, settings } from '../stores'
+  import { appStates, codeOptions, settings } from '../stores'
 
   import { inview } from 'svelte-inview'
   import Tree from './Tree.svelte'
   import type { Action, AppliedCode, CodeOption, Commit } from '../../../types'
-  import { GitCommit, Github } from 'lucide-svelte'
+  import { Github } from 'lucide-svelte'
   import CommitPillButton from './CommitPillButton.svelte'
 
   export let encodingAction: Action
   export let activeAtStart = true
   export let commit: Commit
   export let userRepoInfo: string
-  export let promise: Promise<any>
   let active = activeAtStart
 
   let showFileTree = false
@@ -28,13 +27,6 @@
   }
 
   const dispatch = createEventDispatcher()
-
-  function onToggleIncluded(event): void {
-    dispatch('toggleIncluded', {
-      checked: event.target.checked,
-      hash: commit.hash
-    })
-  }
 
   function getExt(filename): string {
     const ext = filename.split('.').pop()
@@ -93,8 +85,8 @@
   }
 
   function codesChanged(event: CustomEvent): void {
-    // console.log(event.detail)
-    // console.log('old options', $codeOptions)
+    console.log(event.detail)
+    console.log('old options', $codeOptions)
     updateCodes(event.detail.codes, event.detail.options)
 
     const codesToAdd = event.detail.codes.filter((c) => findIndexCodeToApply(c.value) < 0)
@@ -203,50 +195,48 @@
     <div class="overflow-auto px-8">
       <details class:animate={isInView} class="overflow-auto pe-2" bind:open={showFileTree}>
         <summary class="w-fit"><i class="bi bi-eye"></i> Preview files in this commit</summary>
-        {#await promise then}
-          <Tree tree={commit.fileTree} let:node>
-            <div
-              class="flex items-start py-1 align-middle text-sm"
-              class:italic={isUnsupported(node)}
-              class:opacity-50={isUnsupported(node)}>
-              {#if node.children}
-                <input
-                  type="checkbox"
-                  class="form-checkbox text-app-accessible focus:outline-none
+        <Tree tree={commit.fileTree} let:node>
+          <div
+            class="flex items-start py-1 align-middle text-sm"
+            class:italic={isUnsupported(node)}
+            class:opacity-50={isUnsupported(node)}>
+            {#if node.children}
+              <input
+                type="checkbox"
+                class="form-checkbox text-app-accessible focus:outline-none
                   focus:ring-2 focus:ring-app-accessible focus:ring-offset-c-white dark:focus:ring-app dark:focus:ring-offset-c-black"
-                  role="switch"
-                  id="folderSwitch_{node.name}"
-                  on:change={(e) => toggleFolder(e, node)}
-                  checked={node.selected} />
+                role="switch"
+                id="folderSwitch_{node.name}"
+                on:change={(e) => toggleFolder(e, node)}
+                checked={node.selected} />
 
-                <i class="bi bi-folder me-1"></i>
-                <label for="folderSwitch_{node.name}">{node.name}</label>
-              {:else}
-                {#if checkTextSourceExt(node.name)}
-                  <input
-                    class="form-checkbox text-app-accessible focus:outline-none
+              <i class="bi bi-folder me-1"></i>
+              <label for="folderSwitch_{node.name}">{node.name}</label>
+            {:else}
+              {#if checkTextSourceExt(node.name)}
+                <input
+                  class="form-checkbox text-app-accessible focus:outline-none
                   focus:ring-2 focus:ring-app focus:ring-offset-c-white dark:focus:ring-offset-c-black"
-                    type="checkbox"
-                    role="switch"
-                    id="fileSwitch_{node.name}_{commit.hashAbbrev}"
-                    disabled={!checkTextSourceExt(node.name)}
-                    on:change={(e) => toggleFile(e, node)}
-                    checked={node.selected} />
-                  <i class="bi bi-file-text-fill me-1"></i>
-                  <label for="fileSwitch_{node.name}_{commit.hashAbbrev}">{node.name}</label>
-                {:else}
-                  {node.name}
-                {/if}
-                <a
-                  href={`https://github.com/${userRepoInfo}/tree/${commit.hash}/${node.rel}`}
-                  target="_blank"
-                  title="See file in GitHub"
-                  class="mx-2 items-start align-middle text-neutral-600"
-                  ><Github class="h-4 w-4" /></a>
+                  type="checkbox"
+                  role="switch"
+                  id="fileSwitch_{node.name}_{commit.hashAbbrev}"
+                  disabled={!checkTextSourceExt(node.name)}
+                  on:change={(e) => toggleFile(e, node)}
+                  checked={node.selected} />
+                <i class="bi bi-file-text-fill me-1"></i>
+                <label for="fileSwitch_{node.name}_{commit.hashAbbrev}">{node.name}</label>
+              {:else}
+                {node.name}
               {/if}
-            </div>
-          </Tree>
-        {/await}
+              <a
+                href={`https://github.com/${userRepoInfo}/tree/${commit.hash}/${node.rel}`}
+                target="_blank"
+                title="See file in GitHub"
+                class="mx-2 items-start align-middle text-neutral-600"
+                ><Github class="h-4 w-4" /></a>
+            {/if}
+          </div>
+        </Tree>
       </details>
     </div>
   {/if}

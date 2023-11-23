@@ -22,20 +22,23 @@ kanban-plugin: basic
 
 ## High priority
 
-- [ ] Visualize a timeline of commits showing passage of time between them
 - [ ] Convert tag input to Melt UI
-- [ ] Embed images as base64 in devlogs or link to them on GitHub
 - [ ] Change relative links to GitHub links in devlogs
 - [ ] Separate commands **compile folder** from **individual and hierarchical file selection** in file preview, showing them as diff GUI elements
+- [ ] Embed images as base64 in devlogs or link to them on GitHub
 
 
 ## In progress
 
+- [ ] Add a badge with relative rank to FileChangeDrawer
+- [ ] Adds a version number tagline to the build
 
 
 ## Done
 
 **Complete**
+- [x] Visualize a timeline of commits showing passage of time between them
+- [x] Adds a tab system to change between views
 
 
 ***
