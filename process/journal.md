@@ -1,5 +1,13 @@
 # Process journal
 
+## 2022-11-24 Line changes drawer
+
+Added a line changes drawer. I'm pretty happy with how it turned out, but I might need to increase the contrast of the colors to make it readable.
+
+![](media/20231124T085416-0500--journal.png)
+
+![](media/20231124T085416-0500--journal-1.png)
+
 ## 2023-11-11 to 22 Commit timeline side-journal
 
 (ts::2023-11-11T18:52:39-05:00) Starting out development.

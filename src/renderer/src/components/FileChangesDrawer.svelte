@@ -40,9 +40,9 @@
 </script>
 
 <div
-  class="relative block h-fit w-full border-t-2 border-t-c-black bg-c-white font-mono font-normal text-c-black"
+  class="relative block h-fit w-full border-t-2 border-t-f-grey-100 bg-c-white font-mono font-normal text-c-black"
   bind:clientWidth={width}>
-  <div class="p-1 text-center font-bold">File changes: {commit.fileChangeStats.length}</div>
+  <div class="p-1 text-center font-bold">Files diff: {commit.fileChangeStats.length}</div>
   <svg {width} {height}>
     <rect x="0" y="0" {width} height={height / 3}></rect>
     <rect x={0} width={width * ratioAdd + 1} y={0} {height} class="fill-yellow"></rect>

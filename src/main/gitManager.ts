@@ -98,6 +98,27 @@ class GitManager {
           filepath: f.split('\t')[1]
         }
       })
+      let logLineChanges = await this.git.raw('show', commit.hash, '--numstat', '--pretty=%h')
+      let splitLCs = logLineChanges
+        .substring(logLineChanges.split('\n')[0].length + 2, logLineChanges.length)
+        .trim()
+      console.log(splitLCs)
+      if (logLineChanges == '') {
+        commit.lineChangeStats = { is_empty: true }
+      } else {
+        commit.lineChangeStats = splitLCs.split('\n').map((l) => {
+          let res = {
+            is_empty: l.split('\t')[0] == '',
+            is_binary: l.split('\t')[0] == '-',
+            added_lines: l.split('\t')[0],
+            deleted_lines: l.split('\t')[1],
+            filepath: l.split('\t')[2]
+          }
+          // const fc = commit.fileChangeStats.findIndex((f) => f.filepath == res.filepath)
+          // commit.fileChangeStats[fc] = { ...commit.fileChangeStats[fc], ...res }
+          return res
+        })
+      }
       commit.fileTree = await this.getFileTree(commit.tree, commit.hash)
       commits.push(commit)
       progressNotification(`Processing commits...(${commits.length}/${logData.all.length})`)

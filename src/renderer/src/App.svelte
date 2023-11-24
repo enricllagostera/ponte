@@ -226,7 +226,7 @@
       <MainTabs></MainTabs>
 
       <!-- Right col -->
-      <QdpxPreview class="h-100 w-1/4 min-w-[200px]" on:showCommitOnView={onShowCommitOnView} />
+      <QdpxPreview class="h-100 max-w-1/4 min-w-[200px]" on:showCommitOnView={onShowCommitOnView} />
     {/if}
   </div>
 

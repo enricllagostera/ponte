@@ -65,6 +65,7 @@ export type RepoInfo = {
 }
 
 export type Commit = {
+  lineChangeStats: any
   hash: string
   hashAbbrev: string
   author: CommitAuthor
