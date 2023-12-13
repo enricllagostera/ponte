@@ -1,12 +1,34 @@
 # Process journal
 
-## 2022-11-24 Line changes drawer
+## 2023-12-08 A brief hiatus
+
+The last couple weeks I ended up working less hours than expected in the GAR project in terms of coding and features or planning them. Part of that was because of the focus on dissertation work and getting closer to some of the deadlines on that front. Another part was that I started focusing more on the discussions about reflective learning and techniques to support reflective writing and note taking.
+
+The last group meeting we had last Friday (Dec 01) was quite useful for me to engage with my own process of writing reflected notes. I have been bothered by how descriptive a lot of my note taking was when writing about design projects. The samples in Moon's book got me thinking a lot about how to scaffold things so that I engage in writing with more analytic hat on. We also discussed about brainstorming and ideating possible reflective techniques.
+
+So I've been thinking about this annotated portfolio approach that I've been using in my thesis (for the chapter about my phone experiments). In some of the literature that I read for the chapter (to support the use of this technique) there were some interesting case studies and approaches that combined visual documentation with diagrams and written observations. I started preparing a draft of what an **annotated reflective portfolio** approach could look like for game design projects, adapted from Cathryn Hall's use of "exprience-based annotated portfolios" [@hall2020]. I think it can be adapted as a reflective 2nd layer of process documentation, happening in addition and after more descriptive everyday notes are taken.
+
+![](media/20231208T163515-0500--journal.png)
+
+(Hall, 2020, p. 10) Above: An example of experience-based annotated portfolio. The central vertical layout (top to bottom) accounts for chronology. 
+
+Basically, here is a summary of this potential approach. The idea is to create a center column (or line) of visual documentation sketches photographs diagrams or textural documentation (let's call them traces) that is more descriptive and organize them sequentially in a chronological order. From this initial column or line (let's call it a thread of traces), a second stage begins. At this moment the idea is to look at these materials and start annotating it. First, we could find patterns or key moments in them and writing them out as observations, visually connected to the specific traces through a line. A second form of annotation that could happen could be to basically draw brackets that group traces and start to name a period of meaningful work or insights based on them. The more layers of annotation are added, the further away from the thread things become.
+
+This is a process of annotating that takes some time, it is not necessarily quick. However, that might be a useful characteristic, in the sense of using the moment to slow down and consider what happened through the traces gathered. I think it could work well as a weekly or even monthly activity as a project is ongoing. This is a question that would need to be tested, probably. Also, prompting the observations with a variation of the classic post-mortem questions (goals, what worked, what didn't, what was learned for next time) could be useful and they could be color-coded as well. It might make for a good moment for collective work too. 
+
+It could also work well with screenshot-gathering of play sessions!
+
+## 2023-11-24 Line changes drawer
 
 Added a line changes drawer. I'm pretty happy with how it turned out, but I might need to increase the contrast of the colors to make it readable.
 
 ![](media/20231124T085416-0500--journal.png)
 
 ![](media/20231124T085416-0500--journal-1.png)
+
+### After GaR meeting
+
+We had a conversation about publications. I'll start outlining a general structure for a DIS 2024 Pictorial. I'll  be doing that on my wiki.
 
 ## 2023-11-11 to 22 Commit timeline side-journal
 

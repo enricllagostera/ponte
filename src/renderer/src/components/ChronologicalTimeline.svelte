@@ -15,7 +15,6 @@
     PlusIcon,
     Target
   } from 'lucide-svelte'
-
   import FileChangesDrawer from './FileChangesDrawer.svelte'
   import LineChangesDrawer from './LineChangesDrawer.svelte'
 
@@ -251,8 +250,8 @@
           {#if commit.parents == ''}
             <circle cx={commit.x + 75} cy={commit.y} r="10" fill={'black'} stroke="transparent" />
           {:else}
-            {#each commit.parents.split(' ') as child}
-              {#each commit.branches.reverse() as branch, i}
+            <!-- {#each commit.parents.split(' ') as child}
+              {#each commit.branches}
                 <path
                   d={getLinkFor(commit.hash, child, 75)}
                   fill="transparent"
@@ -265,7 +264,7 @@
                   fill={'black'}
                   stroke="transparent" />
               {/each}
-            {/each}
+            {/each} -->
           {/if}
           <line
             x1={commit.x}

@@ -85,7 +85,8 @@ class GitManager {
         },
         refs: commitLog.refs.split(',').map((b) => b.split(' ')[0]),
         branches: await this.getBranches(commitLog.hash),
-        fileChangeStats: []
+        fileChangeStats: [],
+        lineChangeStats: [{ is_empty: true }]
       }
 
       let logFileChanges = await this.git.raw('show', commit.hash, '--name-status', '--pretty=%h')
@@ -98,16 +99,16 @@ class GitManager {
           filepath: f.split('\t')[1]
         }
       })
-      let logLineChanges = await this.git.raw('show', commit.hash, '--numstat', '--pretty=%h')
-      let splitLCs = logLineChanges
+      const logLineChanges = await this.git.raw('show', commit.hash, '--numstat', '--pretty=%h')
+      const splitLCs = logLineChanges
         .substring(logLineChanges.split('\n')[0].length + 2, logLineChanges.length)
         .trim()
-      console.log(splitLCs)
+      //console.log(splitLCs)
       if (logLineChanges == '') {
-        commit.lineChangeStats = { is_empty: true }
+        commit.lineChangeStats = [{ is_empty: true }]
       } else {
         commit.lineChangeStats = splitLCs.split('\n').map((l) => {
-          let res = {
+          const res = {
             is_empty: l.split('\t')[0] == '',
             is_binary: l.split('\t')[0] == '-',
             added_lines: l.split('\t')[0],

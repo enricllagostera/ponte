@@ -154,6 +154,11 @@
       .scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
+  const versionInfo = `${__VERSION__}-${new Date()
+    .toISOString()
+    .substring(0, 10)
+    .replaceAll('-', '')}`
+
   onMount(() => {
     console.log('Starting app... Main view: ', $appStates.mainView)
     footer.setup()
@@ -172,7 +177,9 @@
   <div class="flex w-screen grow-0">
     <!-- Navbar col -->
     <nav class="flex w-screen items-center p-2">
-      <h3 class="me-20 ps-4 text-3xl font-black">RepoToQDA</h3>
+      <h3 class="me-20 ps-4 text-3xl font-black">
+        RepoToQDA<span class="text-sm font-normal"> v{versionInfo}</span>
+      </h3>
       {#if $repo.commits.length == 0}
         <Button on:click={() => window.files.forceClearCache()}>
           <Trash2 class="me-2" /> Clear all local data

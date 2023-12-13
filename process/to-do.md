@@ -31,20 +31,20 @@ kanban-plugin: basic
 ## In progress
 
 - [ ] Add a badge with relative rank to FileChangeDrawer
-- [ ] Adds a version number tagline to the build
 
 
 ## Done
 
 **Complete**
-- [x] Visualize a timeline of commits showing passage of time between them
-- [x] Adds a tab system to change between views
 
 
 ***
 
 ## Archive
 
+- [x] 2023-11-27T18:13:42-05:00 -- Adds a version number tagline to the build
+- [x] 2023-11-27T18:13:42-05:00 -- Visualize a timeline of commits showing passage of time between them
+- [x] 2023-11-27T18:13:42-05:00 -- Adds a tab system to change between views
 - [x] 2023-11-09T18:12:04-05:00 -- Fix dark theme bug on pill buttons
 - [x] 2023-11-09T18:12:04-05:00 -- Generate changelogs between build versions
 - [x] 2023-11-03T17:35:23-04:00 -- Scroll to a commit in current view when clicks on the commit hash pill

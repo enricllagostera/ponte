@@ -215,7 +215,7 @@ async function getDevlogForCommit(_event: IpcMainInvokeEvent, commitHash: string
   const devlogTrailers = parseTrailers(commitData.trailers).filter(
     ({ key }) => key.toLowerCase() == 'devlog'
   )
-  const devlogs = []
+  const devlogs: Array<any> = []
   let devlogsContent = ''
   for (const trailer of devlogTrailers) {
     // loads file from latest commit

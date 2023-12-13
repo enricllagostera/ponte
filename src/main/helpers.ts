@@ -40,7 +40,7 @@ export default {
     url: string,
     path: string,
     onProgressCb: (arg0: AxiosProgressEvent) => void
-  ): Promise<any> => {
+  ): Promise<unknown> => {
     fs.ensureFileSync(path)
     const writer = fs.createWriteStream(path)
     const response = await axios({

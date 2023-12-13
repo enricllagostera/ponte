@@ -1,6 +1,7 @@
 import type fsExtra = require('fs-extra')
 
 declare global {
+  const __VERSION__: string
   interface Window {
     loader: {
       checkRepoInfo: (userRepoInfo: string) => Promise<boolean>
@@ -65,7 +66,6 @@ export type RepoInfo = {
 }
 
 export type Commit = {
-  lineChangeStats: any
   hash: string
   hashAbbrev: string
   author: CommitAuthor
@@ -78,6 +78,13 @@ export type Commit = {
   branches: string[]
   fileTree: RepoDirent[]
   fileChangeStats: { operation: string; filepath: string }[]
+  lineChangeStats: {
+    added_lines?: number | string
+    deleted_lines?: number | string
+    is_binary?: boolean
+    is_empty?: boolean
+    filepath?: string
+  }[]
   trailers?: string
   appliedCodes?: AppliedCode[]
 }
