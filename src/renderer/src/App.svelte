@@ -74,7 +74,7 @@
 
   async function loadConfig(): Promise<void> {
     let loadOptions = {
-      title: `Load RepoToQDA config...`
+      title: `Load Ponte config...`
     }
     let loadReturn = await window.loader.loadDialog(loadOptions)
     if (!loadReturn) {
@@ -120,7 +120,7 @@
 
   async function saveConfig(): Promise<void> {
     let saveOptions = {
-      title: `Save RepoToQDA config...`,
+      title: `Save Ponte config...`,
       data: {
         userRepoInfo: userRepoInfo,
         actions: [...$appStates.actions.current]
@@ -178,7 +178,7 @@
     <!-- Navbar col -->
     <nav class="flex w-screen items-center p-2">
       <h3 class="me-20 ps-4 text-3xl font-black">
-        RepoToQDA<span class="text-sm font-normal"> v{versionInfo}</span>
+        Ponte<span class="text-sm font-normal"> v{versionInfo}</span>
       </h3>
       {#if $repo.commits.length == 0}
         <Button on:click={() => window.files.forceClearCache()}>

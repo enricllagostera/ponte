@@ -12,8 +12,11 @@
     ArrowRightToLine,
     Calendar,
     Minus,
+    Play,
     PlusIcon,
-    Target
+    Target,
+    FileDiff,
+    Diff
   } from 'lucide-svelte'
   import FileChangesDrawer from './FileChangesDrawer.svelte'
   import LineChangesDrawer from './LineChangesDrawer.svelte'
@@ -236,6 +239,12 @@
       currentCommitIndex = $repo.commits.length - 1
       scrollToIndex(currentCommitIndex)
     }}><ArrowRightToLine /></Button>
+    <Button
+    class=" h-8 w-fit justify-center"
+    on:click={() => {}}><FileDiff /> Show file changes</Button>
+    <Button
+    class=" h-8 w-fit justify-center"
+    on:click={() => {}}><Diff /> Show line changes</Button>
 </div>
 <div class="relative h-full font-mono text-sm" style:height="{getCommitY(maxBand + 1)}px">
   <div class="absolute top-0">
@@ -250,8 +259,8 @@
           {#if commit.parents == ''}
             <circle cx={commit.x + 75} cy={commit.y} r="10" fill={'black'} stroke="transparent" />
           {:else}
-            <!-- {#each commit.parents.split(' ') as child}
-              {#each commit.branches}
+            {#each commit.parents.split(' ') as child}
+              {#each commit.branches as br}
                 <path
                   d={getLinkFor(commit.hash, child, 75)}
                   fill="transparent"
@@ -264,7 +273,7 @@
                   fill={'black'}
                   stroke="transparent" />
               {/each}
-            {/each} -->
+            {/each}
           {/if}
           <line
             x1={commit.x}
@@ -316,6 +325,12 @@
                     currentCommitIndex = i
                     scrollToIndex(currentCommitIndex)
                   }}><Target class="h-3 w-3" /></Button>
+                  <Button
+                  class="me-2 ms-auto"
+                  on:click={() => {
+                    currentCommitIndex = i
+                    scrollToIndex(currentCommitIndex)
+                  }}><Play class="h-3 w-3" /></Button>
               </div>
               <!-- <div class="flex w-full items-center">
                 

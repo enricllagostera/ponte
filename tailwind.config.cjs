@@ -14,7 +14,7 @@ const config = {
         app: '#13d44e',
         'app-accessible': '#10a73e',
         'c-black': '#101010',
-        'c-white': '#fafafa',
+        'c-white': '#fff',
         'f-grey': {
           100: '#a0a0a0',
           200: '#555555'

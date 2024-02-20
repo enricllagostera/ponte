@@ -9,7 +9,6 @@ kanban-plugin: basic
 - [ ] Allow importing from wiki as individual files or as folder compilations
 - [ ] Load commits from wiki repo and display in commit feed
 - [ ] Improve keyboard accessibility of the tree navigation in file selection
-- [ ] Visualize commits in an ordered topological timeline (usual git charts)
 - [ ] Encode manually selected files
 - [ ] Ignore commits from subject (simple string pattern)
 - [ ] Compile folders from glob pattern
@@ -24,13 +23,11 @@ kanban-plugin: basic
 
 - [ ] Convert tag input to Melt UI
 - [ ] Change relative links to GitHub links in devlogs
-- [ ] Separate commands **compile folder** from **individual and hierarchical file selection** in file preview, showing them as diff GUI elements
 - [ ] Embed images as base64 in devlogs or link to them on GitHub
 
 
 ## In progress
 
-- [ ] Add a badge with relative rank to FileChangeDrawer
 
 
 ## Done
@@ -42,6 +39,9 @@ kanban-plugin: basic
 
 ## Archive
 
+- [x] 2024-02-19T16:41:49-05:00 -- Add a badge with relative rank to FileChangeDrawer
+- [x] 2024-02-19T16:41:40-05:00 -- Separate commands **compile folder** from **individual and hierarchical file selection** in file preview, showing them as diff GUI elements
+- [x] 2024-02-19T16:41:40-05:00 -- Visualize commits in an ordered topological timeline (usual git charts)
 - [x] 2023-11-27T18:13:42-05:00 -- Adds a version number tagline to the build
 - [x] 2023-11-27T18:13:42-05:00 -- Visualize a timeline of commits showing passage of time between them
 - [x] 2023-11-27T18:13:42-05:00 -- Adds a tab system to change between views
