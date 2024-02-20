@@ -20,6 +20,7 @@
   } from 'lucide-svelte'
   import FileChangesDrawer from './FileChangesDrawer.svelte'
   import LineChangesDrawer from './LineChangesDrawer.svelte'
+  import Toggle from './Toggle.svelte'
 
   let scaleX = undefined
   let timeExtent
@@ -38,6 +39,9 @@
   let baseCommitTileWidth = 230
   let commitsVisual = new Map()
   let scalingFactor = 1
+
+  let toggleFileChangeDrawer = false
+  let toggleLineChangeDrawer = false
 
   const link = d3.link(d3.curveBumpX)
 
@@ -101,7 +105,7 @@
 
   function getLinkFor(sourceHash: string, targetHash: string, xOffset = 0, yOffset = 0) {
     if (commitsVisual.get(targetHash) == undefined) {
-      console.log('invalid target')
+      // console.log('invalid target')
       return link({
         source: [
           commitsVisual.get(sourceHash).x + xOffset,
@@ -112,9 +116,7 @@
           commitsVisual.get(sourceHash).y + yOffset
         ]
       })
-      return
     }
-    //console.log('getting link')
     return link({
       source: [
         commitsVisual.get(sourceHash).x + xOffset,
@@ -239,12 +241,10 @@
       currentCommitIndex = $repo.commits.length - 1
       scrollToIndex(currentCommitIndex)
     }}><ArrowRightToLine /></Button>
-    <Button
-    class=" h-8 w-fit justify-center"
-    on:click={() => {}}><FileDiff /> Show file changes</Button>
-    <Button
-    class=" h-8 w-fit justify-center"
-    on:click={() => {}}><Diff /> Show line changes</Button>
+  <Toggle class="h-8" name="File changes" bind:value={toggleFileChangeDrawer}
+    ><FileDiff /> File changes</Toggle>
+  <Toggle class="h-8" name="Line changes" bind:value={toggleLineChangeDrawer}
+    ><Diff /> Line changes</Toggle>
 </div>
 <div class="relative h-full font-mono text-sm" style:height="{getCommitY(maxBand + 1)}px">
   <div class="absolute top-0">
@@ -325,7 +325,7 @@
                     currentCommitIndex = i
                     scrollToIndex(currentCommitIndex)
                   }}><Target class="h-3 w-3" /></Button>
-                  <Button
+                <Button
                   class="me-2 ms-auto"
                   on:click={() => {
                     currentCommitIndex = i
@@ -337,8 +337,12 @@
               </div> -->
 
               <p class="m-2 mb-4 line-clamp-3 text-sm">{commit.subject}</p>
-              <FileChangesDrawer {commit} {fileChangesExtents} />
-              <LineChangesDrawer {commit} {lineChangesExtents} />
+              {#if toggleFileChangeDrawer}
+                <FileChangesDrawer {commit} {fileChangesExtents} />
+              {/if}
+              {#if toggleLineChangeDrawer}
+                <LineChangesDrawer {commit} {lineChangesExtents} />
+              {/if}
             </div>
           </div>
         {/each}

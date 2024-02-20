@@ -1,5 +1,9 @@
 # Process journal
 
+## 2024-02-20 Drawer toggles
+
+Today I implemented the on/off buttons for the two information drawers that are attached to commits in the timeline graph. It took me much longer than expected, as I had to refamiliarize myself with the codebase after a couple of months without using it much. In late January and February I worked on preparing a conference submission about the tool, and that took time out of the development side.
+
 ## 2023-12-08 A brief hiatus
 
 The last couple weeks I ended up working less hours than expected in the GAR project in terms of coding and features or planning them. Part of that was because of the focus on dissertation work and getting closer to some of the deadlines on that front. Another part was that I started focusing more on the discussions about reflective learning and techniques to support reflective writing and note taking.
@@ -10,11 +14,11 @@ So I've been thinking about this annotated portfolio approach that I've been usi
 
 ![](media/20231208T163515-0500--journal.png)
 
-(Hall, 2020, p. 10) Above: An example of experience-based annotated portfolio. The central vertical layout (top to bottom) accounts for chronology. 
+(Hall, 2020, p. 10) Above: An example of experience-based annotated portfolio. The central vertical layout (top to bottom) accounts for chronology.
 
 Basically, here is a summary of this potential approach. The idea is to create a center column (or line) of visual documentation sketches photographs diagrams or textural documentation (let's call them traces) that is more descriptive and organize them sequentially in a chronological order. From this initial column or line (let's call it a thread of traces), a second stage begins. At this moment the idea is to look at these materials and start annotating it. First, we could find patterns or key moments in them and writing them out as observations, visually connected to the specific traces through a line. A second form of annotation that could happen could be to basically draw brackets that group traces and start to name a period of meaningful work or insights based on them. The more layers of annotation are added, the further away from the thread things become.
 
-This is a process of annotating that takes some time, it is not necessarily quick. However, that might be a useful characteristic, in the sense of using the moment to slow down and consider what happened through the traces gathered. I think it could work well as a weekly or even monthly activity as a project is ongoing. This is a question that would need to be tested, probably. Also, prompting the observations with a variation of the classic post-mortem questions (goals, what worked, what didn't, what was learned for next time) could be useful and they could be color-coded as well. It might make for a good moment for collective work too. 
+This is a process of annotating that takes some time, it is not necessarily quick. However, that might be a useful characteristic, in the sense of using the moment to slow down and consider what happened through the traces gathered. I think it could work well as a weekly or even monthly activity as a project is ongoing. This is a question that would need to be tested, probably. Also, prompting the observations with a variation of the classic post-mortem questions (goals, what worked, what didn't, what was learned for next time) could be useful and they could be color-coded as well. It might make for a good moment for collective work too.
 
 It could also work well with screenshot-gathering of play sessions!
 
@@ -28,7 +32,7 @@ Added a line changes drawer. I'm pretty happy with how it turned out, but I migh
 
 ### After GaR meeting
 
-We had a conversation about publications. I'll start outlining a general structure for a DIS 2024 Pictorial. I'll  be doing that on my wiki.
+We had a conversation about publications. I'll start outlining a general structure for a DIS 2024 Pictorial. I'll be doing that on my wiki.
 
 ## 2023-11-11 to 22 Commit timeline side-journal
 
@@ -36,17 +40,17 @@ We had a conversation about publications. I'll start outlining a general structu
 
 ![](../media/20231111T185300-0500--screenrecording.mp4)
 
-(ts::2023-11-15T16:05:46-05:00) After some more work on this front, I think that the passage of time is being depicted in an OK way. The zoom performance is still pretty bad, but it seems to be functional. I think I'll move on to the other information I want to display. 
+(ts::2023-11-15T16:05:46-05:00) After some more work on this front, I think that the passage of time is being depicted in an OK way. The zoom performance is still pretty bad, but it seems to be functional. I think I'll move on to the other information I want to display.
 
 ![](../media/20231115T161500-0500--timeline.mp4)
 
 (...) Got some branch linking and file change summaries working.
 
-(ts::2023-11-15T19:02:43-05:00) Started thinking more about how to create a minimal version of the commit pill. Maybe something with drawer-like compartments that can be toggled in the top menu? Each drawer could  also be "pinned" so they remain visible even if turned off on the top menu.
+(ts::2023-11-15T19:02:43-05:00) Started thinking more about how to create a minimal version of the commit pill. Maybe something with drawer-like compartments that can be toggled in the top menu? Each drawer could also be "pinned" so they remain visible even if turned off on the top menu.
 
 ![](../media/20231115T190824-0500--20_commits_timeline.jpg)
 
-(ts::2023-11-20T17:14:03-05:00) During the weekend I made a few sketches of other drawers to add to the views. I think this can work quite well. 
+(ts::2023-11-20T17:14:03-05:00) During the weekend I made a few sketches of other drawers to add to the views. I think this can work quite well.
 
 ![](media/20231123T114951-0500--journal.jpg)
 

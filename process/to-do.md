@@ -21,9 +21,9 @@ kanban-plugin: basic
 
 ## High priority
 
-- [ ] Convert tag input to Melt UI
 - [ ] Change relative links to GitHub links in devlogs
 - [ ] Embed images as base64 in devlogs or link to them on GitHub
+- [ ] Convert tag input to Melt UI
 
 
 ## In progress
@@ -39,6 +39,7 @@ kanban-plugin: basic
 
 ## Archive
 
+- [x] 2024-02-20T18:54:03-05:00 -- Implement drawer toggles
 - [x] 2024-02-19T16:41:49-05:00 -- Add a badge with relative rank to FileChangeDrawer
 - [x] 2024-02-19T16:41:40-05:00 -- Separate commands **compile folder** from **individual and hierarchical file selection** in file preview, showing them as diff GUI elements
 - [x] 2024-02-19T16:41:40-05:00 -- Visualize commits in an ordered topological timeline (usual git charts)
