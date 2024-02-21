@@ -1,5 +1,9 @@
 # Process journal
 
+## 2024-02-21 Improving tag inputs
+
+Currently, tag inputs are fiddly and do not use the same system as other elements. I plan to migrate them to use the Melt UI library, as it will hopefully make it easier to re-use it in different contexts (e.g. commits and files). (...) I think I managed to get it working ok, but it does not have an autocomplete system yet. This is not supported by Melt UI right now. It would be really useful, but I'll leave as-is and add that functionality once the underlying library supports it. Keyboard navigation and correction is much improved from the previous implementation, so that's already useful.
+
 ## 2024-02-20 Drawer toggles
 
 Today I implemented the on/off buttons for the two information drawers that are attached to commits in the timeline graph. It took me much longer than expected, as I had to refamiliarize myself with the codebase after a couple of months without using it much. In late January and February I worked on preparing a conference submission about the tool, and that took time out of the development side.

@@ -4,11 +4,16 @@ kanban-plugin: basic
 
 ---
 
-## Backlog
+## Wishlist
 
 - [ ] Allow importing from wiki as individual files or as folder compilations
 - [ ] Load commits from wiki repo and display in commit feed
 - [ ] Improve keyboard accessibility of the tree navigation in file selection
+- [ ] Create a URI handler (see Electron Deep Link feature) that will open a specific version of the app that can run web-based playable builds from the local commits. Alternatively, show a list of build folders per commit.
+
+
+## Backlog
+
 - [ ] Encode manually selected files
 - [ ] Ignore commits from subject (simple string pattern)
 - [ ] Compile folders from glob pattern
@@ -16,14 +21,13 @@ kanban-plugin: basic
 - [ ] Encode files from text content (glob pattern, aka auto-code)
 - [ ] Encode files from filename (glob patterns)
 - [ ] Encode commits from full text content (glob pattern)
-- [ ] Create a URI handler (see Electron Deep Link feature) that will open a specific version of the app that can run web-based playable builds from the local commits. Alternatively, show a list of build folders per commit.
+- [ ] Embed images as base64 in devlogs or link to them on GitHub
 
 
 ## High priority
 
+- [ ] Re-organize the export preview and actions panel
 - [ ] Change relative links to GitHub links in devlogs
-- [ ] Embed images as base64 in devlogs or link to them on GitHub
-- [ ] Convert tag input to Melt UI
 
 
 ## In progress
@@ -39,6 +43,7 @@ kanban-plugin: basic
 
 ## Archive
 
+- [x] 2024-02-21T10:24:52-05:00 -- Convert tag input to Melt UI
 - [x] 2024-02-20T18:54:03-05:00 -- Implement drawer toggles
 - [x] 2024-02-19T16:41:49-05:00 -- Add a badge with relative rank to FileChangeDrawer
 - [x] 2024-02-19T16:41:40-05:00 -- Separate commands **compile folder** from **individual and hierarchical file selection** in file preview, showing them as diff GUI elements

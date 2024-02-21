@@ -10,11 +10,6 @@
     states: { pressed }
   } = createToggle()
 
-  // function onChange({ curr, next }) {
-  //   value = $pressed
-  //   return next
-  // }
-
   pressed.set(value)
 
   $: {

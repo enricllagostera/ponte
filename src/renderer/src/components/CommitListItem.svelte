@@ -12,6 +12,7 @@
   import type { Action, AppliedCode, CodeOption, Commit } from '../../../types'
   import { Github } from 'lucide-svelte'
   import CommitPillButton from './CommitPillButton.svelte'
+  import TagInput from './TagInput.svelte'
 
   export let encodingAction: Action
   export let activeAtStart = true
@@ -242,10 +243,11 @@
   {/if}
 
   <div class="px-8 py-4">
-    <CodeSelect
+    <TagInput on:codesChanged={codesChanged}></TagInput>
+    <!-- <CodeSelect
       initialOptions={$codeOptions}
       initialValues={getAllCodesForThisCommit()}
-      on:codesChanged={codesChanged} />
+      on:codesChanged={codesChanged} /> -->
   </div>
 </div>
 
