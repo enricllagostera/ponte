@@ -1,5 +1,41 @@
 # Process journal
 
+## 2024-02-26 and 28 Improving the timeline implementation
+
+(timestamp::2024-02-26T14:00:00-05:00)
+
+I did some hours of work in getting the CSS and formatting of the timeline view to be more consistent. Basically, it now repositions the different commit nodes based on `grid` rows, which automates some of the positioning math I was doing at any change of visualization.
+
+(timestamp::2024-02-28T15:58:23-05:00)
+
+I'm trying to improve the timeline component but it still feels kind of janky. I think the key reason for that is how it is left aligned with the time axis so that I have no flexibility in positioning them along the horizontal axes. I am thinking of trying to create a more condensed view horizontally by making the component more vertical and make the text only appear on mouse over or when you select a commit. That way it might be possible to have a more horizontally condensed timeline but at the same time have enough visual information to explore it better.
+
+## 2024-02-23 Notes after meeting
+
+- L: Timeline with teams, multiple gels or layers of different users.
+	- R: Triangulation and getting a different perspective.
+	- C: Shifts in views as sliding scale.
+	- L: Grouping of commits, topological mappings.
+- E: Filters to the timeline view as helping with this kind of exploration.
+- C: Default tagging rules and an incipient codebook across GaR repos.
+	- K: Developing a shared codebook through group work.
+
+## 2024-02-21 Some panel re-org
+
+(timestamp::2024-02-21T18:47:45-05:00)
+
+![](media/20240221T183124-0500--journal.png)
+
+![](media/20240221T185921-0500--journal.png)
+
+(timestamp::2024-02-22T16:28:56-05:00)
+
+![](media/20240222T164736-0500--journal.png)
+
+![](media/20240222T182503-0500--journal.png)
+
+I think this idea of the sources as small files to the left makes a lot of sense. The metadata information gives a reminder of how this source was created. Finally, the annotation as a last detail to the right also makes sense, and keeps complexity to a minimum by only allowing one annotation per source. I'll probably also have to create some kind of quick edit or quick annotation buttons to the list of sources. Also some kind of bulk action system using checkboxes might be useful as well. Another feature that might be useful would be to show a small notification toast at the bottom of the screen or at the top when a source is added to the project with a link to click and see it in the export preview panel.
+
 ## 2024-02-21 Improving tag inputs
 
 Currently, tag inputs are fiddly and do not use the same system as other elements. I plan to migrate them to use the Melt UI library, as it will hopefully make it easier to re-use it in different contexts (e.g. commits and files). (...) I think I managed to get it working ok, but it does not have an autocomplete system yet. This is not supported by Melt UI right now. It would be really useful, but I'll leave as-is and add that functionality once the underlying library supports it. Keyboard navigation and correction is much improved from the previous implementation, so that's already useful.

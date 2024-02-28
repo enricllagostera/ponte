@@ -1,0 +1,25 @@
+{
+	"nodes":[
+		{"id":"0342c6a36732edae","type":"text","text":"Timeline graph","x":236,"y":-400,"width":250,"height":60,"color":"5"},
+		{"id":"9428856706a03183","type":"text","text":"Timeboxed zooming","x":236,"y":-320,"width":250,"height":60},
+		{"id":"9f7ef3979dd9896c","type":"text","text":"Drawer toggles","x":236,"y":-240,"width":250,"height":60},
+		{"id":"3fa3f2d34724ef06","type":"text","text":"Export preview","x":540,"y":-400,"width":250,"height":60,"color":"3"},
+		{"id":"f201bcdff9b80c2c","type":"text","text":"Source list","x":540,"y":-320,"width":250,"height":60},
+		{"id":"5f3b8c76b82035c5","type":"text","text":"Annotating individual sources","x":540,"y":-240,"width":250,"height":60},
+		{"id":"f3fe8004b5e6178a","type":"text","text":"Shared features in all views","x":-100,"y":-400,"width":280,"height":60,"color":"6"},
+		{"id":"f7a78472beb71ab9","type":"text","text":"Tagging commits","x":-100,"y":-320,"width":280,"height":60},
+		{"id":"6e7fd5d20ede5e7f","type":"text","text":"Filter by commit subject","x":-100,"y":-240,"width":280,"height":60},
+		{"id":"ae1b504bf56091e0","type":"text","text":"Minimap (wishlist)","x":-100,"y":-160,"width":280,"height":60},
+		{"id":"882c5bc91c334a5a","type":"text","text":"Blogroll","x":-400,"y":-400,"width":250,"height":60,"color":"1"},
+		{"id":"ff2bb46753afb40d","type":"text","text":"File selection as sources","x":-400,"y":-320,"width":250,"height":60},
+		{"id":"69b36febaa4e1ad8","type":"text","text":"Full file tree","x":-400,"y":-240,"width":250,"height":60},
+		{"id":"57bc56a916e3fe0c","type":"text","text":"Changes-only file tree","x":-400,"y":-160,"width":250,"height":60},
+		{"id":"e8aa4b233a821399","type":"text","text":"Top 7 changed files drawer","x":236,"y":-160,"width":250,"height":60},
+		{"id":"678cf665090ebe6b","type":"text","text":"Add off-repo files as sources (wishlist)","x":540,"y":-160,"width":250,"height":60},
+		{"id":"c5103e72037f24c3","type":"text","text":"Codebook","x":540,"y":-81,"width":250,"height":60},
+		{"id":"286515cd88488c50","type":"text","text":"Table with file age and change count","x":-400,"y":-81,"width":250,"height":60},
+		{"id":"50bbf4848d53cf93","type":"file","file":"media/20240219T165636-0500--design_ideas.png","x":-663,"y":0,"width":513,"height":160},
+		{"id":"42b472b5c2b6e62c","type":"text","text":"Branches drawer","x":236,"y":-81,"width":250,"height":60}
+	],
+	"edges":[]
+}

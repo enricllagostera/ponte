@@ -14,7 +14,7 @@ kanban-plugin: basic
 
 ## Backlog
 
-- [ ] Encode manually selected files
+- [ ] Change relative links to GitHub links in devlogs
 - [ ] Ignore commits from subject (simple string pattern)
 - [ ] Compile folders from glob pattern
 - [ ] Copy file as sources and encode from filename (glob pattern)
@@ -27,7 +27,7 @@ kanban-plugin: basic
 ## High priority
 
 - [ ] Re-organize the export preview and actions panel
-- [ ] Change relative links to GitHub links in devlogs
+- [ ] Encode manually selected files
 
 
 ## In progress
@@ -43,6 +43,7 @@ kanban-plugin: basic
 
 ## Archive
 
+- [x] 2024-02-28T16:05:09-05:00 -- Improve timeline usability
 - [x] 2024-02-21T10:24:52-05:00 -- Convert tag input to Melt UI
 - [x] 2024-02-20T18:54:03-05:00 -- Implement drawer toggles
 - [x] 2024-02-19T16:41:49-05:00 -- Add a badge with relative rank to FileChangeDrawer
