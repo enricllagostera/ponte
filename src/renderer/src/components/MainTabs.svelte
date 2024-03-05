@@ -5,6 +5,7 @@
   import { appStates, repo, settings } from '../stores'
   import CommitListItem from './CommitListItem.svelte'
   import ChronologicalTimeline from './ChronologicalTimeline.svelte'
+  import Button from './Button.svelte'
 
   const {
     elements: { root, list, content, trigger },
@@ -19,11 +20,37 @@
   ]
 
   let mainView
+  let filterKeyword = ''
+  let filteredCommitsCount = 0
 
   const [send, receive] = crossfade({
     duration: 250,
     easing: cubicInOut
   })
+
+  const debounce = (callback: Function, wait = 300) => {
+    let timeout: ReturnType<typeof setTimeout>
+    return (...args: any[]) => {
+      clearTimeout(timeout)
+      timeout = setTimeout(() => callback(...args), wait)
+    }
+  }
+
+  function changeKeyword(e) {
+    filterKeyword = e.target.value
+  }
+
+  function clearCommitFilter() {
+    filterKeyword = ''
+  }
+
+  function filteredCommits() {
+    const filtered = $repo.commits.filter(
+      (i) => i.subject.toLowerCase().indexOf(filterKeyword.toLowerCase()) >= 0
+    )
+    filteredCommitsCount = filtered.length
+    return filtered
+  }
 </script>
 
 <div class="m-2 flex h-full w-full flex-col" {...$root} use:root>
@@ -48,31 +75,54 @@
     {/each}
   </div>
   <div
-    class="flex w-full shrink grow overflow-auto px-4 py-2 scrollbar"
+    class="flex w-full shrink grow overflow-auto px-4 scrollbar"
     id="mainTabbedView"
     on:scroll={() => ($appStates.mainViewScroll = mainView.scrollTop)}
     bind:this={mainView}>
-    <div {...$content('tab-2')} use:content id="chronoTimelineView">
+    <div {...$content('tab-2')} use:content id="chronoTimelineView" class="pt-2">
       <ChronologicalTimeline />
     </div>
     <div {...$content('tab-1')} use:content>
       <div class="flex w-full flex-col" id="commitListViewContainer">
         {#if $appStates.repoReady}
-          {#each $repo.commits as commit (commit.hash)}
-            <CommitListItem
-              {commit}
-              userRepoInfo={$repo.userRepoInfo}
-              encodingAction={$appStates.actions.manualEncodeCommits}
-              on:fileToggled={async () => {
-                await $appStates.updateQDPX($repo, $settings, $appStates.actions)
-              }}
-              on:folderToggled={async () => {
-                await $appStates.updateQDPX($repo, $settings, $appStates.actions)
-              }}
-              on:commitEncoded={async () => {
-                await $appStates.updateQDPX($repo, $settings, $appStates.actions)
-              }} />
-          {/each}
+          <div class="sticky top-0 bg-white py-4">
+            <input
+              type="text"
+              placeholder="Filter commits by subject..."
+              on:input={debounce(changeKeyword)}
+              value={filterKeyword} />
+
+            <Button on:click={clearCommitFilter}>Reset filter</Button>
+            {#key filterKeyword}
+              {#if filteredCommitsCount > 0}
+                {#if filterKeyword != ''}
+                  Showing {filteredCommitsCount} commits with '{filterKeyword}' (out of {$repo
+                    .commits.length} commits).
+                {:else}
+                  Showing all {$repo.commits.length} commits.
+                {/if}
+              {:else}
+                No commits to show with '{filterKeyword}'.
+              {/if}
+            {/key}
+          </div>
+          {#key filterKeyword}
+            {#each filteredCommits() as commit (commit.hash)}
+              <CommitListItem
+                {commit}
+                userRepoInfo={$repo.userRepoInfo}
+                encodingAction={$appStates.actions.manualEncodeCommits}
+                on:fileToggled={async () => {
+                  await $appStates.updateQDPX($repo, $settings, $appStates.actions)
+                }}
+                on:folderToggled={async () => {
+                  await $appStates.updateQDPX($repo, $settings, $appStates.actions)
+                }}
+                on:commitEncoded={async () => {
+                  await $appStates.updateQDPX($repo, $settings, $appStates.actions)
+                }} />
+            {/each}
+          {/key}
         {:else}
           <p id="gitData">Waiting for repo data.</p>
         {/if}

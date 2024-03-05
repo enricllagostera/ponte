@@ -14,6 +14,7 @@ kanban-plugin: basic
 
 ## Backlog
 
+- [ ] Encode manually selected files
 - [ ] Change relative links to GitHub links in devlogs
 - [ ] Ignore commits from subject (simple string pattern)
 - [ ] Compile folders from glob pattern
@@ -27,7 +28,7 @@ kanban-plugin: basic
 ## High priority
 
 - [ ] Re-organize the export preview and actions panel
-- [ ] Encode manually selected files
+- [ ] Implement full-text filter for commit messages plus devlog in blogroll view
 
 
 ## In progress
@@ -37,6 +38,7 @@ kanban-plugin: basic
 ## Done
 
 **Complete**
+- [x] Filter commits in blogroll by subject
 
 
 ***

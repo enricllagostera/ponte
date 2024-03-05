@@ -1,5 +1,13 @@
 # Process journal
 
+## 2024-03-05 Filter blogroll by commit subject
+
+(timestamp::2024-03-05T15:23:41-05:00)
+
+Added a basic implementation, with a filter input and a clear button. This is already a pretty useful way to quickly check subject lines for important keywords. However, just the subject line might be too narrow a search scope, leaving out info about commits that is in the body of the message or in a devlog. So, later I'll add a toggle to choose to search within the shole message plus devlog. That way we can leverage conventional commit prefixes with the narrower search or more open-ended and exploratory full-text-like searches.
+
+![](media/20240305T152630-0500--journal.png)
+
 ## 2024-03-04 Blogroll rework
 
 (timestamp::2024-03-04T18:38:15-05:00)

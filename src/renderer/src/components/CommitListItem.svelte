@@ -20,7 +20,6 @@
   export let userRepoInfo: string
   let active = activeAtStart
 
-  let showFileTree = false
   let isInView = false
   let inViewOptions = {
     rootMargin: '1000px',
@@ -174,13 +173,13 @@
         res = 'c-black'
         break
     }
-    console.log(operation, res)
+    // console.log(operation, res)
     return res
   }
 </script>
 
 <div
-  class="my-6 flex h-[500px] w-full flex-col border-2 border-c-black transition-all dark:border-f-grey-200"
+  class="my-6 flex max-h-[500px] w-full flex-col border-2 border-c-black transition-all dark:border-f-grey-200"
   class:text-bg-secondary={!active}
   use:inview={inViewOptions}
   on:inview_enter={(event) => {
