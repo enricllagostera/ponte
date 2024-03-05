@@ -105,7 +105,7 @@
     const someNumber = rangeWidth
     rangeWidth = toggleFileChangeDrawer ? rangeWidth : rangeWidth
     rangeWidth = toggleLineChangeDrawer ? rangeWidth : rangeWidth
-    console.log(someNumber)
+    //console.log(someNumber)
   }
 
   function getLinkFor(
@@ -293,7 +293,6 @@
   <Toggle class="h-8" name="Line changes" bind:value={toggleLineChangeDrawer}
     ><Diff /> Line changes</Toggle>
 </div>
-<!-- style:height="{getCommitY(maxBand + 1)}px" -->
 <div
   class="relative h-full font-mono text-sm"
   id="timeline_box"

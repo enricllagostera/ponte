@@ -1,5 +1,23 @@
 # Process journal
 
+## 2024-03-04 Blogroll rework
+
+(timestamp::2024-03-04T18:38:15-05:00)
+
+I started implementing a blogroll version that shows both the changes in that commit and the file structure. It is an attempt at a more concise presentation and also with more space for metadata and details. It is roughly similar with the mockup I made back in [2024-02-21](#2024-02-21%20Some%20panel%20re-org). It is mostly working now, I just need to show the diff files properly (right now I'm only showing the complete file tree correctly).
+
+(timestamp::2024-03-04T20:18:21-05:00)
+
+The changed files and file tree work well. I probably should add a checkbox to add/remove the file as a source directly in the file changes panel, but that can come later.
+
+![](media/20240304T201816-0500--journal.png)
+
+(timestamp::2024-03-05T10:34:30-05:00)
+
+Did a pass with some color coding for the different operations plus the "explore diff on GitHub" link.
+
+![](media/20240305T103508-0500--journal.png)
+
 ## 2024-02-26 and 28 Improving the timeline implementation
 
 (timestamp::2024-02-26T14:00:00-05:00)
@@ -12,7 +30,7 @@ I'm trying to improve the timeline component but it still feels kind of janky. I
 
 ## 2024-02-23 Notes after meeting
 
-- L: Timeline with teams, multiple gels or layers of different users.
+- L: Timeline with teams, like multiple gels or layers of different users.
 	- R: Triangulation and getting a different perspective.
 	- C: Shifts in views as sliding scale.
 	- L: Grouping of commits, topological mappings.

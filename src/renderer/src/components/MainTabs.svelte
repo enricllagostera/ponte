@@ -26,7 +26,7 @@
   })
 </script>
 
-<div class="h-100 m-2 flex w-1/2 max-w-full grow flex-col" {...$root} use:root>
+<div class="m-2 flex h-full w-full flex-col" {...$root} use:root>
   <div
     class="flex w-full grow-0 border-b-2 border-c-black px-2 font-bold dark:border-c-white"
     {...$list}
@@ -56,7 +56,7 @@
       <ChronologicalTimeline />
     </div>
     <div {...$content('tab-1')} use:content>
-      <div class="flex flex-col" id="commitListViewContainer">
+      <div class="flex w-full flex-col" id="commitListViewContainer">
         {#if $appStates.repoReady}
           {#each $repo.commits as commit (commit.hash)}
             <CommitListItem

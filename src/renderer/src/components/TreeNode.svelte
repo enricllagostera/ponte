@@ -14,7 +14,7 @@
     }}>
     {#if node.children}
       <div
-        class="w-6 h-6 ms-0 -rotate-90 transition-transform text-app"
+        class="ms-0 h-6 w-6 -rotate-90 text-app transition-transform"
         class:active={showChildren}>
         <svg focusable="false" viewBox="0 0 24 24">
           <path
@@ -30,7 +30,7 @@
   </div>
   {#if node.children && showChildren}
     <div
-      class="ps-[0.65rem] me-2 border-l-2 border-f-grey-100"
+      class="me-2 border-l-2 border-f-grey-100 ps-[0.65rem]"
       transition:slide|local={{ duration: 150 }}>
       {#each node.children as _node, i}
         <svelte:self node={_node} index={i} let:node>
@@ -45,33 +45,4 @@
   .active {
     transform: rotate(0deg);
   }
-  /* .node .content {
-    display: flex;
-    align-items: start;
-    border-left: 3px rgba(39, 126, 232, 0.744) solid;
-  }
-  .node .content:hover {
-    cursor: pointer;
-  }
-  .node .content .button {
-    width: 20px;
-    height: 20px;
-    transform: rotate(-90deg);
-    transition: transform 0.15s;
-  }
-  .node .content .button.active {
-    transform: rotate(0deg);
-  }
-  .node .content .spacer {
-    width: 20px;
-    height: 20px;
-  }
-  .node .content .name {
-    margin-left: 10px;
-    font-size: 15px;
-  }
-  .children {
-    padding-left: 20px;
-    border-left: 3px rgba(39, 126, 232, 0.744) solid;
-  } */
 </style>

@@ -25,11 +25,11 @@
   }
 </script>
 
-<div class="flex flex-col items-start justify-center gap-2">
+<div class="flex w-full flex-col items-start justify-center gap-2">
   <div
     {...$root}
     use:root
-    class="flex w-full flex-row flex-wrap gap-2.5 rounded-md px-3 py-2 align-middle focus-within:ring-1 focus-within:ring-f-grey-200">
+    class="flex w-full flex-row flex-wrap gap-2.5 rounded-md bg-f-grey-100/50 px-3 py-2 align-middle focus-within:ring-1 focus-within:ring-f-grey-200">
     <Tags class="mt-2 flex p-0" />
     {#each $tags as t}
       <div
