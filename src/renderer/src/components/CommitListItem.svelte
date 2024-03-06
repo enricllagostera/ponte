@@ -178,8 +178,9 @@
   }
 </script>
 
+<!-- COMPONENT ROOT -->
 <div
-  class="my-6 flex max-h-[500px] w-full flex-col border-2 border-c-black transition-all dark:border-f-grey-200"
+  class="my-6 flex shrink grow basis-full flex-col gap-0 overflow-hidden border-2 border-c-black transition-all dark:border-f-grey-200"
   class:text-bg-secondary={!active}
   use:inview={inViewOptions}
   on:inview_enter={(event) => {
@@ -190,46 +191,46 @@
     const { inView } = event.detail
     isInView = inView
   }}>
-  {#if isInView}
-    <!-- TOP BAR -->
-    <div class="flex w-full flex-col">
-      <div
-        class="flex items-center justify-between border-b-2 border-c-black bg-c-black px-8 py-2 text-sm text-c-white dark:border-b-f-grey-200"
-        id="commit_{commit.hashAbbrev}">
-        <CommitPillButton clickable={false} hashAbbrev={commit.hashAbbrev} forceDarkTheme />
-        <time class="ms-2 text-sm font-normal"
-          >{DateTime.fromMillis(commit.author.timestamp).toISODate()}, approx. {DateTime.fromMillis(
-            commit.author.timestamp
-          ).toRelative()}</time>
-        <a
-          class="active:hover:ring-0! me-2 ms-auto inline-flex h-fit w-fit cursor-pointer items-center border-2 border-c-black bg-transparent p-2 text-center text-sm font-medium text-c-white underline ring-offset-2 ring-offset-c-white hover:bg-c-black hover:text-app focus:outline-none focus-visible:z-10 focus-visible:border-2 focus-visible:ring-2 focus-visible:ring-c-black active:border-app active:bg-app active:text-c-black active:focus-visible:border-c-white disabled:bg-f-grey-200 disabled:text-c-white"
-          href={`https://github.com/${userRepoInfo}/tree/${commit.hash}`}
-          target="_blank"
-          role="button">
-          <Github class="me-1 inline h-5 w-5" /> Browse on Github</a>
+  <!-- {#if isInView} -->
+  <!-- TOP BAR -->
+  <div
+    class="flex h-16 basis-full flex-row items-center justify-between border-b-2 border-c-black bg-c-black px-8 py-2 align-middle text-sm text-c-white dark:border-b-f-grey-200"
+    id="commit_{commit.hashAbbrev}">
+    <CommitPillButton clickable={false} hashAbbrev={commit.hashAbbrev} forceDarkTheme />
+    <time class="ms-2 flex font-normal"
+      >{DateTime.fromMillis(commit.author.timestamp).toISODate()}, approx. {DateTime.fromMillis(
+        commit.author.timestamp
+      ).toRelative()}</time>
+    <a
+      class="active:hover:ring-0! me-2 ms-auto inline-flex h-fit w-fit cursor-pointer items-center border-2 border-c-black bg-transparent p-2 text-center text-sm font-medium text-c-white underline ring-offset-2 ring-offset-c-white hover:bg-c-black hover:text-app focus:outline-none focus-visible:z-10 focus-visible:border-2 focus-visible:ring-2 focus-visible:ring-c-black active:border-app active:bg-app active:text-c-black active:focus-visible:border-c-white disabled:bg-f-grey-200 disabled:text-c-white"
+      href={`https://github.com/${userRepoInfo}/tree/${commit.hash}`}
+      target="_blank"
+      role="button">
+      <Github class="me-1 inline h-5 w-5" /> Browse on Github</a>
+  </div>
+  <!-- {/if} -->
+  <!--  MAIN CONTAINER FOR 3-COLS -->
+  <div class="my-2 flex h-full max-h-[400px] w-full flex-row gap-2 px-8 pt-2">
+    <!-- Main commit panel -->
+    <div class="flex shrink-0 grow flex-col overflow-y-auto scrollbar-thin">
+      <div class="min-w-1/2 prose prose-base prose-neutral pe-4 text-c-black">
+        <h3 class="pb-4 text-2xl font-bold dark:text-white">
+          {commit.subject}
+        </h3>
+        {#if commit.body != ''}
+          {#await devlogWithTrailerContent() then dlog}
+            <!-- eslint-disable-next-line svelte/no-at-html-tags -->
+            {@html marked.parse(dlog)}
+          {/await}
+        {:else}
+          <p>No commit message available.</p>
+        {/if}
       </div>
-    </div>
-  {/if}
-  <!-- Main commit panel -->
-  <div class="flex flex-row overflow-hidden">
-    <div
-      class="prose prose-base prose-neutral mt-4 flex w-1/2 max-w-full flex-col overflow-y-auto border-r-8 border-transparent px-8 text-c-black">
-      <h3 class="pb-4 text-2xl font-bold dark:text-white">
-        {commit.subject}
-      </h3>
-      {#if commit.body != ''}
-        {#await devlogWithTrailerContent() then dlog}
-          <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-          {@html marked.parse(dlog)}
-        {/await}
-      {:else}
-        <p>No commit message available.</p>
-      {/if}
     </div>
 
     <!-- Changed files col -->
 
-    <Pane class=" mt-4 flex h-full w-1/5 flex-grow-0 flex-col transition-all">
+    <Pane class="ms-auto basis-1/4">
       <div slot="header" class="flex w-full justify-between">
         <span class="flex w-fit">Changed files</span>
         <span class="flex w-fit">
@@ -241,11 +242,9 @@
           ></span>
       </div>
       <div slot="body">
-        <table class="w-full table-auto border-separate border-spacing-1">
+        <table class="h-full w-full table-auto border-separate border-spacing-1">
           {#each commit.fileChangeStats as { operation, filepath }}
             <tr class="align-top text-sm">
-              <!-- {@debug commit} -->
-              <!-- <div class="flex w-full items-start py-1 text-sm"> -->
               <td
                 class="text-balance break-all border-l-2 pb-2 pe-4 ps-2"
                 style:border-left-color={getBgColorByOperation(operation)}
@@ -257,21 +256,18 @@
               <td class="text-red">{getLineChanges(commit, filepath).deleted_lines}</td>
               <td class="w-4 px-2 pt-1">
                 <a
-                  href={`https://github.com/${userRepoInfo}/blame/${commit.hash}/${filepath}`}
+                  href={`https://github.com/${userRepoInfo}/blob/${commit.hash}/${filepath}`}
                   target="_blank"
-                  title="See file in GitHub (blame)"
+                  title="See file in GitHub"
                   class=" text-neutral-600"><Github class="h-4 w-4" /></a>
               </td>
-              <!-- </div> -->
             </tr>
           {/each}
         </table>
       </div>
     </Pane>
     <!-- All files in project col -->
-    <Pane
-      title="All files in project"
-      class="mt-4  flex h-full w-1/5 flex-grow-0 flex-col transition-all">
+    <Pane title="All files in project" class="basis-1/4">
       <div slot="body">
         <Tree tree={commit.fileTree} let:node>
           <div
@@ -317,8 +313,9 @@
       </div>
     </Pane>
   </div>
+
   <!-- TAGGING ROW -->
-  <div class="my-4 flex w-full px-8">
+  <div class="my-2 flex basis-full px-8">
     <TagInput on:codesChanged={codesChanged}></TagInput>
   </div>
 </div>

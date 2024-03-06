@@ -38,13 +38,14 @@ kanban-plugin: basic
 ## Done
 
 **Complete**
-- [x] Filter commits in blogroll by subject
 
 
 ***
 
 ## Archive
 
+- [x] 2024-03-06T16:20:31-05:00 -- Fixing blogroll layout issues
+- [x] 2024-03-06T16:20:31-05:00 -- Filter commits in blogroll by subject
 - [x] 2024-02-28T16:05:09-05:00 -- Improve timeline usability
 - [x] 2024-02-21T10:24:52-05:00 -- Convert tag input to Melt UI
 - [x] 2024-02-20T18:54:03-05:00 -- Implement drawer toggles

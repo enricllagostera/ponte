@@ -1,5 +1,11 @@
 # Process journal
 
+## 2024-03-06 Blogroll layout fixes
+
+(timestamp::2024-03-06T16:20:54-05:00)
+
+Did a bunch of layout fixes. Flexbox is pretty frustrating sometimes, in order to get the stretching and overflows working as I wanted. I think it is mostly done now and the posts should be more readable and predictable.
+
 ## 2024-03-05 Filter blogroll by commit subject
 
 (timestamp::2024-03-05T15:23:41-05:00)
