@@ -22,8 +22,8 @@
 
   let isInView = false
   let inViewOptions = {
-    rootMargin: '1000px',
-    unobserveOnEnter: false
+    rootMargin: '500px',
+    unobserveOnEnter: true
   }
 
   const dispatch = createEventDispatcher()
@@ -67,9 +67,7 @@
   }
 
   function removeCodeToApply(codeToRemove): void {
-    encodingAction.codesToApply = encodingAction.codesToApply.filter(
-      (c) => c.code.value != codeToRemove.code.value
-    )
+    encodingAction.codesToApply = encodingAction.codesToApply.filter((c) => c.code.value != codeToRemove.code.value)
   }
 
   function appendToCommits(indexOfCode: number, newHash: string): void {
@@ -78,9 +76,7 @@
   }
 
   function removeFromCommits(indexOfCode: number, hashToRemove: string): void {
-    const other = encodingAction.codesToApply[indexOfCode].commitHashes.filter(
-      (c) => c !== hashToRemove
-    )
+    const other = encodingAction.codesToApply[indexOfCode].commitHashes.filter((c) => c !== hashToRemove)
     encodingAction.codesToApply[indexOfCode].commitHashes = [...other]
   }
 
@@ -91,14 +87,11 @@
 
     const codesToAdd = event.detail.codes.filter((c) => findIndexCodeToApply(c.value) < 0)
 
-    const codesAlreadyInAction = event.detail.codes.filter(
-      (c) => findIndexCodeToApply(c.value) >= 0
-    )
+    const codesAlreadyInAction = event.detail.codes.filter((c) => findIndexCodeToApply(c.value) >= 0)
 
     const entriesWithObsoleteCodes = encodingAction.codesToApply.filter((entry) => {
       const entryHasThisCommit = entry.commitHashes.indexOf(commit.hash) >= 0
-      const entryCodeIsNotInEvent =
-        event.detail.codes.findIndex((c) => c.value == entry.code.value) < 0
+      const entryCodeIsNotInEvent = event.detail.codes.findIndex((c) => c.value == entry.code.value) < 0
       return entryHasThisCommit && entryCodeIsNotInEvent
     })
 
@@ -180,7 +173,7 @@
 
 <!-- COMPONENT ROOT -->
 <div
-  class="my-6 flex shrink grow basis-full flex-col gap-0 overflow-hidden border-2 border-c-black transition-all dark:border-f-grey-200"
+  class="my-6 flex w-full shrink grow-0 flex-col gap-0 overflow-hidden border-2 border-c-black transition-all dark:border-f-grey-200"
   class:text-bg-secondary={!active}
   use:inview={inViewOptions}
   on:inview_enter={(event) => {
@@ -208,6 +201,7 @@
       role="button">
       <Github class="me-1 inline h-5 w-5" /> Browse on Github</a>
   </div>
+  <!-- {#if isInView} -->
   <!-- {/if} -->
   <!--  MAIN CONTAINER FOR 3-COLS -->
   <div class="my-2 flex h-full max-h-[400px] w-full flex-row gap-2 px-8 pt-2">
@@ -229,7 +223,6 @@
     </div>
 
     <!-- Changed files col -->
-
     <Pane class="ms-auto basis-1/4">
       <div slot="header" class="flex w-full justify-between">
         <span class="flex w-fit">Changed files</span>
@@ -305,14 +298,14 @@
                 href={`https://github.com/${userRepoInfo}/tree/${commit.hash}/${node.rel}`}
                 target="_blank"
                 title="See file in GitHub"
-                class="mx-2 items-start align-middle text-neutral-600"
-                ><Github class="h-4 w-4" /></a>
+                class="mx-2 items-start align-middle text-neutral-600"><Github class="h-4 w-4" /></a>
             {/if}
           </div>
         </Tree>
       </div>
     </Pane>
   </div>
+  <!-- {/if} -->
 
   <!-- TAGGING ROW -->
   <div class="my-2 flex basis-full px-8">

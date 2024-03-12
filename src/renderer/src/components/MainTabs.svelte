@@ -6,6 +6,9 @@
   import CommitListItem from './CommitListItem.svelte'
   import ChronologicalTimeline from './ChronologicalTimeline.svelte'
   import Button from './Button.svelte'
+  import QdpxPreview from './QDPXPreview.svelte'
+  import GeneralToggle from './GeneralToggle.svelte'
+  import { onMount } from 'svelte'
 
   const {
     elements: { root, list, content, trigger },
@@ -16,12 +19,28 @@
 
   const triggers = [
     { id: 'tab-1', title: 'Blogroll view' },
-    { id: 'tab-2', title: 'Timeline view' }
+    { id: 'tab-2', title: 'Timeline view' },
+    { id: 'tab-3', title: 'Export panel' }
   ]
 
   let mainView
   let filterKeyword = ''
   let filteredCommitsCount = 0
+  let toggleFullText = false
+
+  let allDevlogs = []
+
+  onMount(async () => {
+    let allDvsPromises = $repo.commits.map(async (c) => {
+      return { hash: c.hash, content: await devlogWithTrailerContent(c.hash) }
+    })
+
+    allDevlogs = []
+    for await (const devlog of allDvsPromises) {
+      allDevlogs.push(devlog)
+    }
+    //console.log(allDevlogs)
+  })
 
   const [send, receive] = crossfade({
     duration: 250,
@@ -45,11 +64,23 @@
   }
 
   function filteredCommits() {
-    const filtered = $repo.commits.filter(
-      (i) => i.subject.toLowerCase().indexOf(filterKeyword.toLowerCase()) >= 0
-    )
+    if (toggleFullText) {
+      const filtered = $repo.commits.filter((i) => {
+        let devlog = allDevlogs.find((d) => d.hash == i.hash)
+        return devlog.content.toLowerCase().indexOf(filterKeyword.toLowerCase()) >= 0
+      })
+      filteredCommitsCount = filtered.length
+      return filtered
+    }
+
+    const filtered = $repo.commits.filter((i) => i.subject.toLowerCase().indexOf(filterKeyword.toLowerCase()) >= 0)
     filteredCommitsCount = filtered.length
     return filtered
+  }
+
+  async function devlogWithTrailerContent(commitHash): Promise<string> {
+    const dv = await window.loader.getDevlogForCommit(commitHash, {})
+    return dv.content
   }
 </script>
 
@@ -79,13 +110,16 @@
     id="mainTabbedView"
     on:scroll={() => ($appStates.mainViewScroll = mainView.scrollTop)}
     bind:this={mainView}>
+    <div {...$content('tab-3')} use:content id="exportPanelTab" class="h-full w-full">
+      <QdpxPreview></QdpxPreview>
+    </div>
     <div {...$content('tab-2')} use:content id="chronoTimelineView" class="pt-2">
       <ChronologicalTimeline />
     </div>
     <div {...$content('tab-1')} use:content>
       <div class="flex w-full flex-col" id="commitListViewContainer">
         {#if $appStates.repoReady}
-          <div class="sticky top-0 bg-white py-4">
+          <div class="sticky top-0 z-10 inline-flex w-full items-center gap-2 bg-white py-4">
             <input
               type="text"
               placeholder="Filter commits by subject..."
@@ -93,11 +127,11 @@
               value={filterKeyword} />
 
             <Button on:click={clearCommitFilter}>Reset filter</Button>
+            <GeneralToggle bind:value={toggleFullText}>Full-text search</GeneralToggle>
             {#key filterKeyword}
               {#if filteredCommitsCount > 0}
                 {#if filterKeyword != ''}
-                  Showing {filteredCommitsCount} commits with '{filterKeyword}' (out of {$repo
-                    .commits.length} commits).
+                  Showing {filteredCommitsCount} commits with '{filterKeyword}' (out of {$repo.commits.length} commits).
                 {:else}
                   Showing all {$repo.commits.length} commits.
                 {/if}

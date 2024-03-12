@@ -27,17 +27,17 @@ kanban-plugin: basic
 
 ## High priority
 
-- [ ] Re-organize the export preview and actions panel
-- [ ] Implement full-text filter for commit messages plus devlog in blogroll view
 
 
 ## In progress
 
+- [ ] Re-organize the export preview and actions panel
 
 
 ## Done
 
 **Complete**
+- [x] Implement full-text filter for commit messages plus devlog in blogroll view
 
 
 ***

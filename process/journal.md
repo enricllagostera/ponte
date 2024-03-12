@@ -1,5 +1,23 @@
 # Process journal
 
+## 2024-03-12 Full-text devlog search in blogroll
+
+(timestamp::2024-03-12T15:52:03-04:00)
+
+I'm quite happy this feature didn't take too long to implement. This makes it possible to search for matches when filtering commits using the whole commit message and the added devlog, when using external-file devlogs. This kind of quick filtering feels very at-home to me, maybe because I'm used to search systems that allow this querying. It might be pretty useful when trying to tag all instances of particular keywords associated with a preliminary theme or idea. For instance, when I tried it with the Ponte repo, I found a few repos that used the idea of "noisy" and it made me think this could be a useful theme when discussing the design later.
+
+## 2024-03-11 Export panel improvements
+
+(timestamp::2024-03-11T17:15:26-04:00)
+
+Made some small changes to how the sources list shows items. I want to add a few "remove source" buttons later.
+
+## 2024-03-07 to 08 Export panel redesign
+
+(timestamp::2024-03-08T10:47:40-05:00)
+
+Following up from yesterday, the redesign of the export panel is coming along well. While working on it, I noticed it is becoming pretty clear that the `inView` way of loading the blogroll progressively does not work well enough. It feels very janky and something like [pagination](https://melt-ui.com/docs/builders/pagination) might be better than the current "seamless" infinite loading.
+
 ## 2024-03-06 Blogroll layout fixes
 
 (timestamp::2024-03-06T16:20:54-05:00)

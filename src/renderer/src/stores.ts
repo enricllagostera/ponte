@@ -35,11 +35,7 @@ export const appStates = writable({
     let commitsToProcess = []
 
     if (actions.manualIgnoreCommits.active) {
-      commitsToProcess = [
-        ...repo.commits.filter(
-          (v) => actions.manualIgnoreCommits.ignoredCommits.indexOf(v.hash) < 0
-        )
-      ]
+      commitsToProcess = [...repo.commits.filter((v) => actions.manualIgnoreCommits.ignoredCommits.indexOf(v.hash) < 0)]
     } else {
       commitsToProcess = [...repo.commits]
     }
@@ -86,10 +82,7 @@ export const appStates = writable({
             if (settings.supportedTextExts.indexOf(ext) >= 0) {
               compilationSource.content += `\n\n## [${file.rel}]\n\n`
               if (ext == 'md') {
-                compilationSource.content += await window.files.readFileAtCommit(
-                  file.rel,
-                  commit.hash
-                )
+                compilationSource.content += await window.files.readFileAtCommit(file.rel, commit.hash)
               } else {
                 const fileData = await window.files.readFileAtCommit(file.rel, commit.hash)
                 compilationSource.content += `\`\`\`\n${fileData}\`\`\``
@@ -124,9 +117,7 @@ export const appStates = writable({
     // encode commits manually
     if (actions.manualEncodeCommits.active) {
       for (const codeInAction of actions.manualEncodeCommits.codesToApply) {
-        const getCodeOnExportList = allCodesToSendToQDPXExport.filter(
-          (c) => c.code.value == codeInAction.code.value
-        )
+        const getCodeOnExportList = allCodesToSendToQDPXExport.filter((c) => c.code.value == codeInAction.code.value)
         if (getCodeOnExportList.length == 1) {
           getCodeOnExportList[0].commitHashes = [
             ...getCodeOnExportList[0].commitHashes,
@@ -151,13 +142,9 @@ export const appStates = writable({
     for (const act of allApplyCodeCommitByGlob) {
       if (act.active) {
         for (const selectedCode of act.codesToApply) {
-          const getCodeOnExportList = allCodesToSendToQDPXExport.filter(
-            (c) => c.code.value == selectedCode.code.value
-          )
+          const getCodeOnExportList = allCodesToSendToQDPXExport.filter((c) => c.code.value == selectedCode.code.value)
           if (getCodeOnExportList.length == 1) {
-            getCodeOnExportList[0].commitHashes = getCodeOnExportList[0].commitHashes.concat(
-              selectedCode.commitHashes
-            )
+            getCodeOnExportList[0].commitHashes = getCodeOnExportList[0].commitHashes.concat(selectedCode.commitHashes)
           } else {
             allCodesToSendToQDPXExport.push({
               code: { ...selectedCode.code },

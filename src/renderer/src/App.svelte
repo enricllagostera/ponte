@@ -2,7 +2,6 @@
   import { onMount } from 'svelte'
   import { Copy, FilePlus, FolderOpen, Save, SunMoon, Trash2 } from 'lucide-svelte'
 
-  import QdpxPreview from './components/QDPXPreview.svelte'
   import RepoLoader from './components/RepoLoader.svelte'
 
   import type { RepoDirent, Action, QDPXData } from '../../types'
@@ -149,15 +148,10 @@
   }
 
   function onShowCommitOnView(e: CustomEvent): void {
-    document
-      .querySelector(`#commit_${e.detail.hashAbbrev}`)
-      .scrollIntoView({ behavior: 'smooth', block: 'start' })
+    document.querySelector(`#commit_${e.detail.hashAbbrev}`).scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
-  const versionInfo = `${__VERSION__}-${new Date()
-    .toISOString()
-    .substring(0, 10)
-    .replaceAll('-', '')}`
+  const versionInfo = `${__VERSION__}-${new Date().toISOString().substring(0, 10).replaceAll('-', '')}`
 
   onMount(() => {
     console.log('Starting app... Main view: ', $appStates.mainView)
@@ -186,8 +180,7 @@
         </Button>
       {/if}
 
-      <Button on:click={toggleTheme} class="me-2 ms-auto"
-        ><SunMoon class="me-2" />Toggle theme</Button>
+      <Button on:click={toggleTheme} class="me-2 ms-auto"><SunMoon class="me-2" />Toggle theme</Button>
 
       <div class="me-2 inline-flex p-0">
         <Dialog title="New config?" onConfirm={resetConfig} bind:this={newConfigDialog} />
@@ -198,17 +191,14 @@
           title="Are you sure you want to load config from a file?"
           onConfirm={loadConfig}
           bind:this={loadConfigDialog} />
-        <Button on:click={() => loadConfigDialog.trigger()}
-          ><FolderOpen class="me-2" />Open config</Button>
+        <Button on:click={() => loadConfigDialog.trigger()}><FolderOpen class="me-2" />Open config</Button>
 
         <Button class="border-s-0" on:click={saveConfig}><Save class="me-2" />Save config</Button>
       </div>
 
       {#if $repo.commits.length > 0}
-        <Button
-          class="me-2"
-          on:click={() => navigator.clipboard.writeText(JSON.stringify($repo.commits))}
-          title=""><Copy class="me-2" /> Copy commit data to clipboard</Button>
+        <Button class="me-2" on:click={() => navigator.clipboard.writeText(JSON.stringify($repo.commits))} title=""
+          ><Copy class="me-2" /> Copy commit data to clipboard</Button>
       {/if}
     </nav>
   </div>
@@ -233,7 +223,16 @@
       <MainTabs></MainTabs>
 
       <!-- Right col -->
-      <!-- <QdpxPreview class="h-100 max-w-1/4 min-w-[200px]" on:showCommitOnView={onShowCommitOnView} /> -->
+      <!-- div.flex.w-
+      <GeneralToggle name="exportToggle">Export panel</GeneralToggle> -->
+      <!-- {#if isExportPanelOpen}
+        <QdpxPreview class="h-100 max-w-1/4 min-w-[200px]" on:showCommitOnView={onShowCommitOnView}></QdpxPreview>
+      {:else}
+        <div>
+          <Button>Open export panel</Button>
+        </div>
+      {/if} -->
+      <!-- > -->
     {/if}
   </div>
 
