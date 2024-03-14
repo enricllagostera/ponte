@@ -37,13 +37,14 @@ kanban-plugin: basic
 ## Done
 
 **Complete**
-- [x] Implement full-text filter for commit messages plus devlog in blogroll view
 
 
 ***
 
 ## Archive
 
+- [x] 2024-03-14T12:08:41-04:00 -- Timebox the timeline view
+- [x] 2024-03-14T12:08:41-04:00 -- Implement full-text filter for commit messages plus devlog in blogroll view
 - [x] 2024-03-06T16:20:31-05:00 -- Fixing blogroll layout issues
 - [x] 2024-03-06T16:20:31-05:00 -- Filter commits in blogroll by subject
 - [x] 2024-02-28T16:05:09-05:00 -- Improve timeline usability

@@ -21,6 +21,8 @@
   import FileChangesDrawer from './FileChangesDrawer.svelte'
   import LineChangesDrawer from './LineChangesDrawer.svelte'
   import Toggle from './Toggle.svelte'
+  import ScaleSelect from './ScaleSelect.svelte'
+  import CommitListItem from './CommitListItem.svelte'
 
   let scaleX = undefined
   let timeExtent
@@ -31,14 +33,17 @@
   let baseZoom = 50
   let zoomMultiplier = 1
 
-  let commitsShownPerBand = new Map()
   let maxBand = 0
   let currentHover = ''
   let commitHeight = 0
   let currentCommitIndex = 0
-  let baseCommitTileWidth = 230
+  let baseCommitTileWidth = 250
+  let baseTimeUnitWidth = 270
   let commitsVisual = new Map()
   let scalingFactor = 1
+
+  let timeSelected = ''
+  let timeScale = null
 
   let toggleFileChangeDrawer = false
   let toggleLineChangeDrawer = false
@@ -65,36 +70,57 @@
   lineChangesExtents = {}
   lineChangesExtents.added_lines = d3.extent(
     $repo.commits.map((c) =>
-      c.lineChangeStats.reduce(
-        (acc, f) => acc + Number(f.is_binary || f.is_empty ? 0 : f.added_lines),
-        0
-      )
+      c.lineChangeStats.reduce((acc, f) => acc + Number(f.is_binary || f.is_empty ? 0 : f.added_lines), 0)
     )
   )
   lineChangesExtents.deleted_lines = d3.extent(
     $repo.commits.map((c) =>
-      c.lineChangeStats.reduce(
-        (acc, f) => acc + Number(f.is_binary || f.is_empty ? 0 : f.deleted_lines),
-        0
-      )
+      c.lineChangeStats.reduce((acc, f) => acc + Number(f.is_binary || f.is_empty ? 0 : f.deleted_lines), 0)
     )
   )
 
   timeExtent = d3.extent(dates)
 
   $: {
+    const timeUnit = timeSelected
+
+    switch (timeUnit) {
+      case 'hour1':
+        timeScale = d3.timeHour.every(1)
+        rangeWidth = d3.timeHour.count(timeExtent[0], timeExtent[1]) * baseTimeUnitWidth
+        break
+      case 'hour12':
+        timeScale = d3.timeHour.every(12)
+        rangeWidth = (d3.timeHour.count(timeExtent[0], timeExtent[1]) / 12) * baseTimeUnitWidth
+        break
+      case 'day3':
+        timeScale = d3.timeDay.every(3)
+        rangeWidth = (d3.timeDay.count(timeExtent[0], timeExtent[1]) / 3) * baseTimeUnitWidth
+        break
+      case 'week1':
+        timeScale = d3.timeWeek.every(1)
+        rangeWidth = d3.timeWeek.count(timeExtent[0], timeExtent[1]) * baseTimeUnitWidth
+        break
+      case 'week2':
+        timeScale = d3.timeWeek.every(2)
+        rangeWidth = (d3.timeWeek.count(timeExtent[0], timeExtent[1]) / 2) * baseTimeUnitWidth
+        break
+      case 'month1':
+        timeScale = d3.timeMonth.every(1)
+        rangeWidth = d3.timeMonth.count(timeExtent[0], timeExtent[1]) * baseTimeUnitWidth
+        break
+      default:
+        timeScale = d3.timeDay.every(1)
+        rangeWidth = d3.timeDay.count(timeExtent[0], timeExtent[1]) * baseTimeUnitWidth
+        break
+    }
+
     if ($appStates.repoReady) {
-      rangeWidth = d3.timeDay.count(timeExtent[0], timeExtent[1]) * (baseZoom * zoomMultiplier)
-      scaleX = d3.scaleTime(timeExtent, [0, rangeWidth]).nice(d3.timeDay.every(15))
+      //rangeWidth = d3.timeDay.count(timeExtent[0], timeExtent[1]) * 250
+      //d3.timeFormat('%Y-%m-%d')
+      scaleX = d3.scaleTime(timeExtent, [0, rangeWidth]).nice(timeScale)
       d3.select(gx)
-        .call(
-          d3
-            .axisTop()
-            .scale(scaleX)
-            .ticks(d3.timeDay.every(7))
-            .tickSize(20)
-            .tickFormat(d3.timeFormat('%Y-%m-%d'))
-        )
+        .call(d3.axisTop().scale(scaleX).ticks(timeScale).tickSize(30))
         .selectAll('text')
         .style('text-anchor', 'start')
         .attr('dx', '4px')
@@ -119,100 +145,41 @@
     if (commitsVisual.get(targetHash) == undefined) {
       // console.log('invalid target')
       return link({
-        source: [
-          commitsVisual.get(sourceHash).x + xOffsetOrigin,
-          commitsVisual.get(sourceHash).y + yOffsetOrigin
-        ],
-        target: [
-          commitsVisual.get(sourceHash).x + xOffsetOrigin,
-          commitsVisual.get(sourceHash).y + yOffsetOrigin
-        ]
+        source: [commitsVisual.get(sourceHash).x + xOffsetOrigin, commitsVisual.get(sourceHash).y + yOffsetOrigin],
+        target: [commitsVisual.get(sourceHash).x + xOffsetOrigin, commitsVisual.get(sourceHash).y + yOffsetOrigin]
       })
     }
     return link({
-      source: [
-        commitsVisual.get(sourceHash).x + xOffsetOrigin,
-        commitsVisual.get(sourceHash).y + yOffsetOrigin
-      ],
-      target: [
-        commitsVisual.get(targetHash).x + xOffsetDest,
-        commitsVisual.get(targetHash).y + yOffsetDest
-      ]
+      source: [commitsVisual.get(sourceHash).x + xOffsetOrigin, commitsVisual.get(sourceHash).y + yOffsetOrigin],
+      target: [commitsVisual.get(targetHash).x + xOffsetDest, commitsVisual.get(targetHash).y + yOffsetDest]
     })
   }
 
   function calcCommitPositions(): void {
     maxBand = 0
-    commitsShownPerBand = new Map()
-    let positionsCalculated = 0
-    let curr = 0
-    let lastBand = 0
+    // let positionsCalculated = 0
+    let lastBand = -1
+    let lastX = 0
     for (const cv of commitsVisual) {
       const commit = cv[1]
-      curr++
-      let thisX = scaleX(new Date(commit.committer.timestamp))
-      let candidate = { x: thisX, y: 0, band: lastBand }
+      let thisX = scaleX(timeScale.floor(new Date(commit.committer.timestamp)))
 
-      // no bands yet
-      if (commitsShownPerBand.size == 0) {
-        maxBand = 0
-        commitsShownPerBand.set(0, { x: thisX, y: getCommitY(0), band: 0 })
+      if (thisX > lastX) {
         commit.x = thisX
+        lastX = thisX
+        lastBand = 0
         commit.y = getCommitY(0)
-        commit.band = 0
-        positionsCalculated++
-        continue
+        commit.band = lastBand
+      } else {
+        lastBand += 1
+        commit.band = lastBand
+        commit.x = thisX
+        commit.y = getCommitY(lastBand)
+        lastX = thisX
       }
-
-      for (let b = lastBand - 1; b >= 0 && b > lastBand - 2; b--) {
-        const lastCommitInBand = commitsShownPerBand.get(b)
-        candidate.band = b
-        thisX = lastCommitInBand.x + baseCommitTileWidth
-        if (thisX < candidate.x) {
-          candidate.y = getCommitY(candidate.band)
-          commitsShownPerBand.set(b, { ...candidate })
-          commit.x = candidate.x
-          commit.y = candidate.y
-          commit.band = candidate.band
-          lastBand = candidate.band
-          positionsCalculated++
-          break
-        }
+      if (lastBand > maxBand) {
+        maxBand = lastBand
       }
-      // already calculated this position
-      if (positionsCalculated >= curr) {
-        continue
-      }
-
-      for (let b = 0; b < commitsShownPerBand.size; b++) {
-        const lastCommitInBand = commitsShownPerBand.get(b)
-        candidate.band = b
-        thisX = lastCommitInBand.x + baseCommitTileWidth
-        if (thisX < candidate.x) {
-          candidate.y = getCommitY(candidate.band)
-          commitsShownPerBand.set(b, { ...candidate })
-          commit.x = candidate.x
-          commit.y = candidate.y
-          commit.band = candidate.band
-          lastBand = candidate.band
-          positionsCalculated++
-          break
-        }
-      }
-      // already calculated this position
-      if (positionsCalculated >= curr) {
-        continue
-      }
-
-      maxBand += 1
-      candidate.band = maxBand
-      candidate.y = getCommitY(candidate.band)
-      commitsShownPerBand.set(candidate.band, { ...candidate })
-      commit.x = candidate.x
-      commit.y = candidate.y
-      commit.band = candidate.band
-      lastBand = candidate.band
-      positionsCalculated++
     }
   }
 
@@ -220,7 +187,7 @@
     // return 160 + band * ((commitHeight == 0 ? 160 : commitHeight) + 50)
     return (
       180 * band +
-      120 +
+      190 +
       (toggleFileChangeDrawer && band > 0 ? 100 * band : 0) +
       (toggleLineChangeDrawer && band > 0 ? 100 * band : 0)
     )
@@ -234,7 +201,7 @@
   }
 </script>
 
-<div class="fixed left-4 top-auto z-10 -m-2 bg-c-white p-4">
+<div class="fixed left-4 top-auto z-10 -m-2 flex w-full flex-row gap-2 bg-c-white p-4">
   <Button
     class="h-8 w-8 justify-center"
     on:click={() => {
@@ -288,10 +255,9 @@
       currentCommitIndex = $repo.commits.length - 1
       scrollToIndex(currentCommitIndex)
     }}><ArrowRightToLine /></Button>
-  <Toggle class="h-8" name="File changes" bind:value={toggleFileChangeDrawer}
-    ><FileDiff /> File changes</Toggle>
-  <Toggle class="h-8" name="Line changes" bind:value={toggleLineChangeDrawer}
-    ><Diff /> Line changes</Toggle>
+  <Toggle class="h-8" name="File changes" bind:value={toggleFileChangeDrawer}><FileDiff /> File changes</Toggle>
+  <Toggle class="h-8" name="Line changes" bind:value={toggleLineChangeDrawer}><Diff /> Line changes</Toggle>
+  <ScaleSelect bind:selectedUnit={timeSelected}></ScaleSelect>
 </div>
 <div
   class="relative h-full font-mono text-sm"
@@ -319,23 +285,15 @@
                 <path
                   d={getLinkFor(commit.hash, child, 0, 0, commit.w, commitsVisual.get(child).h)}
                   fill="transparent"
-                  stroke={currentCommitIndex == i || currentCommitIndex == i - 1
-                    ? '#13d44e'
-                    : `#999`}
-                  stroke-width="{currentCommitIndex == i || currentCommitIndex == i - 1 ? 8 : 3}px"
-                ></path>
+                  stroke={currentCommitIndex == i || currentCommitIndex == i - 1 ? '#13d44e' : `#999`}
+                  stroke-width="{currentCommitIndex == i || currentCommitIndex == i - 1 ? 8 : 3}px"></path>
                 <circle
                   cx={commit.x + commit.w}
                   cy={getCommitY(commit.band) + commit.h}
                   r="10"
                   fill={`#999`}
                   stroke="transparent" />
-                <circle
-                  cx={commit.x}
-                  cy={getCommitY(commit.band)}
-                  r="10"
-                  fill={`#999`}
-                  stroke="transparent" />
+                <circle cx={commit.x} cy={getCommitY(commit.band)} r="10" fill={`#999`} stroke="transparent" />
               {/each}
             {/each}
           {/if}
@@ -345,16 +303,11 @@
             x2={commit.x}
             y2="{getCommitY(maxBand + 1)}px"
             style:stroke-width={currentHover == commit.hash || currentCommitIndex == i ? 4 : 1}
-            style:stroke={currentHover == commit.hash || currentCommitIndex == i
-              ? '#101010'
-              : '#ccc'}
+            style:stroke={currentHover == commit.hash || currentCommitIndex == i ? '#101010' : '#ccc'}
             style:z-index={currentHover == commit.hash || currentCommitIndex == i ? '10' : '0'}
             transform="translate(0, 0)" />
         {/each}
-        <g
-          bind:this={gx}
-          class="text-xs"
-          transform="translate(0, {$appStates.mainViewScroll + 130})"></g>
+        <g bind:this={gx} class=" text-xs" transform="translate(0, {$appStates.mainViewScroll + 130 + 48})"></g>
       </svg>
     </div>
   {/key}

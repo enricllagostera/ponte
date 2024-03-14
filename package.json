@@ -55,7 +55,7 @@
     "@electron-toolkit/eslint-config-prettier": "^1.0.1",
     "@electron-toolkit/eslint-config-ts": "^1.0.0",
     "@electron-toolkit/tsconfig": "^1.0.1",
-    "@melt-ui/svelte": "^0.57.2",
+    "@melt-ui/svelte": "^0.57.3",
     "@sveltejs/vite-plugin-svelte": "^2.4.2",
     "@tailwindcss/forms": "^0.5.6",
     "@tailwindcss/typography": "^0.5.10",

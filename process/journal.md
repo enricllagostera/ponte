@@ -1,5 +1,13 @@
 # Process journal
 
+## 2024-03-12 Timeline redesign
+
+(timestamp::2024-03-14T12:02:51-04:00)
+
+I managed to re-organise the horizontal scale of the timeline view so that instead of having a continuous 1:1 mapping of time to x position, the x position is mapped to specific time units. Basically, this allows for a few interesting things: 1) a "natural" breakpoint between vertical and horizontal placement of nodes, as they go back to the top on a new time block; 2) the daily, weekly, bi-weekly and monthly units are all very familiar and feel intuitive to use, allowing for better understanding of the passage of time and rhythms of development.
+
+Now, I'm thinking about how and what to display in order to have visualizations with different information densities. Right now, as the columns are quite wide, there is only so much that can fit in the view, so it is hard to prioritize what information to show. I have scheduled a chat with Shahrom so that we can continue discussing ideas for this redesign in order to figure out priorities and how to elaborate on them. There is abalance that is needed between context-switching, tagging, metadata information, and ways to identify commits among others.
+
 ## 2024-03-12 Full-text devlog search in blogroll
 
 (timestamp::2024-03-12T15:52:03-04:00)
