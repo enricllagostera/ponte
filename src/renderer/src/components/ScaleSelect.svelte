@@ -9,7 +9,7 @@
     { value: 'hour1', label: '1 hour' },
     { value: 'hour12', label: '12 hours' },
     { value: 'day1', label: '1 day' },
-    { value: 'day3', label: '3 days' },
+    // { value: 'day3', label: '3 days' },
     { value: 'week1', label: '1 week' },
     { value: 'week2', label: '2 weeks' },
     { value: 'month1', label: '1 month' }

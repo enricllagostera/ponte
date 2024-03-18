@@ -93,10 +93,10 @@
         timeScale = d3.timeHour.every(12)
         rangeWidth = (d3.timeHour.count(timeExtent[0], timeExtent[1]) / 12) * baseTimeUnitWidth
         break
-      case 'day3':
-        timeScale = d3.timeDay.every(3)
-        rangeWidth = (d3.timeDay.count(timeExtent[0], timeExtent[1]) / 3) * baseTimeUnitWidth
-        break
+      // case 'day3':
+      //   timeScale = d3.timeDay.every(3)
+      //   rangeWidth = (d3.timeDay.count(timeExtent[0], timeExtent[1]) / 3) * baseTimeUnitWidth
+      //   break
       case 'week1':
         timeScale = d3.timeWeek.every(1)
         rangeWidth = d3.timeWeek.count(timeExtent[0], timeExtent[1]) * baseTimeUnitWidth
