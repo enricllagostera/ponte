@@ -14,13 +14,17 @@
     elements: { root, list, content, trigger },
     states: { value }
   } = createTabs({
-    defaultValue: 'tab-1'
+    defaultValue: 'blogroll',
+    onValueChange: ({ curr, next }) => {
+      $appStates.view = next
+      return next
+    }
   })
 
   const triggers = [
-    { id: 'tab-1', title: 'Blogroll view' },
-    { id: 'tab-2', title: 'Timeline view' },
-    { id: 'tab-3', title: 'Export panel' }
+    { id: 'blogroll', title: 'Blogroll view' },
+    { id: 'timeline', title: 'Timeline view' },
+    { id: 'exportPanel', title: 'Export panel' }
   ]
 
   let mainView
@@ -39,8 +43,17 @@
     for await (const devlog of allDvsPromises) {
       allDevlogs.push(devlog)
     }
+
     //console.log(allDevlogs)
   })
+
+  $: {
+    if ($appStates.view != $value) {
+      $value = $appStates.view
+      clearCommitFilter()
+      $appStates.scrollIntoView($value, $appStates.commitInView)
+    }
+  }
 
   const [send, receive] = crossfade({
     duration: 250,
@@ -110,13 +123,13 @@
     id="mainTabbedView"
     on:scroll={() => ($appStates.mainViewScroll = mainView.scrollTop)}
     bind:this={mainView}>
-    <div {...$content('tab-3')} use:content id="exportPanelTab" class="h-full w-full">
+    <div {...$content('exportPanel')} use:content id="exportPanelTab" class="h-full w-full">
       <QdpxPreview></QdpxPreview>
     </div>
-    <div {...$content('tab-2')} use:content id="chronoTimelineView" class="pt-2">
+    <div {...$content('timeline')} use:content id="chronoTimelineView" class="pt-2">
       <ChronologicalTimeline />
     </div>
-    <div {...$content('tab-1')} use:content>
+    <div {...$content('blogroll')} use:content>
       <div class="flex w-full flex-col" id="commitListViewContainer">
         {#if $appStates.repoReady}
           <div class="sticky top-0 z-10 inline-flex w-full items-center gap-2 bg-white py-4">

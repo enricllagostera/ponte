@@ -175,6 +175,7 @@
 <div
   class="my-6 flex w-full shrink grow-0 flex-col gap-0 overflow-hidden border-2 border-c-black transition-all dark:border-f-grey-200"
   class:text-bg-secondary={!active}
+  id="blogroll_{commit.hashAbbrev}"
   use:inview={inViewOptions}
   on:inview_enter={(event) => {
     const { inView } = event.detail
@@ -189,11 +190,11 @@
   <div
     class="flex h-16 basis-full flex-row items-center justify-between border-b-2 border-c-black bg-c-black px-8 py-2 align-middle text-sm text-c-white dark:border-b-f-grey-200"
     id="commit_{commit.hashAbbrev}">
-    <CommitPillButton clickable={false} hashAbbrev={commit.hashAbbrev} forceDarkTheme />
+    <CommitPillButton clickable={false} hashAbbrev={commit.hashAbbrev} forceDarkTheme class="p-1 px-2" />
     <time class="ms-2 flex font-normal"
       >{DateTime.fromMillis(commit.author.timestamp).toISODate()}, approx. {DateTime.fromMillis(
         commit.author.timestamp
-      ).toRelative()}</time>
+      ).toRelative()}.</time>
     <a
       class="active:hover:ring-0! me-2 ms-auto inline-flex h-fit w-fit cursor-pointer items-center border-2 border-c-black bg-transparent p-2 text-center text-sm font-medium text-c-white underline ring-offset-2 ring-offset-c-white hover:bg-c-black hover:text-app focus:outline-none focus-visible:z-10 focus-visible:border-2 focus-visible:ring-2 focus-visible:ring-c-black active:border-app active:bg-app active:text-c-black active:focus-visible:border-c-white disabled:bg-f-grey-200 disabled:text-c-white"
       href={`https://github.com/${userRepoInfo}/tree/${commit.hash}`}

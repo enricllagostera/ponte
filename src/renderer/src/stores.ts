@@ -28,6 +28,20 @@ export const appStates = writable({
   mainViewScroll: 0,
   repoReady: false,
   actions: undefined,
+  view: 'blogroll',
+  commitInView: '',
+  scrollIntoView: (view, hashAbbrev) => {
+    //console.log(view, hashAbbrev)
+    const element = document.querySelector(`#${view}_${hashAbbrev}`)
+    if (element) {
+      console.log('element found', element)
+      setTimeout(() => {
+        element.scrollIntoView({ behavior: 'instant', block: 'center', inline: 'center' })
+      }, 0)
+    } else {
+      console.log('element not found')
+    }
+  },
   updateQDPX: async (repo, settings, actions) => {
     console.log('update qdpx via store')
 

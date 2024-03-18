@@ -12,17 +12,16 @@
     ArrowRightToLine,
     Calendar,
     Minus,
-    Play,
     PlusIcon,
     Target,
     FileDiff,
-    Diff
+    Diff,
+    TagsIcon
   } from 'lucide-svelte'
   import FileChangesDrawer from './FileChangesDrawer.svelte'
   import LineChangesDrawer from './LineChangesDrawer.svelte'
   import Toggle from './Toggle.svelte'
   import ScaleSelect from './ScaleSelect.svelte'
-  import CommitListItem from './CommitListItem.svelte'
 
   let scaleX = undefined
   let timeExtent
@@ -38,7 +37,7 @@
   let commitHeight = 0
   let currentCommitIndex = 0
   let baseCommitTileWidth = 250
-  let baseTimeUnitWidth = 270
+  let baseTimeUnitWidth = 380
   let commitsVisual = new Map()
   let scalingFactor = 1
 
@@ -48,7 +47,8 @@
   let toggleFileChangeDrawer = false
   let toggleLineChangeDrawer = false
 
-  const link = d3.link(d3.curveBumpX)
+  const linkHor = d3.link(d3.curveBumpX)
+  const linkVer = d3.link(d3.curveStep)
 
   commitsVisual = new Map()
   const commitsCopy = [...$repo.commits]
@@ -134,24 +134,24 @@
     //console.log(someNumber)
   }
 
-  function getLinkFor(
-    sourceHash: string,
-    targetHash: string,
-    xOffsetOrigin = 0,
-    yOffsetOrigin = 0,
-    xOffsetDest = 0,
-    yOffsetDest = 0
-  ) {
-    if (commitsVisual.get(targetHash) == undefined) {
-      // console.log('invalid target')
-      return link({
-        source: [commitsVisual.get(sourceHash).x + xOffsetOrigin, commitsVisual.get(sourceHash).y + yOffsetOrigin],
-        target: [commitsVisual.get(sourceHash).x + xOffsetOrigin, commitsVisual.get(sourceHash).y + yOffsetOrigin]
+  function getLinkFor(sourceHash: string, targetHash: string) {
+    const cvSource = commitsVisual.get(sourceHash)
+    const cvTarget = commitsVisual.get(targetHash)
+
+    if (cvSource == undefined || cvTarget == undefined) {
+      return
+    }
+
+    if (cvSource.band == 0) {
+      return linkHor({
+        source: [cvSource.x, cvSource.y + cvSource.h * 0.5],
+        target: [cvTarget.x + cvTarget.w, cvTarget.y + cvTarget.h * 0.5]
       })
     }
-    return link({
-      source: [commitsVisual.get(sourceHash).x + xOffsetOrigin, commitsVisual.get(sourceHash).y + yOffsetOrigin],
-      target: [commitsVisual.get(targetHash).x + xOffsetDest, commitsVisual.get(targetHash).y + yOffsetDest]
+
+    return linkVer({
+      source: [cvSource.x + cvSource.w * 0.5, cvSource.y + cvSource.h],
+      target: [cvTarget.x + cvTarget.w * 0.5, cvTarget.y]
     })
   }
 
@@ -186,7 +186,7 @@
   function getCommitY(band): number {
     // return 160 + band * ((commitHeight == 0 ? 160 : commitHeight) + 50)
     return (
-      180 * band +
+      220 * band +
       190 +
       (toggleFileChangeDrawer && band > 0 ? 100 * band : 0) +
       (toggleLineChangeDrawer && band > 0 ? 100 * band : 0)
@@ -195,9 +195,15 @@
 
   function scrollToIndex(index: number): void {
     const commits = [...$repo.commits].reverse()
+    $appStates.commitInView = commits[index].hashAbbrev
     document
       .querySelector(`#timeline_${commits[index].hashAbbrev}`)
       .scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' })
+  }
+
+  $: {
+    const cInView = $appStates.commitInView
+    currentCommitIndex = [...$repo.commits].reverse().findIndex((c) => c.hashAbbrev == cInView)
   }
 </script>
 
@@ -260,41 +266,36 @@
   <ScaleSelect bind:selectedUnit={timeSelected}></ScaleSelect>
 </div>
 <div
-  class="relative h-full font-mono text-sm"
+  class="relative h-full bg-[#d0d0d0] text-sm"
   id="timeline_box"
   style="transform: scale({scalingFactor}, {scalingFactor}); transform-origin: top left;">
   {#key rangeWidth}
-    <div class="absolute top-0">
+    <div class="absolute top-0 bg-[#d0d0d0]">
       <svg
         id="topAxis"
         width={rangeWidth}
         height="{getCommitY(maxBand + 1)}px"
-        class="absolute fill-c-black stroke-c-black"
+        class="absolute bg-[#f1f1f1] fill-c-black stroke-c-black"
         transform="translate(0, 0)">
         {#each commitsVisual as [hash, commit], i (hash)}
           {#if commit.parents == ''}
-            <circle
+            <!-- <circle
               cx={commit.x + commit.w}
               cy={getCommitY(commit.band) + commit.h}
               r="10"
               fill={'black'}
-              stroke="transparent" />
+              stroke="transparent" /> -->
           {:else}
             {#each commit.parents.split(' ') as child}
-              {#each commit.branches as br}
+              {#if getLinkFor(commit.hash, child, 0, 0, commit.w, commitsVisual.get(child).h * 0.5) != undefined}
                 <path
-                  d={getLinkFor(commit.hash, child, 0, 0, commit.w, commitsVisual.get(child).h)}
+                  d={getLinkFor(commit.hash, child, 0, 0, commit.w, commitsVisual.get(child).h * 0.5)}
                   fill="transparent"
                   stroke={currentCommitIndex == i || currentCommitIndex == i - 1 ? '#13d44e' : `#999`}
                   stroke-width="{currentCommitIndex == i || currentCommitIndex == i - 1 ? 8 : 3}px"></path>
-                <circle
-                  cx={commit.x + commit.w}
-                  cy={getCommitY(commit.band) + commit.h}
-                  r="10"
-                  fill={`#999`}
-                  stroke="transparent" />
-                <circle cx={commit.x} cy={getCommitY(commit.band)} r="10" fill={`#999`} stroke="transparent" />
-              {/each}
+              {/if}
+              <!-- {#each commit.branches as br} -->
+              <!-- {/each} -->
             {/each}
           {/if}
           <line
@@ -302,21 +303,21 @@
             y1={0}
             x2={commit.x}
             y2="{getCommitY(maxBand + 1)}px"
-            style:stroke-width={currentHover == commit.hash || currentCommitIndex == i ? 4 : 1}
-            style:stroke={currentHover == commit.hash || currentCommitIndex == i ? '#101010' : '#ccc'}
-            style:z-index={currentHover == commit.hash || currentCommitIndex == i ? '10' : '0'}
+            style:stroke-width={currentHover == commit.hash || currentCommitIndex == i ? 2 : 2}
+            style:stroke={currentHover == commit.hash || currentCommitIndex == i ? '#ccc' : '#ccc'}
+            style:z-index={currentHover == commit.hash || currentCommitIndex == i ? '0' : '0'}
             transform="translate(0, 0)" />
         {/each}
         <g bind:this={gx} class=" text-xs" transform="translate(0, {$appStates.mainViewScroll + 130 + 48})"></g>
       </svg>
     </div>
   {/key}
-  <div class="relative h-full gap-0" id="commitTLView">
+  <div class="relative h-full gap-0 bg-[#d0d0d0]" id="commitTLView">
     {#if $appStates.repoReady}
       {#key rangeWidth}
         {#each commitsVisual as [hash, commit], i (hash)}
           <div
-            class="group absolute h-fit w-56 items-center bg-c-white pt-3 text-sm shadow-lg hover:border-c-black hover:bg-app {currentCommitIndex ==
+            class="group absolute h-fit w-[300px] items-center bg-c-white text-base shadow-lg hover:border-c-black hover:bg-app {currentCommitIndex ==
             i
               ? 'z-10 border-2 bg-c-white ring-4 ring-app'
               : 'z-0 border-2 border-c-black bg-c-white'}"
@@ -328,37 +329,42 @@
             style:top="{getCommitY(commit.band)}px"
             on:pointerenter={() => (currentHover = commit.hash)}
             on:pointerleave={() => (currentHover = '')}>
-            <CommitPillButton
-              class="absolute -top-5 left-14"
-              forceDarkTheme={true}
-              hashAbbrev={commit.hashAbbrev}
-              clickable={false} />
-            <div class="relative p-0">
-              <div class="my-2 flex items-center">
-                <p class="ms-2 w-fit">
-                  <Calendar class="mb-1 inline-block h-4 w-4 text-xs" />
+            <div class="relative flex flex-col">
+              <p class="m-2 line-clamp-3 text-xl font-semibold">{commit.subject}</p>
+              <div class="flex items-center gap-1 px-2 py-1">
+                <p class="w-fit">
+                  <Calendar class="mb-1 inline-flex h-4 w-4 text-xs" />
                   {DateTime.fromMillis(commit.author.timestamp).toFormat('yyyy-MM-dd, HH:mm')}
                 </p>
                 <Button
-                  class="me-2 ms-auto"
+                  class="ms-auto"
                   on:click={() => {
                     currentCommitIndex = i
                     scrollToIndex(currentCommitIndex)
-                  }}><Target class="h-3 w-3" /></Button>
-                <Button
-                  class="me-2 ms-auto"
+                  }}><Target class="h-4 w-4" /></Button>
+                <!-- PLAY BUTTON
+                  <Button
+                  class="me-2"
                   on:click={() => {
                     currentCommitIndex = i
                     scrollToIndex(currentCommitIndex)
-                  }}><Play class="h-3 w-3" /></Button>
+                  }}><Play class="h-3 w-3" /></Button> -->
+                <Button class=""><TagsIcon class="h-4 w-4" /></Button>
               </div>
-              <p class="m-2 mb-4 line-clamp-3 text-sm">{commit.subject}</p>
+
               {#if toggleFileChangeDrawer}
                 <FileChangesDrawer {commit} {fileChangesExtents} />
               {/if}
               {#if toggleLineChangeDrawer}
                 <LineChangesDrawer {commit} {lineChangesExtents} />
               {/if}
+              <div class="flex w-full flex-row place-items-end bg-[#ddd] py-1">
+                <CommitPillButton
+                  class="w-full px-2"
+                  forceDarkTheme={true}
+                  hashAbbrev={commit.hashAbbrev}
+                  clickable={false} />
+              </div>
             </div>
           </div>
         {/each}
