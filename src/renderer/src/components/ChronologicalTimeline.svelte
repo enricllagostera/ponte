@@ -1,6 +1,6 @@
 <script lang="ts">
   import * as d3 from 'd3'
-  import { appStates, repo } from '../stores'
+  import { appStates, qdpx, repo } from '../stores'
   import CommitPillButton from './CommitPillButton.svelte'
   import { DateTime } from 'luxon'
 
@@ -16,7 +16,10 @@
     Target,
     FileDiff,
     Diff,
-    TagsIcon
+    TagsIcon,
+    GitBranch,
+    User,
+    Tag
   } from 'lucide-svelte'
   import FileChangesDrawer from './FileChangesDrawer.svelte'
   import LineChangesDrawer from './LineChangesDrawer.svelte'
@@ -53,7 +56,7 @@
   commitsVisual = new Map()
   const commitsCopy = [...$repo.commits]
   commitsCopy.reverse().forEach((c) => {
-    commitsVisual.set(c.hash, { ...c, x: 0, y: 0, band: 0 })
+    commitsVisual.set(c.hash, { ...c, x: 0, y: 0, band: 0, codes: [] })
   })
   let domCommits = [...commitsVisual.values()].map((i) => i.hash + '')
   dates = $repo.commits.map((c) => c.committer.timestamp)
@@ -80,6 +83,19 @@
   )
 
   timeExtent = d3.extent(dates)
+
+  $: {
+    console.log('updating codes')
+    commitsVisual.forEach((v) => {
+      v.codes = []
+    })
+    const res = $qdpx.codes.forEach((appliedCode) => {
+      appliedCode.commitHashes.forEach((ch) => {
+        let r = commitsVisual.get(ch)
+        r.codes.push(appliedCode.code)
+      })
+    })
+  }
 
   $: {
     const timeUnit = timeSelected
@@ -186,7 +202,7 @@
   function getCommitY(band): number {
     // return 160 + band * ((commitHeight == 0 ? 160 : commitHeight) + 50)
     return (
-      220 * band +
+      300 * band +
       190 +
       (toggleFileChangeDrawer && band > 0 ? 100 * band : 0) +
       (toggleLineChangeDrawer && band > 0 ? 100 * band : 0)
@@ -294,8 +310,6 @@
                   stroke={currentCommitIndex == i || currentCommitIndex == i - 1 ? '#13d44e' : `#999`}
                   stroke-width="{currentCommitIndex == i || currentCommitIndex == i - 1 ? 8 : 3}px"></path>
               {/if}
-              <!-- {#each commit.branches as br} -->
-              <!-- {/each} -->
             {/each}
           {/if}
           <line
@@ -331,11 +345,33 @@
             on:pointerleave={() => (currentHover = '')}>
             <div class="relative flex flex-col">
               <p class="m-2 line-clamp-3 text-xl font-semibold">{commit.subject}</p>
+              <div class="flex items-center px-2 py-1">
+                <p class="w-fit gap-1">
+                  <span class="inline-flex items-center bg-f-info/40 px-1"
+                    ><User class="mx-1 inline-flex h-4 w-4"></User>{commit.author_name}</span>
+                  {#each commit.branches as br}
+                    <!-- {@debug br} -->
+                    <span class="inline-flex items-center bg-app/40 px-1"
+                      ><GitBranch class="mx-1 inline-flex h-4 w-4"></GitBranch> {br.substring(15)}
+                    </span>
+                  {/each}
+                  {#key $qdpx.codes}
+                    {#each commit.codes as tag}
+                      <!-- {@debug br} -->
+                      <span class="inline-flex items-center bg-magenta/30 px-1"
+                        ><Tag class="mx-1 inline-flex h-4 w-4"></Tag> {tag.value}
+                      </span>
+                    {/each}
+                  {/key}
+                </p>
+              </div>
+
               <div class="flex items-center gap-1 px-2 py-1">
                 <p class="w-fit">
                   <Calendar class="mb-1 inline-flex h-4 w-4 text-xs" />
                   {DateTime.fromMillis(commit.author.timestamp).toFormat('yyyy-MM-dd, HH:mm')}
                 </p>
+
                 <Button
                   class="ms-auto"
                   on:click={() => {

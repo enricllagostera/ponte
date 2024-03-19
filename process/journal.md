@@ -1,5 +1,13 @@
 # Process journal
 
+## 2024-03-18 Show tags and branches in timeline view
+
+(timestamp::2024-03-18T11:41:05-04:00)
+
+This is for the medium density version. I just added the info as a kind of list of pills with icons after the main commit subject. Below is an example of how it looks. I also added the author info. This already works quite well, but it does make the boxes too tall, so I'm thinking of adding some form of toggling, similar to the file and line changes info, so that users can choose to show or hide these different pieces of info. I think a general toggle for the whole timeline would be enough, instead of per-commit toggles. There is still a bug with loading tags from config files, but I'll add it to the fix-it list for later.
+
+![](media/20240318T175433-0400--journal.png)
+
 ## 2024-03-15 Continuing timeline redesign
 
 (timestamp::2024-03-15T14:18:44-04:00)

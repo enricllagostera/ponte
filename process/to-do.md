@@ -27,16 +27,21 @@ kanban-plugin: basic
 
 ## High priority
 
+- [ ] BUG Saved tags in config are not showing up on tag input in blogroll when config file is loaded
+- [ ] Re-organize the export preview and actions panel
+- [ ] Show author in blogroll view
 
 
 ## In progress
 
-- [ ] Re-organize the export preview and actions panel
 
 
 ## Done
 
 **Complete**
+- [x] Show tags in timeline view
+- [x] Show author in timeline view
+- [x] Show branch names in timeline view
 
 
 ***
