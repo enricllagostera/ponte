@@ -27,9 +27,7 @@ kanban-plugin: basic
 
 ## High priority
 
-- [ ] BUG Saved tags in config are not showing up on tag input in blogroll when config file is loaded
 - [ ] Re-organize the export preview and actions panel
-- [ ] Show author in blogroll view
 
 
 ## In progress
@@ -39,15 +37,18 @@ kanban-plugin: basic
 ## Done
 
 **Complete**
-- [x] Show tags in timeline view
-- [x] Show author in timeline view
-- [x] Show branch names in timeline view
 
 
 ***
 
 ## Archive
 
+- [x] 2024-03-19T18:14:54-04:00 -- Better zoom controls
+- [x] 2024-03-19T18:14:54-04:00 -- BUG Saved tags in config are not showing up on tag input in blogroll when config file is loaded
+- [x] 2024-03-19T16:43:41-04:00 -- Show author in blogroll view
+- [x] 2024-03-19T16:43:41-04:00 -- Show tags in timeline view
+- [x] 2024-03-19T16:43:41-04:00 -- Show author in timeline view
+- [x] 2024-03-19T16:43:41-04:00 -- Show branch names in timeline view
 - [x] 2024-03-14T12:08:41-04:00 -- Timebox the timeline view
 - [x] 2024-03-14T12:08:41-04:00 -- Implement full-text filter for commit messages plus devlog in blogroll view
 - [x] 2024-03-06T16:20:31-05:00 -- Fixing blogroll layout issues

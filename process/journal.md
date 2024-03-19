@@ -1,5 +1,15 @@
 # Process journal
 
+## 2024-03-19 Fixing bugs and some zooming issues
+
+(timestamp::2024-03-19T17:05:07-04:00)
+
+OK, just got the loading of tags from configs to work with the `TagsInput` component, finally. It is getting recalculated too often, but I think it won't be much of a problem as I'm using an early return before the larger calculation. Moving on to improving the timeline zooming.
+
+(timestamp::2024-03-19T18:12:44-04:00)
+
+The 3-level zoom is implemented. I think it feels easy enough to use. Maybe the default level (100%) is too large? I should check with folks what they think.
+
 ## 2024-03-18 Show tags and branches in timeline view
 
 (timestamp::2024-03-18T11:41:05-04:00)

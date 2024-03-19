@@ -4,7 +4,7 @@
   import { DateTime } from 'luxon'
   import { marked } from 'marked'
 
-  import { appStates, codeOptions, settings } from '../stores'
+  import { appStates, codeOptions, qdpx, settings } from '../stores'
 
   import { inview } from 'svelte-inview'
   import Tree from './Tree.svelte'
@@ -169,6 +169,19 @@
     // console.log(operation, res)
     return res
   }
+
+  function getCodesForCommit(hash) {
+    let codes = []
+    if ($qdpx.codes.length == 0) {
+      return []
+    }
+    $qdpx.codes.forEach((ac: AppliedCode) => {
+      if (ac.commitHashes.indexOf(hash) >= 0) {
+        codes.push(ac.code)
+      }
+    })
+    return codes
+  }
 </script>
 
 <!-- COMPONENT ROOT -->
@@ -310,7 +323,9 @@
 
   <!-- TAGGING ROW -->
   <div class="my-2 flex basis-full px-8">
-    <TagInput on:codesChanged={codesChanged}></TagInput>
+    {#key $qdpx.codes}
+      <TagInput on:codesChanged={codesChanged} startingTags={getCodesForCommit(commit.hash)}></TagInput>
+    {/key}
   </div>
 </div>
 

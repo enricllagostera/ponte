@@ -3,13 +3,15 @@
   import { Tags, X } from 'lucide-svelte'
   import { createEventDispatcher } from 'svelte'
 
+  export let startingTags = ['teste', 'teste2']
+
   const dispatch = createEventDispatcher()
 
   const {
     elements: { root, input, tag, deleteTrigger, edit },
     states: { tags }
   } = createTagsInput({
-    defaultTags: [],
+    defaultTags: startingTags,
     unique: true,
     add(tag) {
       return { id: tag, value: tag }
@@ -37,10 +39,7 @@
         use:tag
         class="flex items-center overflow-hidden rounded-md bg-f-grey-100 [word-break:break-word] data-[disabled]:bg-neutral-400 data-[selected]:bg-app data-[disabled]:hover:cursor-default data-[disabled]:focus:!outline-none data-[disabled]:focus:!ring-0">
         <span class="flex items-center border-r border-white/10 px-1.5">{t.value}</span>
-        <button
-          {...$deleteTrigger(t)}
-          use:deleteTrigger
-          class="flex h-full items-center px-1 enabled:hover:bg-app">
+        <button {...$deleteTrigger(t)} use:deleteTrigger class="flex h-full items-center px-1 enabled:hover:bg-app">
           <X class="h-4 w-4" />
         </button>
       </div>
