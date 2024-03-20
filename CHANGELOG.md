@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.1.3](https://github.com/enricllagostera/repo-to-qda/compare/v0.1.2...v0.1.3) (2024-03-20)
+
+
+### Features
+
+* Add back the export QDPX button and some formatting ([306a4f4](https://github.com/enricllagostera/repo-to-qda/commit/306a4f46c85343009f10efdb08bf0609732196f9))
+* Adds line changes drawer and improves file changes drawer ([1c88bf3](https://github.com/enricllagostera/repo-to-qda/commit/1c88bf3b1b0654a3c5d8adf2bc963ceb1f1340a4))
+* Adds small tweaks to build numbers ([d2efe78](https://github.com/enricllagostera/repo-to-qda/commit/d2efe780de2bdecdbee3a5f2b1623fc9b0e14d5a))
+* Adds tag input usability improvements via Melt UI ([1951d9d](https://github.com/enricllagostera/repo-to-qda/commit/1951d9df7c3eb64e85bceb17b7175c1a87bcd480))
+* Adds toggles for information drawers in the timeline graph ([695c1c1](https://github.com/enricllagostera/repo-to-qda/commit/695c1c136891aaa4f49e91dcef3fd76990743608))
+* Allows full-text filtering of commit messages and devlogs in blogroll view ([ce62b77](https://github.com/enricllagostera/repo-to-qda/commit/ce62b77c1bea930945b6e8ecc072e350a07e957e))
+* Better zoom controls and fixes tags loading from config files ([d7dd335](https://github.com/enricllagostera/repo-to-qda/commit/d7dd3358013eeb3531dd83e8074bc42fac937c6f))
+* Filters commits in blogroll per subject ([f8fb87d](https://github.com/enricllagostera/repo-to-qda/commit/f8fb87d22f4549a0fb52eeeaf34ca17cb9096ad2))
+* Improvements to timeline usability and design ideation for new panels ([7d0c7a4](https://github.com/enricllagostera/repo-to-qda/commit/7d0c7a401f1c6172d313a392433c52ce0f199183))
+* More detailed blogroll with changed files information ([3369bdb](https://github.com/enricllagostera/repo-to-qda/commit/3369bdb3af110c9d7d87ec2d5a2fe22c9ca5efc7))
+* Organizes timeline view into timeboxes (daily, weekly, etc) ([97cdab2](https://github.com/enricllagostera/repo-to-qda/commit/97cdab209b581e97ca5311a4b0d9f01bcbf220d9))
+* Show more info (branches, tags, author) on timeline nodes ([1920439](https://github.com/enricllagostera/repo-to-qda/commit/1920439edaa04b0de6640497e873156142cd0525))
+* Timeline redesign and context-switching with blogroll ([6b6aaa4](https://github.com/enricllagostera/repo-to-qda/commit/6b6aaa43d97acebc7f4211151a4f51dacae9e5d9))
+* **wip:** Adds version numbers and other small improvements ([5db4af0](https://github.com/enricllagostera/repo-to-qda/commit/5db4af07698563e4cc9db98deaff902be6df6906))
+* **wip:** Initial stages of a commit timeline view with viz for different data points ([aa6be49](https://github.com/enricllagostera/repo-to-qda/commit/aa6be4963a97aeb73f62bac93deb990a28263d6f))
+
+
+### Bug Fixes
+
+* Improve blogroll layout with proper overflows ([18535c9](https://github.com/enricllagostera/repo-to-qda/commit/18535c95086c78cb5100f96c18453fec7fa5b8fb))
+* Removes "3 days" time unit from timeline view ([a585643](https://github.com/enricllagostera/repo-to-qda/commit/a5856439650bd3e53213ca232d934d1f70c299a8))
+
 ## 0.1.2 (2023-11-09)
 
 ### Features
