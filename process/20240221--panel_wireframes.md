@@ -3,7 +3,7 @@ Below is the https://wireframe.fun/ code for the mockups in the journal.
 ```
 h.h-3.bg-whitesmoke.gap-3.p-1.v-center Header
     h.expand.px-2
-        title Ponte  
+        title Ponte
         text.ml-2 v0.1.1.1111
     h.gap-3
         button new config
@@ -60,7 +60,7 @@ desktop Ponte - 1. Loading repo
         copy Header
         h.expand.bg-whitesmoke.h-center.v-center Main
             v Repo loader
-                Load project data  
+                Load project data
                 h.v-center
                     input Enter user/repo
                     button.m-1 Load
@@ -130,7 +130,7 @@ desktop Export panel
                             copy TagEntry
                             copy TagEntry
                             copy TagEntry
-                            copy TagEntry                                
+                            copy TagEntry
                     v.w-75.p-1
                         h.expand
                             v.expand.p-1.scroll
@@ -146,7 +146,7 @@ desktop Export panel
                             v.w-15.bg-lightgrey.border-l.p-1
                                 Some metadata about how the devlog was compiled.
                                 divider.my-2
-                                v Annotation 
+                                v Annotation
                                     No annotations for this source so far.
                                     button.my-2(click=Editing an annotation for a source) Add annotation
 

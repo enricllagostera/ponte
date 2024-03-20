@@ -90,9 +90,7 @@ class GitManager {
       }
 
       let logFileChanges = await this.git.raw('show', commit.hash, '--name-status', '--pretty=%h')
-      logFileChanges = logFileChanges
-        .substring(logFileChanges.split('\n')[0].length + 2, logFileChanges.length)
-        .trim()
+      logFileChanges = logFileChanges.substring(logFileChanges.split('\n')[0].length + 2, logFileChanges.length).trim()
       commit.fileChangeStats = logFileChanges.split('\n').map((f) => {
         return {
           operation: f.split('\t')[0],
@@ -100,9 +98,7 @@ class GitManager {
         }
       })
       const logLineChanges = await this.git.raw('show', commit.hash, '--numstat', '--pretty=%h')
-      const splitLCs = logLineChanges
-        .substring(logLineChanges.split('\n')[0].length + 2, logLineChanges.length)
-        .trim()
+      const splitLCs = logLineChanges.substring(logLineChanges.split('\n')[0].length + 2, logLineChanges.length).trim()
       //console.log(splitLCs)
       if (logLineChanges == '') {
         commit.lineChangeStats = [{ is_empty: true }]
@@ -131,9 +127,7 @@ class GitManager {
     const hierarchy = {}
     // var hierarchy = []
     // adapted from https://codereview.stackexchange.com/questions/158134/generate-a-nested-structure-based-on-a-list-of-file-paths
-    const paths = [
-      ...(await this.git.raw(['ls-tree', tree, '-r', '--name-only'])).trim().split('\n')
-    ]
+    const paths = [...(await this.git.raw(['ls-tree', tree, '-r', '--name-only'])).trim().split('\n')]
     paths.forEach(function (filePath) {
       filePath.split('/').reduce(function (r, e) {
         return r[e] || (r[e] = {})
@@ -163,13 +157,7 @@ class GitManager {
           abs: path.join(baseAbsPath, folderPath, entry),
           selected: false,
           commitHash: commitHash,
-          children: this.getTree(
-            hierarchy[entry],
-            rootPath,
-            path.join(folderPath, entry),
-            baseAbsPath,
-            commitHash
-          )
+          children: this.getTree(hierarchy[entry], rootPath, path.join(folderPath, entry), baseAbsPath, commitHash)
         })
       }
     }

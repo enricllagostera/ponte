@@ -1,7 +1,5 @@
 ---
-
 kanban-plugin: basic
-
 ---
 
 ## Wishlist
@@ -10,7 +8,6 @@ kanban-plugin: basic
 - [ ] Load commits from wiki repo and display in commit feed
 - [ ] Improve keyboard accessibility of the tree navigation in file selection
 - [ ] Create a URI handler (see Electron Deep Link feature) that will open a specific version of the app that can run web-based playable builds from the local commits. Alternatively, show a list of build folders per commit.
-
 
 ## Backlog
 
@@ -24,22 +21,17 @@ kanban-plugin: basic
 - [ ] Encode commits from full text content (glob pattern)
 - [ ] Embed images as base64 in devlogs or link to them on GitHub
 
-
 ## High priority
 
 - [ ] Re-organize the export preview and actions panel
 
-
 ## In progress
-
-
 
 ## Done
 
 **Complete**
 
-
-***
+---
 
 ## Archive
 
@@ -85,7 +77,9 @@ kanban-plugin: basic
 - [x] 2023-10-06T13:07:32-04:00 -- Prepare MAC build
 
 %% kanban:settings
+
 ```
 {"kanban-plugin":"basic"}
 ```
+
 %%

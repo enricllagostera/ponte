@@ -23,8 +23,7 @@
       st.operation.startsWith('T')
   ).length
   let ratioAdd =
-    commit.fileChangeStats.filter((st) => st.operation.startsWith('A')).length /
-    commit.fileChangeStats.length
+    commit.fileChangeStats.filter((st) => st.operation.startsWith('A')).length / commit.fileChangeStats.length
   let ratioMod =
     commit.fileChangeStats.filter(
       (st) =>
@@ -34,9 +33,8 @@
         st.operation.startsWith('T')
     ).length / commit.fileChangeStats.length
   let ratioDel =
-    commit.fileChangeStats.filter(
-      (st) => st.operation.startsWith('D') || st.operation.startsWith('X')
-    ).length / commit.fileChangeStats.length
+    commit.fileChangeStats.filter((st) => st.operation.startsWith('D') || st.operation.startsWith('X')).length /
+    commit.fileChangeStats.length
 </script>
 
 <div
@@ -47,31 +45,12 @@
     <rect x="0" y="0" {width} height={height / 3}></rect>
     <rect x={0} width={width * ratioAdd + 1} y={0} {height} class="fill-yellow"></rect>
     <rect x={width * ratioAdd} width={width * ratioMod + 1} y={0} {height} class="fill-blue"></rect>
-    <rect
-      x={width * (ratioAdd + ratioMod)}
-      width={width * ratioDel + 1}
-      y={0}
-      {height}
-      class="fill-orange"></rect>
-    <text
-      x={width / 2}
-      y={height * 0.25 - 3}
-      text-anchor="middle"
-      dominant-baseline="middle"
-      class="fill-c-white"
+    <rect x={width * (ratioAdd + ratioMod)} width={width * ratioDel + 1} y={0} {height} class="fill-orange"></rect>
+    <text x={width / 2} y={height * 0.25 - 3} text-anchor="middle" dominant-baseline="middle" class="fill-c-white"
       >Additions: {commit.fileChangeStats.filter((st) => st.operation == 'A').length}</text>
-    <text
-      x={width / 2}
-      dy={height * 0.5 + 1}
-      text-anchor="middle"
-      dominant-baseline="middle"
-      class="fill-c-white">Mods or renamed: {modCount}</text>
-    <text
-      x={width / 2}
-      dy={height * 0.75 + 4}
-      text-anchor="middle"
-      dominant-baseline="middle"
-      class="fill-c-white"
+    <text x={width / 2} dy={height * 0.5 + 1} text-anchor="middle" dominant-baseline="middle" class="fill-c-white"
+      >Mods or renamed: {modCount}</text>
+    <text x={width / 2} dy={height * 0.75 + 4} text-anchor="middle" dominant-baseline="middle" class="fill-c-white"
       >Deletions: {commit.fileChangeStats.filter((st) => st.operation == 'D').length}</text>
   </svg>
 </div>

@@ -43,17 +43,16 @@ export async function convertMdToDocx(md, name = '', basePath = '', isFolder = f
   try {
     docRs = await HTMLtoDOCX(sanitizedHtml, null, {
       footer: true,
-      pageNumber: true,
+      pageNumber: false,
       font: 'Roboto',
       fontSize: '12pt',
       title: name,
-      decodeUnicode: true,
-      lineNumber: false
+      decodeUnicode: true
     })
     return docRs
   } catch (error) {
     console.log(error.message)
-    return null
+    return undefined
   }
 }
 
@@ -70,7 +69,7 @@ export async function formatCodeAsHTML(_event, content) {
 }
 
 export async function convertCodeToDocx(content, name = '') {
-  const processedHtml = await formatCodeAsHTML(content)
+  const processedHtml = await formatCodeAsHTML(undefined, content)
   let docRs = await HTMLtoDOCX(processedHtml, null, {
     footer: true,
     pageNumber: true,

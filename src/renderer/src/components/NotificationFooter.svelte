@@ -6,10 +6,7 @@
   export function setup(): void {
     let progressPerCommit = new Map()
     window.loader.onDownloadInProgress(
-      (
-        _event: any,
-        data: { message: string; progress: { total: number }; hash: any; commitCount: number }
-      ) => {
+      (_event: any, data: { message: string; progress: { total: number }; hash: any; commitCount: number }) => {
         if (data.message != '') {
           // if there is a message, just forward it to the footer
           message = data.message
@@ -25,18 +22,16 @@
         } else {
           progressPerCommit.set(data.hash, data)
         }
-        message = `Downloading commits... (${
-          data.commitCount - Array.from(progressPerCommit).length
-        }/${data.commitCount})`
+        message = `Downloading commits... (${data.commitCount - Array.from(progressPerCommit).length}/${
+          data.commitCount
+        })`
       }
     )
   }
 </script>
 
 {#if message != ''}
-  <div
-    transition:slide
-    class="flex flex-col grow-0 w-screen p-4 text-center bg-f-warn text-c-black">
+  <div transition:slide class="flex flex-col grow-0 w-screen p-4 text-center bg-f-warn text-c-black">
     {#if message != ''}
       <div class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></div>
       {message}

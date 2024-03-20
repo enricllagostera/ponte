@@ -14,23 +14,19 @@ if (process.contextIsolated) {
     contextBridge.exposeInMainWorld('loader', {
       checkRepoInfo: (repoInfo) => ipcRenderer.invoke('checkRepoInfo', repoInfo),
       loadRepoData: (repoInfo) => ipcRenderer.invoke('loadRepoData', repoInfo),
-      getDevlogForCommit: (hash, devlogConfig) =>
-        ipcRenderer.invoke('getDevlogForCommit', hash, devlogConfig),
+      getDevlogForCommit: (hash, devlogConfig) => ipcRenderer.invoke('getDevlogForCommit', hash, devlogConfig),
       getDevlogCompilation: (devlogCompilationConfig) =>
         ipcRenderer.invoke('getDevlogCompilation', devlogCompilationConfig),
       saveDialog: (saveOptions) => ipcRenderer.invoke('saveDialog', saveOptions),
       loadDialog: (loadOptions) => ipcRenderer.invoke('loadDialog', loadOptions),
-      exportQDPX: (exportData, exportOptions) =>
-        ipcRenderer.invoke('exportQDPX', exportData, exportOptions),
+      exportQDPX: (exportData, exportOptions) => ipcRenderer.invoke('exportQDPX', exportData, exportOptions),
       onDownloadInProgress: (callback) => ipcRenderer.on('commitDownloadInProgress', callback)
     })
     contextBridge.exposeInMainWorld('files', {
       forceClearCache: () => ipcRenderer.invoke('forceClearCache'),
       readFile: (filePath) => ipcRenderer.invoke('readFile', filePath),
-      runGlobOnCommit: (pattern, commitHash) =>
-        ipcRenderer.invoke('runGlobOnCommit', pattern, commitHash),
-      readFileAtCommit: (filePath, commitHash) =>
-        ipcRenderer.invoke('readFileAtCommit', filePath, commitHash),
+      runGlobOnCommit: (pattern, commitHash) => ipcRenderer.invoke('runGlobOnCommit', pattern, commitHash),
+      readFileAtCommit: (filePath, commitHash) => ipcRenderer.invoke('readFileAtCommit', filePath, commitHash),
       convertCodeToHTML: (content) => ipcRenderer.invoke('convertCodeToHTML', content),
       showInExplorer: (filePath) => ipcRenderer.invoke('showInExplorer', filePath)
     })

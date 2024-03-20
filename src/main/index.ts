@@ -1,12 +1,4 @@
-import {
-  app,
-  shell,
-  BrowserWindow,
-  ipcMain,
-  dialog,
-  IpcMainInvokeEvent,
-  OpenDialogReturnValue
-} from 'electron'
+import { app, shell, BrowserWindow, ipcMain, dialog, IpcMainInvokeEvent, OpenDialogReturnValue } from 'electron'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { join } from 'path'
 import * as fs from 'fs-extra'
@@ -165,10 +157,7 @@ async function exportQDPX(_event: IpcMainInvokeEvent, exportData, exportOptions)
   await exporter.exportToFile(exportData, res.filePath)
 }
 
-async function loadDialog(
-  _event: IpcMainInvokeEvent,
-  loadOptions: Electron.OpenDialogOptions
-): Promise<string> {
+async function loadDialog(_event: IpcMainInvokeEvent, loadOptions: Electron.OpenDialogOptions): Promise<string> {
   let dialogRes: OpenDialogReturnValue
   try {
     dialogRes = await dialog.showOpenDialog({
@@ -212,9 +201,7 @@ async function getDevlogForCommit(_event: IpcMainInvokeEvent, commitHash: string
   // basic devlog from commit message
   const commitISODate = DateTime.fromMillis(commitData.author.timestamp).toISODate()
 
-  const devlogTrailers = parseTrailers(commitData.trailers).filter(
-    ({ key }) => key.toLowerCase() == 'devlog'
-  )
+  const devlogTrailers = parseTrailers(commitData.trailers).filter(({ key }) => key.toLowerCase() == 'devlog')
   const devlogs: Array<any> = []
   let devlogsContent = ''
   for (const trailer of devlogTrailers) {
@@ -247,14 +234,9 @@ async function getDevlogForCommit(_event: IpcMainInvokeEvent, commitHash: string
   return devlog
 }
 
-async function getDevlogCompilation(
-  _event: IpcMainInvokeEvent,
-  devlogCompilationConfig
-): Promise<Devlog> {
+async function getDevlogCompilation(_event: IpcMainInvokeEvent, devlogCompilationConfig): Promise<Devlog> {
   let comp = '# Devlog compilation\n\n'
-  const selectedCommits = allCommits.filter(
-    (c) => devlogCompilationConfig.selectedCommits.indexOf(c.hash) >= 0
-  )
+  const selectedCommits = allCommits.filter((c) => devlogCompilationConfig.selectedCommits.indexOf(c.hash) >= 0)
 
   for (let i = 0; i < selectedCommits.length; i++) {
     const sc = selectedCommits[i]

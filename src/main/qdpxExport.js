@@ -112,7 +112,11 @@ class QdpxExporter {
     if (originalExt == 'md') {
       // convert to docx if md
       const docFile = await convertMdToDocx(plainTextData, name, originalAbsPath, isFolder)
-      await fs.outputFile(path.join(qdpxSourcesPath, `/${base_ts_guid}.${richTextExt}`), docFile)
+      if (!docFile) {
+        delete ts['@richTextPath']
+      } else {
+        await fs.outputFile(path.join(qdpxSourcesPath, `/${base_ts_guid}.${richTextExt}`), docFile)
+      }
     }
     // Treat any other extension as plain text code
     else {
@@ -149,9 +153,7 @@ class QdpxExporter {
     fs.emptyDirSync(qdeSourcesFolder)
     let allTs = []
     for (const source of exportData.sources) {
-      let ext = source.originalExt
-        ? source.originalExt
-        : source.name.split('.')[source.name.split('.').length - 1]
+      let ext = source.originalExt ? source.originalExt : source.name.split('.')[source.name.split('.').length - 1]
       const new_ts = await this.createTextSourceFromTextData(
         qdeSourcesFolder,
         source.name,

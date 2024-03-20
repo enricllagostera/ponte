@@ -20,10 +20,7 @@
     c.lineChangeStats.reduce((acc, val) => acc + (val.is_binary ? 0 : Number(val.deleted_lines)), 0)
   )
 
-  const sumAdded = commit.lineChangeStats.reduce(
-    (acc, val) => acc + (val.is_binary ? 0 : Number(val.added_lines)),
-    0
-  )
+  const sumAdded = commit.lineChangeStats.reduce((acc, val) => acc + (val.is_binary ? 0 : Number(val.added_lines)), 0)
   const sumDeleted = commit.lineChangeStats.reduce(
     (acc, val) => acc + (val.is_binary ? 0 : Number(val.deleted_lines)),
     0
@@ -82,47 +79,22 @@
   <div class="p-1 text-center font-bold">Lines diff: +{sumAdded}/-{sumDeleted}</div>
   <svg {width} {height}>
     <rect x={0} y={0} {width} {height} class="fill-c-black"></rect>
-    <rect x={0} width={ratioAdded * width} y={0} height={height / 3} class="fill-green-light"
+    <rect x={0} width={ratioAdded * width} y={0} height={height / 3} class="fill-green-light"></rect>
+    <rect x={ratioAdded * width} width={(1 - ratioAdded) * width} y={0} height={height / 3} class="fill-red-light"
     ></rect>
-    <rect
-      x={ratioAdded * width}
-      width={(1 - ratioAdded) * width}
-      y={0}
-      height={height / 3}
-      class="fill-red-light"></rect>
     {#each { length: quantileScaleAdded(sumAdded) } as _, i}
-      <rect
-        x={3 + (i * width) / 5}
-        y={height * 0.38}
-        width={width / 5 - 6}
-        height={height / 3 - 2}
-        class="fill-green"></rect>
+      <rect x={3 + (i * width) / 5} y={height * 0.38} width={width / 5 - 6} height={height / 3 - 2} class="fill-green"
+      ></rect>
     {/each}
     {#each { length: quantileScaleDeleted(sumDeleted) } as _, i}
-      <rect
-        x={3 + (i * width) / 5}
-        y={height * 0.72}
-        width={width / 5 - 6}
-        height={height / 3 - 2}
-        class="fill-red"></rect>
+      <rect x={3 + (i * width) / 5} y={height * 0.72} width={width / 5 - 6} height={height / 3 - 2} class="fill-red"
+      ></rect>
     {/each}
-    <text
-      x={width / 2}
-      dy={height * 0.21}
-      text-anchor="middle"
-      dominant-baseline="middle"
-      class="fill-c-white">Ratio</text>
-    <text
-      x={width / 2}
-      dy={height * 0.55}
-      text-anchor="middle"
-      dominant-baseline="middle"
-      class="fill-c-white">Additions: {getDescriptorAdded(sumAdded)}</text>
-    <text
-      x={width / 2}
-      dy={height * 0.86}
-      text-anchor="middle"
-      dominant-baseline="middle"
-      class="fill-c-white">Deletions: {getDescriptorDeleted(sumDeleted)}</text>
+    <text x={width / 2} dy={height * 0.21} text-anchor="middle" dominant-baseline="middle" class="fill-c-white"
+      >Ratio</text>
+    <text x={width / 2} dy={height * 0.55} text-anchor="middle" dominant-baseline="middle" class="fill-c-white"
+      >Additions: {getDescriptorAdded(sumAdded)}</text>
+    <text x={width / 2} dy={height * 0.86} text-anchor="middle" dominant-baseline="middle" class="fill-c-white"
+      >Deletions: {getDescriptorDeleted(sumDeleted)}</text>
   </svg>
 </div>

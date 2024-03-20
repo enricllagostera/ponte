@@ -6,7 +6,7 @@
   import Button from './Button.svelte'
   import { marked } from 'marked'
 
-  import { Files, GitCommit, Tag, Tags } from 'lucide-svelte'
+  import { Files, GitCommit, PackageCheck, Tag, Tags } from 'lucide-svelte'
 
   import { createEventDispatcher } from 'svelte'
   import CommitPillButton from './CommitPillButton.svelte'
@@ -51,7 +51,7 @@
 <!-- <div class="flex h-full basis-full flex-col bg-purple-200"> -->
 <div class="flex h-full w-full shrink-0 grow flex-row gap-2 overflow-hidden py-2">
   <div class="flex basis-1/4 flex-col gap-2 pb-2">
-    <Pane title="Sources" class="h-1/2">
+    <Pane title="Sources" class="h-[45%]">
       <div slot="body" class="w-full">
         <ul class="w-full">
           {#each $qdpx.sources as source}
@@ -79,7 +79,7 @@
           {/if}
         </ul>
       </div></Pane>
-    <Pane title="Codebook" class="h-1/2"
+    <Pane title="Codebook" class="h-[45%]"
       ><div slot="body">
         <ul>
           {#each $qdpx.codes as code}
@@ -101,6 +101,8 @@
         </ul>
       </div>
     </Pane>
+    <Button primary class="btn btn-primary" type="button" disabled={$qdpx.commits.length <= 0} on:click={exportQDPX}
+      ><PackageCheck class="me-1 inline-flex"></PackageCheck>Export QDPX</Button>
   </div>
 
   <Pane title="Content preview{contentInPreview != '' ? ' for: ' + previewSource.name : ''}" class="w-1/2">

@@ -30,11 +30,8 @@
             data-bs-target={`#${dialog.showNextModalWithId}`}
             on:click={dialog.executeOnConfirm}>{dialog.confirm}</button>
         {:else}
-          <button
-            type="button"
-            class="btn btn-danger"
-            data-bs-dismiss="modal"
-            on:click={dialog.executeOnConfirm}>{dialog.confirm}</button>
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal" on:click={dialog.executeOnConfirm}
+            >{dialog.confirm}</button>
         {/if}
       </div>
     </div>

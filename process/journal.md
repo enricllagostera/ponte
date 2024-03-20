@@ -22,11 +22,11 @@ This is for the medium density version. I just added the info as a kind of list 
 
 (timestamp::2024-03-15T14:18:44-04:00)
 
-I'll begin today's session by implementing the view-switching functionality. That will make it much easier to explore things back-and-forth between the views. 
+I'll begin today's session by implementing the view-switching functionality. That will make it much easier to explore things back-and-forth between the views.
 
 (timestamp::2024-03-15T17:32:25-04:00)
 
-OK, got quite a lot done. The context-switching between the blogroll and the timeline is working well, also the new focus on the commit subject in the timeline node looks nice.  
+OK, got quite a lot done. The context-switching between the blogroll and the timeline is working well, also the new focus on the commit subject in the timeline node looks nice.
 
 ## 2024-03-12 Timeline redesign
 
@@ -99,12 +99,12 @@ I'm trying to improve the timeline component but it still feels kind of janky. I
 ## 2024-02-23 Notes after meeting
 
 - L: Timeline with teams, like multiple gels or layers of different users.
-	- R: Triangulation and getting a different perspective.
-	- C: Shifts in views as sliding scale.
-	- L: Grouping of commits, topological mappings.
+  - R: Triangulation and getting a different perspective.
+  - C: Shifts in views as sliding scale.
+  - L: Grouping of commits, topological mappings.
 - E: Filters to the timeline view as helping with this kind of exploration.
 - C: Default tagging rules and an incipient codebook across GaR repos.
-	- K: Developing a shared codebook through group work.
+  - K: Developing a shared codebook through group work.
 
 ## 2024-02-21 Some panel re-org
 

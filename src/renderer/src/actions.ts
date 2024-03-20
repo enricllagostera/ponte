@@ -46,8 +46,7 @@ export class ActionDB {
         guid: uuid(),
         active: true,
         title: 'Generate devlog compilation',
-        description:
-          'Generates a single source with the contents of the devlogs for all processed commits.',
+        description: 'Generates a single source with the contents of the devlogs for all processed commits.',
         selectedCommits: []
       },
       {
@@ -103,8 +102,7 @@ export class ActionDB {
       guid: uuid(),
       active: true,
       title: 'Apply codes to commits by pattern',
-      description:
-        'Apply codes to commits based on their subject and body information (i.e. devlog).',
+      description: 'Apply codes to commits based on their subject and body information (i.e. devlog).',
       selectedCommits: [],
       // selectedCommits: [ hash0, hash1 ]
       codesToApply: [],

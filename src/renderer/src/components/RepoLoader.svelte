@@ -73,9 +73,7 @@
       </div>
     {/if}
     {#if loadPromise != null && $repo.commits.length == 0}
-      <div transition:slide class="bg-f-warn px-4 py-2 text-c-black" role="status">
-        Preparing repository data...
-      </div>
+      <div transition:slide class="bg-f-warn px-4 py-2 text-c-black" role="status">Preparing repository data...</div>
     {/if}
   </div>
 </Pane>

@@ -4,8 +4,7 @@
   import { X } from 'lucide-svelte'
 
   export let title: string
-  export let message: string =
-    'This will lose the current config. Be sure to save it first before confirming.'
+  export let message: string = 'This will lose the current config. Be sure to save it first before confirming.'
   export let confirmLabel: string = 'Confirm'
 
   let confirmed = false
@@ -69,10 +68,7 @@
       <h2 {...$localTitle} use:localTitle class="m-0 text-lg font-medium">
         {title}
       </h2>
-      <p
-        {...$description}
-        use:description
-        class="mb-5 mt-2 leading-normal text-f-grey-200 dark:text-f-grey-100">
+      <p {...$description} use:description class="mb-5 mt-2 leading-normal text-f-grey-200 dark:text-f-grey-100">
         {message}
       </p>
 

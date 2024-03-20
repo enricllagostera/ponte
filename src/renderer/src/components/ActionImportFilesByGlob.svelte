@@ -70,11 +70,8 @@
           <h5 style:display="inline">
             {action.title}
           </h5>
-          <button
-            class="btn btn-danger"
-            type="button"
-            id="applyCodeCommitGlob-execute"
-            on:click={onDeleted}><i class="bi bi-trash3-fill"></i></button>
+          <button class="btn btn-danger" type="button" id="applyCodeCommitGlob-execute" on:click={onDeleted}
+            ><i class="bi bi-trash3-fill"></i></button>
         </div>
       </div>
     </div>

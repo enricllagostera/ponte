@@ -36,11 +36,7 @@ export default {
     }
     return false
   },
-  fetch: async (
-    url: string,
-    path: string,
-    onProgressCb: (arg0: AxiosProgressEvent) => void
-  ): Promise<unknown> => {
+  fetch: async (url: string, path: string, onProgressCb: (arg0: AxiosProgressEvent) => void): Promise<unknown> => {
     fs.ensureFileSync(path)
     const writer = fs.createWriteStream(path)
     const response = await axios({

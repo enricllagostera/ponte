@@ -50,9 +50,7 @@
     if ((event.target as HTMLInputElement).value.length >= 0) {
       const subjectAndBodyArray = []
       commitsToProcess.forEach((c) => {
-        if (
-          minimatch(`${c.subject}\n${c.body}`, `**${(event.target as HTMLInputElement).value}**`)
-        ) {
+        if (minimatch(`${c.subject}\n${c.body}`, `**${(event.target as HTMLInputElement).value}**`)) {
           subjectAndBodyArray.push({
             hash: c.hash,
             subject: `${c.subject}`
@@ -88,11 +86,8 @@
           <h5 style:display="inline">
             {action.title}
           </h5>
-          <button
-            class="btn btn-danger"
-            type="button"
-            id="applyCodeCommitGlob-execute"
-            on:click={onDeleted}><i class="bi bi-trash3-fill"></i></button>
+          <button class="btn btn-danger" type="button" id="applyCodeCommitGlob-execute" on:click={onDeleted}
+            ><i class="bi bi-trash3-fill"></i></button>
         </div>
       </div>
     </div>
@@ -115,10 +110,7 @@
     </div>
 
     <!-- <label for="tags">Codes to apply</label> -->
-    <CodeSelect
-      initialOptions={$codeOptions}
-      initialValues={action.codesToApply}
-      on:codesChanged={codesChanged} />
+    <CodeSelect initialOptions={$codeOptions} initialValues={action.codesToApply} on:codesChanged={codesChanged} />
 
     <div class="card text-bg-secondary-subtle">
       <div class="card-header">

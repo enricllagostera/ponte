@@ -6,8 +6,7 @@
 
 <!-- Panel -->
 <div class="flex flex-none flex-col {$$restProps.class || ''}" class:text-bg-success={successClass}>
-  <div
-    class="flex h-fit w-full grow-0 flex-row items-center bg-neutral-200 px-4 py-2 font-bold dark:bg-neutral-800">
+  <div class="flex h-fit w-full grow-0 flex-row items-center bg-neutral-200 px-4 py-2 font-bold dark:bg-neutral-800">
     {#if title != ''}
       {title}
     {:else}
