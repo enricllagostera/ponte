@@ -1,5 +1,13 @@
 # Process journal
 
+## 2024-03-25 Timeline info toggles
+
+(timestamp::2024-03-25T14:48:23-04:00)
+
+I'm adding the toolbar toggles to show/hide different info (author, branches, tags, files, lines) from all the timeline nodes. I think this would be a simple and effective way to control a bit the visual density of this display. I'll probably end up reusing the `ToggleGroup` component builder from MeltUI. (...) I'm happy that this is working quite well. Performance is still too slow, but the functionality is there.
+
+![](media/Ponte%202024-03-25%2015-37-07.mp4)
+
 ## 2024-03-19 Fixing bugs and some zooming issues
 
 (timestamp::2024-03-19T17:05:07-04:00)

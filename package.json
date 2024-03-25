@@ -39,6 +39,7 @@
     "html-escaper": "^3.0.3",
     "html-to-docx": "^1.8.0",
     "image-to-base64": "^2.2.0",
+    "lucide": "^0.360.0",
     "luxon": "^3.4.2",
     "marked": "^7.0.5",
     "marked-xhtml": "^1.0.6",

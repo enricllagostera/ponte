@@ -27,6 +27,7 @@
   import ScaleSelect from './ScaleSelect.svelte'
   import type { AppliedCode } from '../../../types'
   import TimelineZoomSelect from './TimelineZoomSelect.svelte'
+  import InfoToggleBar from './InfoToggleBar.svelte'
 
   let scaleX = undefined
   let timeExtent
@@ -50,6 +51,7 @@
   let timeScale = null
 
   let nodeScale = '100%'
+  let infoToggles = ['author', 'tags']
 
   let toggleFileChangeDrawer = false
   let toggleLineChangeDrawer = false
@@ -208,8 +210,8 @@
     return (
       300 * band +
       190 +
-      (toggleFileChangeDrawer && band > 0 ? 100 * band : 0) +
-      (toggleLineChangeDrawer && band > 0 ? 100 * band : 0)
+      (infoToggles.indexOf('file_diff') > -1 && band > 0 ? 100 * band : 0) +
+      (infoToggles.indexOf('line_diff') > -1 && band > 0 ? 100 * band : 0)
     )
   }
 
@@ -268,86 +270,87 @@
       currentCommitIndex = $repo.commits.length - 1
       scrollToIndex(currentCommitIndex)
     }}><ArrowRightToLine /></Button>
-  <Toggle class="flex h-8" name="File changes" bind:value={toggleFileChangeDrawer}><FileDiff /> File changes</Toggle>
-  <Toggle class="flex h-8" name="Line changes" bind:value={toggleLineChangeDrawer}><Diff /> Line changes</Toggle>
   <ScaleSelect bind:selectedUnit={timeSelected}></ScaleSelect>
   <TimelineZoomSelect bind:selectedZoom={nodeScale}></TimelineZoomSelect>
+  <InfoToggleBar bind:info={infoToggles}></InfoToggleBar>
 </div>
-{#key scalingFactor}
+{#key [scalingFactor, infoToggles, rangeWidth]}
   <div
     class="relative h-full bg-[#d0d0d0] text-sm"
     id="timeline_box"
     style="transform: scale({scalingFactor}, {scalingFactor}); transform-origin: top left;">
-    {#key rangeWidth}
-      <div class="absolute top-0 bg-[#d0d0d0]">
-        <svg
-          id="topAxis"
-          width={rangeWidth}
-          height="{getCommitY(maxBand + 1)}px"
-          class="absolute bg-[#f1f1f1] fill-c-black stroke-c-black"
-          transform="translate(0, 0)">
-          {#each commitsVisual as [hash, commit], i (hash)}
-            {#if commit.parents == ''}
-              <!-- <circle
+    <div class="absolute top-0 bg-[#d0d0d0]">
+      <svg
+        id="topAxis"
+        width={rangeWidth}
+        height="{getCommitY(maxBand + 1)}px"
+        class="absolute bg-[#f1f1f1] fill-c-black stroke-c-black"
+        transform="translate(0, 0)">
+        {#each commitsVisual as [hash, commit], i (hash)}
+          {#if commit.parents == ''}
+            <!-- <circle
               cx={commit.x + commit.w}
               cy={getCommitY(commit.band) + commit.h}
               r="10"
               fill={'black'}
               stroke="transparent" /> -->
-            {:else}
-              {#each commit.parents.split(' ') as child}
-                {#if getLinkFor(commit.hash, child, 0, 0, commit.w, commitsVisual.get(child).h * 0.5) != undefined}
-                  <path
-                    d={getLinkFor(commit.hash, child, 0, 0, commit.w, commitsVisual.get(child).h * 0.5)}
-                    fill="transparent"
-                    stroke={currentCommitIndex == i || currentCommitIndex == i - 1 ? '#13d44e' : `#999`}
-                    stroke-width="{currentCommitIndex == i || currentCommitIndex == i - 1 ? 8 : 3}px"></path>
-                {/if}
-              {/each}
-            {/if}
-            <line
-              x1={commit.x}
-              y1={0}
-              x2={commit.x}
-              y2="{getCommitY(maxBand + 1)}px"
-              style:stroke-width={currentHover == commit.hash || currentCommitIndex == i ? 2 : 2}
-              style:stroke={currentHover == commit.hash || currentCommitIndex == i ? '#ccc' : '#ccc'}
-              style:z-index={currentHover == commit.hash || currentCommitIndex == i ? '0' : '0'}
-              transform="translate(0, 0)" />
-          {/each}
-          <g bind:this={gx} class=" text-xs" transform="translate(0, {$appStates.mainViewScroll + 130 + 48})"></g>
-        </svg>
-      </div>
-    {/key}
+          {:else}
+            {#each commit.parents.split(' ') as child}
+              {#if getLinkFor(commit.hash, child, 0, 0, commit.w, commitsVisual.get(child).h * 0.5) != undefined}
+                <path
+                  d={getLinkFor(commit.hash, child, 0, 0, commit.w, commitsVisual.get(child).h * 0.5)}
+                  fill="transparent"
+                  stroke={currentCommitIndex == i || currentCommitIndex == i - 1 ? '#13d44e' : `#999`}
+                  stroke-width="{currentCommitIndex == i || currentCommitIndex == i - 1 ? 8 : 3}px"></path>
+              {/if}
+            {/each}
+          {/if}
+          <line
+            x1={commit.x}
+            y1={0}
+            x2={commit.x}
+            y2="{getCommitY(maxBand + 1)}px"
+            style:stroke-width={currentHover == commit.hash || currentCommitIndex == i ? 2 : 2}
+            style:stroke={currentHover == commit.hash || currentCommitIndex == i ? '#ccc' : '#ccc'}
+            style:z-index={currentHover == commit.hash || currentCommitIndex == i ? '0' : '0'}
+            transform="translate(0, 0)" />
+        {/each}
+        <g bind:this={gx} class=" text-xs" transform="translate(0, {$appStates.mainViewScroll + 130 + 48})"></g>
+      </svg>
+    </div>
     <div class="relative h-full gap-0 bg-[#d0d0d0]" id="commitTLView">
       {#if $appStates.repoReady}
-        {#key rangeWidth}
-          {#each commitsVisual as [hash, commit], i (hash)}
-            <div
-              class="group absolute h-fit w-[300px] items-center bg-c-white text-base shadow-lg hover:border-c-black hover:bg-app {currentCommitIndex ==
-              i
-                ? 'z-10 border-2 bg-c-white ring-4 ring-app'
-                : 'z-0 border-2 border-c-black bg-c-white'}"
-              bind:this={domCommits[i]}
-              bind:clientHeight={commit.h}
-              bind:clientWidth={commit.w}
-              id="timeline_{commit.hashAbbrev}"
-              style:left="{commit.x}px"
-              style:top="{getCommitY(commit.band)}px"
-              on:pointerenter={() => (currentHover = commit.hash)}
-              on:pointerleave={() => (currentHover = '')}>
-              <div class="relative flex flex-col">
-                <p class="m-2 line-clamp-3 text-xl font-semibold">{commit.subject}</p>
-                <div class="flex items-center px-2 py-1">
-                  <p class="w-fit gap-1">
+        {#each commitsVisual as [hash, commit], i (hash)}
+          <div
+            class="group absolute h-fit w-[300px] items-center bg-c-white text-base shadow-lg hover:border-c-black hover:bg-app {currentCommitIndex ==
+            i
+              ? 'z-10 border-2 bg-c-white ring-4 ring-app'
+              : 'z-0 border-2 border-c-black bg-c-white'}"
+            bind:this={domCommits[i]}
+            bind:clientHeight={commit.h}
+            bind:clientWidth={commit.w}
+            id="timeline_{commit.hashAbbrev}"
+            style:left="{commit.x}px"
+            style:top="{getCommitY(commit.band)}px"
+            on:pointerenter={() => (currentHover = commit.hash)}
+            on:pointerleave={() => (currentHover = '')}>
+            <div class="relative flex flex-col">
+              <p class="m-2 line-clamp-3 text-xl font-semibold">{commit.subject}</p>
+              <div class="flex items-center px-2 py-1">
+                <p class="w-fit gap-1">
+                  {#if infoToggles.indexOf('author') > -1}
                     <span class="inline-flex items-center bg-f-info/40 px-1"
-                      ><User class="mx-1 inline-flex h-4 w-4"></User>{commit.author_name}</span>
+                      ><User class="mx-1 inline-flex h-4 w-4"></User>{commit.author_name}</span
+                    >{/if}
+                  {#if infoToggles.indexOf('branches') > -1}
                     {#each commit.branches as br}
                       <!-- {@debug br} -->
                       <span class="inline-flex items-center bg-app/40 px-1"
                         ><GitBranch class="mx-1 inline-flex h-4 w-4"></GitBranch> {br.substring(15)}
                       </span>
                     {/each}
+                  {/if}
+                  {#if infoToggles.indexOf('tags') > -1}
                     {#key $qdpx.codes}
                       {#each commit.codes as tag}
                         <!-- {@debug br} -->
@@ -356,48 +359,48 @@
                         </span>
                       {/each}
                     {/key}
-                  </p>
-                </div>
+                  {/if}
+                </p>
+              </div>
 
-                <div class="flex items-center gap-1 px-2 py-1">
-                  <p class="w-fit">
-                    <Calendar class="mb-1 inline-flex h-4 w-4 text-xs" />
-                    {DateTime.fromMillis(commit.author.timestamp).toFormat('yyyy-MM-dd, HH:mm')}
-                  </p>
+              <div class="flex items-center gap-1 px-2 py-1">
+                <p class="w-fit">
+                  <Calendar class="mb-1 inline-flex h-4 w-4 text-xs" />
+                  {DateTime.fromMillis(commit.author.timestamp).toFormat('yyyy-MM-dd, HH:mm')}
+                </p>
 
-                  <Button
-                    class="ms-auto"
-                    on:click={() => {
-                      currentCommitIndex = i
-                      scrollToIndex(currentCommitIndex)
-                    }}><Target class="h-4 w-4" /></Button>
-                  <!-- PLAY BUTTON
+                <Button
+                  class="ms-auto"
+                  on:click={() => {
+                    currentCommitIndex = i
+                    scrollToIndex(currentCommitIndex)
+                  }}><Target class="h-4 w-4" /></Button>
+                <!-- PLAY BUTTON
                   <Button
                   class="me-2"
                   on:click={() => {
                     currentCommitIndex = i
                     scrollToIndex(currentCommitIndex)
                   }}><Play class="h-3 w-3" /></Button> -->
-                  <Button class=""><TagsIcon class="h-4 w-4" /></Button>
-                </div>
+                <Button class=""><TagsIcon class="h-4 w-4" /></Button>
+              </div>
 
-                {#if toggleFileChangeDrawer}
-                  <FileChangesDrawer {commit} {fileChangesExtents} />
-                {/if}
-                {#if toggleLineChangeDrawer}
-                  <LineChangesDrawer {commit} {lineChangesExtents} />
-                {/if}
-                <div class="flex w-full flex-row place-items-end bg-[#ddd] py-1">
-                  <CommitPillButton
-                    class="w-full px-2"
-                    forceDarkTheme={true}
-                    hashAbbrev={commit.hashAbbrev}
-                    clickable={false} />
-                </div>
+              {#if infoToggles.indexOf('file_diff') > -1}
+                <FileChangesDrawer {commit} {fileChangesExtents} />
+              {/if}
+              {#if infoToggles.indexOf('line_diff') > -1}
+                <LineChangesDrawer {commit} {lineChangesExtents} />
+              {/if}
+              <div class="flex w-full flex-row place-items-end bg-[#ddd] py-1">
+                <CommitPillButton
+                  class="w-full px-2"
+                  forceDarkTheme={true}
+                  hashAbbrev={commit.hashAbbrev}
+                  clickable={false} />
               </div>
             </div>
-          {/each}
-        {/key}
+          </div>
+        {/each}
       {:else}
         Waiting for repo data.
       {/if}
