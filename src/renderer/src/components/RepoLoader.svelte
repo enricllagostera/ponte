@@ -10,9 +10,21 @@
 
   let confirmedRepoInfo = ''
   let confirmPromise = null
+  let processedRepoInfo = ''
   export let loadPromise = null
 
   async function checkRepoInfo(): Promise<void> {
+    if ($repo.userRepoInfo.startsWith('https://github.com/')) {
+      $repo.userRepoInfo = $repo.userRepoInfo.substring(19)
+      if ($repo.userRepoInfo.endsWith('.git')) {
+        $repo.userRepoInfo = $repo.userRepoInfo.slice(0, -4)
+      }
+    }
+
+    if ($repo.userRepoInfo.endsWith('/')) {
+      $repo.userRepoInfo = $repo.userRepoInfo.slice(0, -1)
+    }
+
     confirmPromise = window.loader.checkRepoInfo($repo.userRepoInfo)
     confirmedRepoInfo = await confirmPromise
   }

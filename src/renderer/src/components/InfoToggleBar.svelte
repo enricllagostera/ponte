@@ -2,14 +2,14 @@
   import { createToggleGroup } from '@melt-ui/svelte'
   import { Diff, FileDiff, GitBranch, Info, Tags, User } from 'lucide-svelte'
 
-  export let info = []
+  export let info: string | string[] = []
 
   const {
     elements: { root, item },
     states: { value }
   } = createToggleGroup({
     type: 'multiple',
-    defaultValue: info
+    defaultValue: [...info]
   })
 
   $: {

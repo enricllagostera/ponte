@@ -11,11 +11,7 @@
     ArrowRight,
     ArrowRightToLine,
     Calendar,
-    Minus,
-    PlusIcon,
     Target,
-    FileDiff,
-    Diff,
     TagsIcon,
     GitBranch,
     User,
@@ -23,9 +19,7 @@
   } from 'lucide-svelte'
   import FileChangesDrawer from './FileChangesDrawer.svelte'
   import LineChangesDrawer from './LineChangesDrawer.svelte'
-  import Toggle from './Toggle.svelte'
   import ScaleSelect from './ScaleSelect.svelte'
-  import type { AppliedCode } from '../../../types'
   import TimelineZoomSelect from './TimelineZoomSelect.svelte'
   import InfoToggleBar from './InfoToggleBar.svelte'
 

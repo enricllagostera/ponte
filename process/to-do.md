@@ -27,23 +27,26 @@ kanban-plugin: basic
 
 ## High priority
 
+- [ ] Ideate what content to show when previewing tags
+- [ ] Show metadata on sources
 - [ ] Re-organize the export preview and actions panel
 
 
 ## In progress
 
+- [ ] Exclude sources from export panel
 
 
 ## Done
 
 **Complete**
-- [x] Add timeline info toggles to the toolbar
 
 
 ***
 
 ## Archive
 
+- [x] 2024-03-25T15:57:25-04:00 -- Add timeline info toggles to the toolbar
 - [x] 2024-03-19T18:14:54-04:00 -- Better zoom controls
 - [x] 2024-03-19T18:14:54-04:00 -- BUG Saved tags in config are not showing up on tag input in blogroll when config file is loaded
 - [x] 2024-03-19T16:43:41-04:00 -- Show author in blogroll view
