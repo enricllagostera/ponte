@@ -35,7 +35,7 @@
   <label class="flex h-8 items-center text-neutral-900" {...$label} use:label
     ><ScanSearch class="inline-flex pe-1"></ScanSearch> Zoom level</label>
   <button
-    class="flex h-8 min-w-[220px] items-center justify-between border-2 border-c-black bg-white px-3 py-1 text-neutral-700 transition-opacity hover:opacity-90"
+    class="flex h-8 w-[100px] items-center justify-between border-2 border-c-black bg-white px-3 py-1 text-neutral-700 transition-opacity hover:opacity-90"
     {...$trigger}
     use:trigger
     aria-label="Time unit">

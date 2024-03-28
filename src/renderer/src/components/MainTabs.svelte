@@ -9,6 +9,7 @@
   import QdpxPreview from './QDPXPreview.svelte'
   import GeneralToggle from './GeneralToggle.svelte'
   import { onMount } from 'svelte'
+  import { Filter, X } from 'lucide-svelte'
 
   const {
     elements: { root, list, content, trigger },
@@ -126,32 +127,35 @@
     <div {...$content('exportPanel')} use:content id="exportPanelTab" class="h-full w-full">
       <QdpxPreview></QdpxPreview>
     </div>
-    <div {...$content('timeline')} use:content id="chronoTimelineView" class="pt-2">
+    <div {...$content('timeline')} use:content id="chronoTimelineView">
       <ChronologicalTimeline />
     </div>
     <div {...$content('blogroll')} use:content>
       <div class="flex w-full flex-col" id="commitListViewContainer">
         {#if $appStates.repoReady}
           <div class="sticky top-0 z-10 inline-flex w-full items-center gap-2 bg-white py-4">
-            <input
-              type="text"
-              placeholder="Filter commits by subject..."
-              on:input={debounce(changeKeyword)}
-              value={filterKeyword} />
-
-            <Button on:click={clearCommitFilter}>Reset filter</Button>
-            <GeneralToggle bind:value={toggleFullText}>Full-text search</GeneralToggle>
-            {#key filterKeyword}
-              {#if filteredCommitsCount > 0}
-                {#if filterKeyword != ''}
-                  Showing {filteredCommitsCount} commits with '{filterKeyword}' (out of {$repo.commits.length} commits).
+            <div class="flex h-8 flex-row items-center gap-x-2 overflow-hidden">
+              <Filter class="inline-flex pe-1"></Filter> Filter
+              <input
+                type="text"
+                placeholder="Search commits..."
+                on:input={debounce(changeKeyword)}
+                value={filterKeyword}
+                class="h-8" />
+              <Button class="-ms-2 h-8 p-0" on:click={clearCommitFilter}><X></X></Button>
+              <GeneralToggle class="h-8 w-[120px]" bind:value={toggleFullText}>Full-text</GeneralToggle>
+              {#key filterKeyword}
+                {#if filteredCommitsCount > 0}
+                  {#if filterKeyword != ''}
+                    Showing {filteredCommitsCount} commits with '{filterKeyword}' (out of {$repo.commits.length} commits).
+                  {:else}
+                    Showing all {$repo.commits.length} commits.
+                  {/if}
                 {:else}
-                  Showing all {$repo.commits.length} commits.
+                  No commits to show with '{filterKeyword}'.
                 {/if}
-              {:else}
-                No commits to show with '{filterKeyword}'.
-              {/if}
-            {/key}
+              {/key}
+            </div>
           </div>
           {#key filterKeyword}
             {#each filteredCommits() as commit (commit.hash)}

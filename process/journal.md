@@ -1,5 +1,31 @@
 # Process journal
 
+## 2024-03-27 and 28 Collapsible timeline nodes
+
+Managed to implement this way of quickly scanning for keywords. It took longer than I expected because I has to fix all the height and Y position calculations (they were really bad before anyway). 
+
+![](media/20240327-collapsible-filter-timeline%20-%20Made%20with%20Clipchamp.mp4)
+
+Worked some more today (Thu Mar 28) on improving the GUI for filtering in both blogroll and timeline views. I should probably move this logic into a separate component file later.
+
+## 2024-03-27 Auto-tagging ideas after meeting
+
+1. Auto-tagging
+	1. They are all configurable as rules in the tool settings.
+	2. There would be a default set of rules at the start.
+	3. The below list is mostly in order of priority. 
+	4. Autotag from commit message / subject (if search is found, add tag)
+		1. **releases**, **post-mortems**, **playtesting**.
+	5. Autotags from file changes (if change to file, add tag to commit).
+		1. **journal** as changes to `/journal.md`. 
+		2. **why** as changes to `/why.md`.
+	6. Autotags from relative distribution of changes (calculate additions, deletions, modifications; add tag)
+		1. Not very sure about this.
+		2. **additions-top-x**, **deletions-bottom-x**.
+2. Default codebook
+	1. As autocomplete suggestions?
+	2. As a checklist / flowchart to help elaborate starting point?
+
 ## 2024-03-25 Timeline info toggles
 
 (timestamp::2024-03-25T14:48:23-04:00)

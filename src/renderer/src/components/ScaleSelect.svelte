@@ -34,12 +34,12 @@
   }
 </script>
 
-<div class="flex flex-row items-center gap-1">
+<div class="flex w-fit flex-row items-center gap-1">
   <!-- svelte-ignore a11y-label-has-associated-control - $label contains the 'for' attribute -->
   <label class="flex h-8 pt-1 text-neutral-900" {...$label} use:label
     ><CalendarSearch class="inline-flex pe-1"></CalendarSearch>Time unit</label>
   <button
-    class="flex h-8 min-w-[220px] items-center justify-between border-2 border-c-black bg-white px-3 py-1 text-neutral-700 transition-opacity hover:opacity-90"
+    class="flex h-8 w-[140px] items-center justify-between border-2 border-c-black bg-white px-3 py-1 text-neutral-700 transition-opacity hover:opacity-90"
     {...$trigger}
     use:trigger
     aria-label="Time unit">

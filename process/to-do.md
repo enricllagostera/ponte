@@ -27,9 +27,9 @@ kanban-plugin: basic
 
 ## High priority
 
+- [ ] Re-organize the export preview and actions panel
 - [ ] Ideate what content to show when previewing tags
 - [ ] Show metadata on sources
-- [ ] Re-organize the export preview and actions panel
 
 
 ## In progress
@@ -40,6 +40,8 @@ kanban-plugin: basic
 ## Done
 
 **Complete**
+- [x] Collapse timeline entries via text filters
+- [x] Accept GitHub URLs on repo loading
 
 
 ***

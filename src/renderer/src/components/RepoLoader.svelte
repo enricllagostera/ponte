@@ -10,7 +10,6 @@
 
   let confirmedRepoInfo = ''
   let confirmPromise = null
-  let processedRepoInfo = ''
   export let loadPromise = null
 
   async function checkRepoInfo(): Promise<void> {
