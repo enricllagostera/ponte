@@ -98,9 +98,9 @@
   }
 </script>
 
-<div class="m-2 flex h-full w-full flex-col" {...$root} use:root>
+<div class="flex h-full w-full flex-col" {...$root} use:root>
   <div
-    class="flex w-full grow-0 border-b-2 border-c-black px-2 font-bold dark:border-c-white"
+    class="flex w-full flex-none border-b-2 border-c-black px-2 font-bold dark:border-c-white"
     {...$list}
     use:list
     aria-label="Main view picker">

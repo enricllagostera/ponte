@@ -30,10 +30,10 @@
   }
 </script>
 
-<div class="flex flex-row items-center gap-1">
+<div class="flex flex-row items-center gap-x-1">
   <!-- svelte-ignore a11y-label-has-associated-control - $label contains the 'for' attribute -->
-  <label class="flex h-8 items-center text-neutral-900" {...$label} use:label
-    ><ScanSearch class="inline-flex pe-1"></ScanSearch> Zoom level</label>
+  <label class="flex gap-x-1 text-neutral-900" {...$label} use:label
+    ><ScanSearch class="inline-flex"></ScanSearch>Zoom level</label>
   <button
     class="flex h-8 w-[100px] items-center justify-between border-2 border-c-black bg-white px-3 py-1 text-neutral-700 transition-opacity hover:opacity-90"
     {...$trigger}
@@ -51,10 +51,6 @@
       use:menu
       transition:fade={{ duration: 150 }}>
       {#each options as item}
-        <!-- <div class="py-1 pl-4 pr-4 font-semibold capitalize text-neutral-800" {...$groupLabel(key)} use:groupLabel>
-            {key}
-          </div> -->
-        <!-- {@debug item} -->
         <div
           class="relative cursor-pointer py-1 pl-8 pr-4 text-neutral-800
               data-[highlighted]:bg-neutral-200 data-[highlighted]:text-neutral-900

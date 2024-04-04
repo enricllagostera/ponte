@@ -17,7 +17,9 @@
     User,
     Tag,
     X,
-    Filter
+    Filter,
+    Pin,
+    Move
   } from 'lucide-svelte'
   import FileChangesDrawer from './FileChangesDrawer.svelte'
   import LineChangesDrawer from './LineChangesDrawer.svelte'
@@ -45,9 +47,6 @@
 
   let nodeScale = '100%'
   let infoToggles = ['author', 'tags']
-
-  let toggleFileChangeDrawer = false
-  let toggleLineChangeDrawer = false
 
   const linkHor = d3.link(d3.curveBumpX)
   const linkVer = d3.link(d3.curveStep)
@@ -98,7 +97,7 @@
     commitsVisual.forEach((v) => {
       v.codes = []
     })
-    const res = $qdpx.codes.forEach((appliedCode) => {
+    $qdpx.codes.forEach((appliedCode) => {
       appliedCode.commitHashes.forEach((ch) => {
         let r = commitsVisual.get(ch)
         r.codes.push(appliedCode.code)
@@ -140,8 +139,9 @@
       //rangeWidth = d3.timeDay.count(timeExtent[0], timeExtent[1]) * 250
       //d3.timeFormat('%Y-%m-%d')
       scaleX = d3.scaleTime(timeExtent, [0, rangeWidth]).nice(timeScale)
+      const scaleWithZoom = d3.scaleTime(timeExtent, [0, rangeWidth * scalingFactor]).nice(timeScale)
       d3.select(gx)
-        .call(d3.axisTop().scale(scaleX).ticks(timeScale).tickSize(30))
+        .call(d3.axisTop().scale(scaleWithZoom).ticks(timeScale).tickSize(30))
         .selectAll('text')
         .style('text-anchor', 'start')
         .attr('dx', '4px')
@@ -220,7 +220,7 @@
     const commitData = commitsCopy[index]
     const cv = commitsVisual.get(commitData.hash)
     if (cv.band == 0) {
-      return 170
+      return 180 / scalingFactor
     }
 
     let accumY = getCommitHeight(index - 1) + 30 + getVisualCommitByIndex(index - 1).y
@@ -298,210 +298,213 @@
   }
 </script>
 
-<div class="fixed left-4 top-auto z-10 flex w-full flex-row items-center gap-x-2 bg-c-white p-4">
-  Navigation
-  <Button
-    class=" h-7 w-7 justify-center"
-    on:click={() => {
-      currentCommitIndex = 0
-      scrollToIndex(currentCommitIndex)
-    }}><ArrowLeftToLine /></Button>
-  <Button
-    class=" h-7 w-7 justify-center"
-    on:click={() => {
-      currentCommitIndex -= 1
-      if (currentCommitIndex < 0) {
-        currentCommitIndex = 0
-      }
-      scrollToIndex(currentCommitIndex)
-    }}><ArrowLeft /></Button>
-  <Button
-    class=" h-7 w-7 justify-center"
-    on:click={() => {
-      scrollToIndex(currentCommitIndex)
-    }}><Target /></Button>
-  <Button
-    class=" h-7 w-7 justify-center"
-    on:click={() => {
-      currentCommitIndex += 1
-      if (currentCommitIndex > $repo.commits.length - 1) {
-        currentCommitIndex = $repo.commits.length - 1
-      }
-      scrollToIndex(currentCommitIndex)
-    }}><ArrowRight /></Button>
-  <Button
-    class=" h-7 w-7 justify-center"
-    on:click={() => {
-      currentCommitIndex = $repo.commits.length - 1
-      scrollToIndex(currentCommitIndex)
-    }}><ArrowRightToLine /></Button>
-  <ScaleSelect bind:selectedUnit={timeSelected}></ScaleSelect>
-  <TimelineZoomSelect bind:selectedZoom={nodeScale}></TimelineZoomSelect>
-  <InfoToggleBar bind:info={infoToggles}></InfoToggleBar>
-  <div class="flex h-8 flex-row items-center gap-x-2 overflow-hidden">
-    <Filter class="inline-flex pe-1"></Filter>Filter
-    <input
-      type="text"
-      placeholder="Search commits..."
-      on:input={debounce(changeKeyword)}
-      value={filterKeyword}
-      class="h-8" />
-    <Button class="-ms-2 h-8 p-0" on:click={clearCommitFilter}><X></X></Button>
-    <GeneralToggle class="h-8 w-[120px]" bind:value={toggleFullText}>Full-text</GeneralToggle>
-    {#key filterKeyword}
-      {#if filteredCommitsCount > 0}
-        {#if filterKeyword != ''}
-          Showing {filteredCommitsCount} commits with '{filterKeyword}' (out of {$repo.commits.length} commits).
-        {:else}
-          Showing all {$repo.commits.length} commits.
-        {/if}
-      {:else}
-        No commits to show with '{filterKeyword}'.
-      {/if}
-    {/key}
-  </div>
-</div>
-{#key [scalingFactor, infoToggles, rangeWidth]}
+<div class="flex w-full flex-col">
   <div
-    class="relative bg-[#d0d0d0] text-sm"
-    id="timeline_box"
-    style="transform: scale({scalingFactor}, {scalingFactor}); transform-origin: top left;">
-    <div class="absolute top-0 bg-[#d0d0d0]">
-      <svg
-        id="topAxis"
-        width={rangeWidth}
-        height="{maxY + 400}px"
-        class="absolute bg-[#f1f1f1] fill-c-black stroke-c-black"
-        transform="translate(0, 0)">
-        {#each commitsVisual as [hash, commit], i (hash)}
-          {#if commit.parents != ''}
-            {#each commit.parents.split(' ') as child}
-              {#if getLinkFor(commit.hash, child) != undefined}
-                <path
-                  d={getLinkFor(commit.hash, child)}
-                  fill="transparent"
-                  stroke={currentCommitIndex == i || currentCommitIndex == i - 1 ? '#13d44e' : `#999`}
-                  stroke-width="{currentCommitIndex == i || currentCommitIndex == i - 1 ? 8 : 3}px"></path>
-              {/if}
-            {/each}
-          {/if}
-          <line
-            x1={commit.x}
-            y1={0}
-            x2={commit.x}
-            y2="{maxY + 400}px"
-            style:stroke-width={currentHover == commit.hash || currentCommitIndex == i ? 2 : 2}
-            style:stroke={currentHover == commit.hash || currentCommitIndex == i ? '#ccc' : '#ccc'}
-            style:z-index={currentHover == commit.hash || currentCommitIndex == i ? '0' : '0'}
-            transform="translate(0, 0)" />
-        {/each}
-        <g bind:this={gx} class=" text-xs" transform="translate(0, {$appStates.mainViewScroll + 130 + 48})"></g>
-      </svg>
+    class="fixed left-0 top-auto z-10 flex w-full flex-row flex-wrap items-center justify-stretch gap-x-4 gap-y-2 bg-c-white px-6 py-2">
+    <div class="flex h-8 flex-row items-center gap-x-0">
+      <Move class="inline-flex pe-1"></Move>Navigation
+      <Button
+        class="ms-2 h-8 w-8 justify-center border-r-0"
+        on:click={() => {
+          currentCommitIndex = 0
+          scrollToIndex(currentCommitIndex)
+        }}><ArrowLeftToLine /></Button>
+      <Button
+        class=" mx-0 h-8 w-8 justify-center border-x-0"
+        on:click={() => {
+          currentCommitIndex -= 1
+          if (currentCommitIndex < 0) {
+            currentCommitIndex = 0
+          }
+          scrollToIndex(currentCommitIndex)
+        }}><ArrowLeft /></Button>
+      <Button
+        class=" h-8 w-8 justify-center border-x-0"
+        on:click={() => {
+          scrollToIndex(currentCommitIndex)
+        }}><Pin /></Button>
+      <Button
+        class=" h-8 w-8 justify-center border-x-0"
+        on:click={() => {
+          currentCommitIndex += 1
+          if (currentCommitIndex > $repo.commits.length - 1) {
+            currentCommitIndex = $repo.commits.length - 1
+          }
+          scrollToIndex(currentCommitIndex)
+        }}><ArrowRight /></Button>
+      <Button
+        class=" h-8 w-8 justify-center border-l-0"
+        on:click={() => {
+          currentCommitIndex = $repo.commits.length - 1
+          scrollToIndex(currentCommitIndex)
+        }}><ArrowRightToLine /></Button>
     </div>
-    <div class="relative h-full gap-0 bg-[#d0d0d0]" id="commitTLView">
-      {#if $appStates.repoReady}
-        {#each commitsVisual as [hash, commit], i (hash)}
-          {#if commit.filtered}
-            <div
-              class="group absolute h-fit w-[300px] items-center bg-c-white text-base shadow-lg hover:border-c-black hover:bg-app {currentCommitIndex ==
-              i
-                ? 'z-10 border-2 bg-c-white ring-4 ring-app'
-                : 'z-0 border-2 border-c-black bg-c-white'}"
-              bind:this={domCommits[i]}
-              bind:clientHeight={commit.h}
-              bind:clientWidth={commit.w}
-              id="timeline_{commit.hashAbbrev}"
-              style:left="{commit.x}px"
-              style:top="{commit.y}px"
-              on:pointerenter={() => (currentHover = commit.hash)}
-              on:pointerleave={() => (currentHover = '')}>
-              <div class={`relative flex flex-col ${filterKeyword != '' ? ' bg-app/25 ' : ''}`}>
-                <p class="m-2 line-clamp-3 text-xl font-semibold">{commit.subject}</p>
-                <div class="flex items-center px-2 py-1">
-                  <p class="w-fit gap-1">
-                    {#if infoToggles.indexOf('author') > -1}
-                      <span class="inline-flex items-center bg-f-info/40 px-1"
-                        ><User class="mx-1 inline-flex h-4 w-4"></User>{commit.author_name}</span
-                      >{/if}
-                    {#if infoToggles.indexOf('branches') > -1}
-                      {#each commit.branches as br}
-                        <span class="inline-flex items-center bg-app/40 px-1"
-                          ><GitBranch class="mx-1 inline-flex h-4 w-4"></GitBranch> {br.substring(15)}
-                        </span>
-                      {/each}
-                    {/if}
-                    {#if infoToggles.indexOf('tags') > -1}
-                      {#key $qdpx.codes}
-                        {#each commit.codes as tag}
-                          <span class="inline-flex items-center bg-magenta/30 px-1"
-                            ><Tag class="mx-1 inline-flex h-4 w-4"></Tag> {tag.value}
+    <ScaleSelect bind:selectedUnit={timeSelected}></ScaleSelect>
+    <TimelineZoomSelect bind:selectedZoom={nodeScale}></TimelineZoomSelect>
+    <InfoToggleBar bind:info={infoToggles}></InfoToggleBar>
+    <div class="flex h-8 w-full flex-row items-center gap-x-1">
+      <Filter class="inline-flex"></Filter>Filter
+      <input
+        type="text"
+        placeholder="Search commits..."
+        on:input={debounce(changeKeyword)}
+        value={filterKeyword}
+        class="h-8 border-2 border-r-0" />
+      <Button class="-ms-2 h-8 p-0" on:click={clearCommitFilter}><X></X></Button>
+      <GeneralToggle class="h-8 w-[120px]" bind:value={toggleFullText}>Full-text</GeneralToggle>
+      {#key filterKeyword}
+        {#if filteredCommitsCount > 0}
+          {#if filterKeyword != ''}
+            Showing {filteredCommitsCount} commits with '{filterKeyword}' (out of {$repo.commits.length} commits).
+          {:else}
+            Showing all {$repo.commits.length} commits.
+          {/if}
+        {:else}
+          No commits to show with '{filterKeyword}'.
+        {/if}
+      {/key}
+    </div>
+  </div>
+
+  {#key [scalingFactor, infoToggles, rangeWidth]}
+    <div class="relative h-full" id="timeline_box">
+      <svg
+        width="{rangeWidth * scalingFactor}px"
+        height="85"
+        fill-opacity="1"
+        class="absolute z-[1] font-bold"
+        style:margin-top="{80 + $appStates.mainViewScroll}px"
+        transform="translate(0, 0);">
+        <g bind:this={gx} class="z-10" transform="translate(0, 85)"></g>
+      </svg>
+      <div
+        class="absolute top-auto gap-0"
+        id="commitTLView"
+        style="transform: scale({scalingFactor}, {scalingFactor}); transform-origin: top left;">
+        <svg
+          width={rangeWidth}
+          height="{maxY + 400}px"
+          fill-opacity="0"
+          class="absolute top-0 z-0 bg-neutral-200 fill-c-black stroke-c-black">
+          {#each commitsVisual as [hash, commit], i (hash)}
+            {#if commit.parents != ''}
+              {#each commit.parents.split(' ') as child}
+                {#if getLinkFor(commit.hash, child) != undefined}
+                  <path
+                    d={getLinkFor(commit.hash, child)}
+                    fill="transparent"
+                    stroke={currentCommitIndex == i || currentCommitIndex == i - 1 ? '#13d44e' : `#777`}
+                    stroke-width="{currentCommitIndex == i || currentCommitIndex == i - 1 ? 8 : 3}px"></path>
+                {/if}
+              {/each}
+            {/if}
+            <line x1={commit.x} y1={0} x2={commit.x} y2="{maxY + 400}px" style:stroke-width={3} style:stroke={'#aaa'} />
+          {/each}
+        </svg>
+        {#if $appStates.repoReady}
+          {#each commitsVisual as [hash, commit], i (hash)}
+            {#if commit.filtered}
+              <div
+                class="group absolute z-[3] h-fit w-[300px] items-center bg-c-white text-base shadow-lg hover:border-c-black hover:bg-app {currentCommitIndex ==
+                i
+                  ? ' border-2 bg-c-white ring-4 ring-app'
+                  : ' border-2 border-c-black bg-c-white'}"
+                bind:this={domCommits[i]}
+                bind:clientHeight={commit.h}
+                bind:clientWidth={commit.w}
+                id="timeline_{commit.hashAbbrev}"
+                style:left="{commit.x}px"
+                style:top="{commit.y}px"
+                on:pointerenter={() => (currentHover = commit.hash)}
+                on:pointerleave={() => (currentHover = '')}>
+                <div class={`relative flex flex-col ${filterKeyword != '' ? ' bg-app/25 ' : ''}`}>
+                  <p class="m-2 line-clamp-3 text-xl font-semibold">{commit.subject}</p>
+                  <div class="flex items-center px-2 py-1">
+                    <p class="w-fit gap-1">
+                      {#if infoToggles.indexOf('author') > -1}
+                        <span class="inline-flex items-center bg-f-info/40 px-1"
+                          ><User class="mx-1 inline-flex h-4 w-4"></User>{commit.author_name}</span
+                        >{/if}
+                      {#if infoToggles.indexOf('branches') > -1}
+                        {#each commit.branches as br}
+                          <span class="inline-flex items-center bg-app/40 px-1"
+                            ><GitBranch class="mx-1 inline-flex h-4 w-4"></GitBranch> {br.substring(15)}
                           </span>
                         {/each}
-                      {/key}
-                    {/if}
-                  </p>
-                </div>
+                      {/if}
+                      {#if infoToggles.indexOf('tags') > -1}
+                        {#key $qdpx.codes}
+                          {#each commit.codes as tag}
+                            <span class="inline-flex items-center bg-magenta/30 px-1"
+                              ><Tag class="mx-1 inline-flex h-4 w-4"></Tag> {tag.value}
+                            </span>
+                          {/each}
+                        {/key}
+                      {/if}
+                    </p>
+                  </div>
 
-                <div class="flex items-center gap-1 px-2 py-1">
-                  <p class="w-fit">
-                    <Calendar class="mb-1 inline-flex h-4 w-4 text-xs" />
-                    {DateTime.fromMillis(commit.author.timestamp).toFormat('yyyy-MM-dd, HH:mm')}
-                  </p>
+                  <div class="flex items-center gap-1 px-2 py-1">
+                    <p class="w-fit">
+                      <Calendar class="mb-1 inline-flex h-4 w-4 text-xs" />
+                      {DateTime.fromMillis(commit.author.timestamp).toFormat('yyyy-MM-dd, HH:mm')}
+                    </p>
 
-                  <Button
-                    class="ms-auto"
-                    on:click={() => {
-                      currentCommitIndex = i
-                      scrollToIndex(currentCommitIndex)
-                    }}><Target class="h-4 w-4" /></Button>
-                  <Button class=""><TagsIcon class="h-4 w-4" /></Button>
-                </div>
+                    <Button
+                      class="ms-auto"
+                      on:click={() => {
+                        currentCommitIndex = i
+                        scrollToIndex(currentCommitIndex)
+                      }}><Pin class="h-4 w-4" /></Button>
+                    <Button class=""><TagsIcon class="h-4 w-4" /></Button>
+                  </div>
 
-                {#if infoToggles.indexOf('file_diff') > -1}
-                  <FileChangesDrawer {commit} {fileChangesExtents} />
-                {/if}
-                {#if infoToggles.indexOf('line_diff') > -1}
-                  <LineChangesDrawer {commit} {lineChangesExtents} />
-                {/if}
-                <div class="flex w-full flex-row place-items-end bg-[#ddd] py-1">
-                  <CommitPillButton
-                    class="w-full px-2"
-                    forceDarkTheme={true}
-                    hashAbbrev={commit.hashAbbrev}
-                    clickable={false} />
+                  {#if infoToggles.indexOf('file_diff') > -1}
+                    <FileChangesDrawer {commit} {fileChangesExtents} />
+                  {/if}
+                  {#if infoToggles.indexOf('line_diff') > -1}
+                    <LineChangesDrawer {commit} {lineChangesExtents} />
+                  {/if}
+                  <div class="flex w-full flex-row place-items-end bg-[#ddd] py-1">
+                    <CommitPillButton
+                      class="w-full px-2"
+                      forceDarkTheme={true}
+                      hashAbbrev={commit.hashAbbrev}
+                      clickable={false} />
+                  </div>
                 </div>
               </div>
-            </div>
-          {:else}
-            <div
-              class="group absolute h-fit w-[300px] items-center bg-neutral-300 text-base shadow-lg hover:border-c-black hover:bg-app {currentCommitIndex ==
-              i
-                ? 'z-10 border-2 bg-c-white ring-4 ring-app'
-                : 'z-0 border-2 border-c-black bg-c-white'}"
-              bind:this={domCommits[i]}
-              bind:clientHeight={commit.h}
-              bind:clientWidth={commit.w}
-              id="timeline_{commit.hashAbbrev}"
-              style:left="{commit.x}px"
-              style:top="{commit.y}px"
-              on:pointerenter={() => (currentHover = commit.hash)}
-              on:pointerleave={() => (currentHover = '')}>
-              <div class="relative flex flex-col">
-                <p class="m-2 line-clamp-3 text-base font-semibold">{commit.subject}</p>
-                <div class="flex w-full flex-row place-items-end bg-[#ddd] py-1">
-                  <CommitPillButton
-                    class="w-full px-2"
-                    forceDarkTheme={true}
-                    hashAbbrev={commit.hashAbbrev}
-                    clickable={false} />
+            {:else}
+              <div
+                class="group absolute z-[3] h-fit w-[300px] items-center bg-neutral-300 text-base shadow-lg hover:border-c-black hover:bg-app {currentCommitIndex ==
+                i
+                  ? ' border-2 bg-c-white ring-4 ring-app'
+                  : ' border-2 border-c-black bg-c-white'}"
+                bind:this={domCommits[i]}
+                bind:clientHeight={commit.h}
+                bind:clientWidth={commit.w}
+                id="timeline_{commit.hashAbbrev}"
+                style:left="{commit.x}px"
+                style:top="{commit.y}px"
+                on:pointerenter={() => (currentHover = commit.hash)}
+                on:pointerleave={() => (currentHover = '')}>
+                <div class="relative flex flex-col">
+                  <p class="m-2 line-clamp-3 text-base font-semibold">{commit.subject}</p>
+                  <div class="flex w-full flex-row place-items-end bg-[#ddd] py-1">
+                    <CommitPillButton
+                      class="w-full px-2"
+                      forceDarkTheme={true}
+                      hashAbbrev={commit.hashAbbrev}
+                      clickable={false} />
+                  </div>
                 </div>
               </div>
-            </div>
-          {/if}
-        {/each}
-      {:else}
-        Waiting for repo data.
-      {/if}
+            {/if}
+          {/each}
+        {:else}
+          Waiting for repo data.
+        {/if}
+      </div>
     </div>
-  </div>
-{/key}
+  {/key}
+</div>

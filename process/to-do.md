@@ -28,8 +28,8 @@ kanban-plugin: basic
 ## High priority
 
 - [ ] Re-organize the export preview and actions panel
-- [ ] Ideate what content to show when previewing tags
 - [ ] Show metadata on sources
+- [ ] Ideate what content to show when previewing tags
 
 
 ## In progress
