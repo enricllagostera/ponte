@@ -1,5 +1,5 @@
-import { writable } from 'svelte/store'
-import type { QDPXData, AppliedCode, CodeOption } from '../../types'
+import { get, writable } from 'svelte/store'
+import type { QDPXData, AppliedCode, CodeOption, Commit } from '../../types'
 import { getAllFilesInFolder, getAllSelectedFiles, getAllSelectedFolders } from './fileSystem'
 
 export const repo = writable({
@@ -42,6 +42,15 @@ export const appStates = writable({
       console.log('element not found')
     }
   },
+  removeSource: (source) => {
+    console.log('removing source via export panel')
+    const snapshot = get(repo)
+    let commit = snapshot.commits.find((c) => c.hash == source.hash) as Commit
+    const allSelected = getAllSelectedFiles(commit.fileTree)
+    const sourceToRemove = allSelected.find((s) => s.abs == source.abs)
+    sourceToRemove.selected = false
+    repo.set({ userRepoInfo: snapshot.userRepoInfo, commits: snapshot.commits })
+  },
   updateQDPX: async (repo, settings, actions) => {
     console.log('update qdpx via store')
 
@@ -69,7 +78,8 @@ export const appStates = writable({
               content: contentWithHeader,
               originalExt: ext,
               abs: file.abs,
-              name: fileTitle
+              name: fileTitle,
+              hash: commit.hash
             })
           }
         }
@@ -89,7 +99,8 @@ export const appStates = writable({
             content: `# Compilation for ${folder.rel} @ #${commit.hashAbbrev}`,
             originalExt: 'md',
             abs: folder.abs,
-            name: `${folder.rel} @ ${commit.hash.substring(0, 7)}`
+            name: `${folder.rel} @ ${commit.hash.substring(0, 7)}`,
+            hash: commit.hash
           }
           for (const file of filesInFolder) {
             const ext = file.name.split('.')[file.name.split('.').length - 1]

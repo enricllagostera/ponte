@@ -1,5 +1,21 @@
 # Process journal
 
+## 2024-04-04 Excluding sources from export panel
+
+(timestamp::2024-04-04T17:00:00-04:00)
+
+I'm back to trying to improve the export panel functionality. I realized that I'm thinking of this moment as a kind of "review" of the actions the user has taken, so as an overview of the corpus construction process. Something like a quick way to remove a source or tag would interesting, as it can be difficult to remember where those were amongst all the commits in the repo and then in the file tree interface within a commit.
+
+The export panel becomes is a snapshot of how the corpus is going to look like once exported, but also it becomes a lens into the interpretation and organization work that is going on in this step of the larger analysis process. (...)
+
+(timestamp::2024-04-04T19:43:20-04:00)
+
+After quite some work, I managed to get the remove button working. The performance is still very slow, mainly because of how reactivity is currently generating full redraws of the blogroll view. I need to find ways to make this more targeted only to the impacted components. For now, I feel it works well enough, I just need to improve the button visuals before committing and to implement it for folders and block it for the devlog. Oh well.
+
+(timestamp::2024-04-05T10:34:40-04:00)
+
+OK, managed to get all the functionality I wanted yesterday working. The performance is still not great, but it's coming along.
+
 ## 2024-03-27 and 28 Collapsible timeline nodes
 
 Managed to implement this way of quickly scanning for keywords. It took longer than I expected because I has to fix all the height and Y position calculations (they were really bad before anyway). 

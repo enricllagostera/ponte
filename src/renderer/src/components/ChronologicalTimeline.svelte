@@ -11,7 +11,6 @@
     ArrowRight,
     ArrowRightToLine,
     Calendar,
-    Target,
     TagsIcon,
     GitBranch,
     User,

@@ -1,4 +1,5 @@
 import type { RepoDirent } from '../../types'
+import type { PathLike } from 'fs-extra'
 
 export function getAllSelectedFolders(directory: RepoDirent[]): RepoDirent[] {
   const selected = []
@@ -42,4 +43,22 @@ export function getAllFilesInFolder(folder: RepoDirent): RepoDirent[] {
     }
   }
   return selected
+}
+
+export function findInTreeAndToggleSelected(abs: PathLike, directory: RepoDirent, value: boolean): void {
+  const dir = directory.children || directory
+  for (const dirent of dir) {
+    if (dirent.children?.length > 0) {
+      // is folder
+      if (dirent.abs == abs) {
+        dirent.selected = value
+        return
+      }
+
+      findInTreeAndToggleSelected(abs, dirent, value)
+    } else if (!dirent.children && dirent.abs == abs) {
+      dirent.selected = value
+      return
+    }
+  }
 }

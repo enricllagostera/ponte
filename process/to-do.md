@@ -34,20 +34,20 @@ kanban-plugin: basic
 
 ## In progress
 
-- [ ] Exclude sources from export panel
 
 
 ## Done
 
 **Complete**
-- [x] Collapse timeline entries via text filters
-- [x] Accept GitHub URLs on repo loading
 
 
 ***
 
 ## Archive
 
+- [x] 2024-04-05T10:35:27-04:00 -- Exclude sources from export panel
+- [x] 2024-04-05T10:35:27-04:00 -- Collapse timeline entries via text filters
+- [x] 2024-04-05T10:35:27-04:00 -- Accept GitHub URLs on repo loading
 - [x] 2024-03-25T15:57:25-04:00 -- Add timeline info toggles to the toolbar
 - [x] 2024-03-19T18:14:54-04:00 -- Better zoom controls
 - [x] 2024-03-19T18:14:54-04:00 -- BUG Saved tags in config are not showing up on tag input in blogroll when config file is loaded
