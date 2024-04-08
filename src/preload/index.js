@@ -25,6 +25,8 @@ if (process.contextIsolated) {
     contextBridge.exposeInMainWorld('files', {
       forceClearCache: () => ipcRenderer.invoke('forceClearCache'),
       readFile: (filePath) => ipcRenderer.invoke('readFile', filePath),
+      exportJsonCanvas: (commitsData, userRepoInfo) =>
+        ipcRenderer.invoke('exportJsonCanvas', commitsData, userRepoInfo),
       runGlobOnCommit: (pattern, commitHash) => ipcRenderer.invoke('runGlobOnCommit', pattern, commitHash),
       readFileAtCommit: (filePath, commitHash) => ipcRenderer.invoke('readFileAtCommit', filePath, commitHash),
       convertCodeToHTML: (content) => ipcRenderer.invoke('convertCodeToHTML', content),

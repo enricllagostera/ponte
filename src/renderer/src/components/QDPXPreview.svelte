@@ -110,8 +110,8 @@
               <ul class="m-2">
                 {#each code.commitHashes as hash}
                   <li class="my-1 border-2 border-f-grey-100 ps-2 text-sm">
-                    <CommitPillButton hashAbbrev={getCommit(hash).hashAbbrev} on:showCommitOnView />
-                    <p class="p-2 pt-1">{getCommit(hash).subject}</p>
+                    <CommitPillButton hashAbbrev={getCommit(hash).hashAbbrev} clickable={false} />
+                    <p class="px-1 pt-1">{getCommit(hash).subject}</p>
                   </li>
                 {/each}
               </ul>
@@ -130,9 +130,9 @@
         <Button class="ms-auto flex h-8" on:click={clearPreviewContent}>Clear preview</Button>{/if}
     </div>
     <div slot="body" class="prose prose-base prose-neutral max-w-[90%] pt-2">
-      {#if contentInPreview != undefined}
-        {@html marked.parse(contentInPreview)}
-      {:else}No source selected.{/if}
+      {#if contentInPreview == '' || contentInPreview == undefined}
+        No source or code selected.
+      {:else}{@html marked.parse(contentInPreview)}{/if}
     </div>
   </Pane>
   <div class="flex w-1/4 grow flex-col">

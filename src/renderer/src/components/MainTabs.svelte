@@ -44,8 +44,6 @@
     for await (const devlog of allDvsPromises) {
       allDevlogs.push(devlog)
     }
-
-    //console.log(allDevlogs)
   })
 
   $: {

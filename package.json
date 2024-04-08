@@ -25,6 +25,7 @@
     "@electron-toolkit/preload": "^2.0.0",
     "@electron-toolkit/utils": "^2.0.0",
     "@fabien0102/git2json": "^1.4.0",
+    "@trbn/jsoncanvas": "^1.0.6",
     "adm-zip": "^0.5.10",
     "axios": "^1.4.0",
     "bootstrap": "^5.3.1",

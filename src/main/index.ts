@@ -14,6 +14,7 @@ import { formatCodeAsHTML } from './docxBuilder'
 
 import type { Commit, Devlog } from '../types'
 import { parseTrailers } from './gitManager'
+import { exportJsonCanvas } from './jsonCanvas'
 
 let initializer: DataInitializer
 let allCommits: Commit[]
@@ -86,6 +87,7 @@ function createWindow(): void {
   ipcMain.handle('convertCodeToHTML', formatCodeAsHTML)
   ipcMain.handle('showInExplorer', showInExplorer)
   ipcMain.handle('forceClearCache', clearCache)
+  ipcMain.handle('exportJsonCanvas', exportJsonCanvas)
 
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.

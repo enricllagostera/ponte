@@ -18,7 +18,8 @@
     X,
     Filter,
     Pin,
-    Move
+    Move,
+    Save
   } from 'lucide-svelte'
   import FileChangesDrawer from './FileChangesDrawer.svelte'
   import LineChangesDrawer from './LineChangesDrawer.svelte'
@@ -198,6 +199,7 @@
       if (lastBand > maxBand) {
         maxBand = lastBand
       }
+      commit.col = commit.x == 0 ? 0 : 1 + Number(BigInt(Math.floor(commit.x)) / BigInt(baseTimeUnitWidth))
     }
     maxY = 0
     for (let i = 0; i < commitsCopy.length; i++) {
@@ -341,6 +343,11 @@
     <ScaleSelect bind:selectedUnit={timeSelected}></ScaleSelect>
     <TimelineZoomSelect bind:selectedZoom={nodeScale}></TimelineZoomSelect>
     <InfoToggleBar bind:info={infoToggles}></InfoToggleBar>
+    <Button
+      class="flex h-8 items-center justify-center gap-x-1"
+      on:click={() => {
+        window.files.exportJsonCanvas(commitsVisual, $repo.userRepoInfo)
+      }}><Save class="inline-flex" />Export to Obsidian</Button>
     <div class="flex h-8 w-full flex-row items-center gap-x-1">
       <Filter class="inline-flex"></Filter>Filter
       <input
@@ -417,6 +424,7 @@
                 on:pointerenter={() => (currentHover = commit.hash)}
                 on:pointerleave={() => (currentHover = '')}>
                 <div class={`relative flex flex-col ${filterKeyword != '' ? ' bg-app/25 ' : ''}`}>
+                  <!-- {commit.col} -->
                   <p class="m-2 line-clamp-3 text-xl font-semibold">{commit.subject}</p>
                   <div class="flex items-center px-2 py-1">
                     <p class="w-fit gap-1">

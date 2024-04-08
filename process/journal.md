@@ -1,5 +1,15 @@
 # Process journal
 
+## 2024-04-07 Exporting timeline to Obsidian
+
+I had seen a while ago that the ObsidianMD devs had released a spec for their canvas format, which is basically a quite simple but flexible file format for graphs of text, media and links. It allows for an "endless" canvas, with nice support in Obsidian. 
+
+Our current timeline view ends up being a quite static and read-only view to the repo history. So, I though of making it more actionable by exporting it as a canvas that can be exported and then opened in ObsidianMD for further annotation and visual interpretation. I basically used the positions of the current timeline mode (weekly, monthly, daily) to distribute the commit nodes in the canvas and then save its JSON. For now the exported version only includes the hash abbreviation, subject line and a link to the GitHub commit page. We could change that in later versions. 
+
+Ideally, this exported timeline could allow for integration with Obsidian plugins for qualitative coding and analysis, such as Quadro (which I found out a couple weeks ago, I'll write more about it later). As it is right now, there is still some information loss (need to add time markers somehow, probably by grouping columns and naming them), but I can see this being very useful for an annotated portfolio approach that integrates photos and other media into a view of the project history.
+
+![](media/exporting%20to%20obsidian%20-%20Made%20with%20Clipchamp.mp4)
+
 ## 2024-04-04 Excluding sources from export panel
 
 (timestamp::2024-04-04T17:00:00-04:00)
