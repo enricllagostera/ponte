@@ -1,5 +1,11 @@
 # Process journal
 
+## 2024-04-09 Code preview in export panel
+
+Now the list of codes in the project can be clicked and a list of all commits and sources encoded with that code is shown. I think this really helps to give a quick overview and a sense of what preparation was done within the tool.
+
+![](media/20240409T135405-0400--journal.png)
+
 ## 2024-04-07 Exporting timeline to Obsidian
 
 I had seen a while ago that the ObsidianMD devs had released a spec for their canvas format, which is basically a quite simple but flexible file format for graphs of text, media and links. It allows for an "endless" canvas, with nice support in Obsidian. 

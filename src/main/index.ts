@@ -251,7 +251,8 @@ async function getDevlogCompilation(_event: IpcMainInvokeEvent, devlogCompilatio
     hashAbbrev: '',
     name: `Devlog compilation`,
     originalExt: 'md',
-    content: comp
+    content: comp,
+    hash: ''
   }
 
   return devlog
