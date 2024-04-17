@@ -10,35 +10,37 @@ kanban-plugin: basic
 - [ ] Load commits from wiki repo and display in commit feed
 - [ ] Improve keyboard accessibility of the tree navigation in file selection
 - [ ] Create a URI handler (see Electron Deep Link feature) that will open a specific version of the app that can run web-based playable builds from the local commits. Alternatively, show a list of build folders per commit.
+- [ ] Encode manually selected files
+- [ ] Ignore commits from subject (simple string pattern)
+- [ ] Compile folders from glob pattern
+- [ ] Copy file as sources and encode from filename (glob pattern)
+- [ ] Embed images as base64 in devlogs or link to them on GitHub
+- [ ] Encode files from text content (glob pattern, aka auto-code)
 
 
 ## Backlog
 
-- [ ] Encode manually selected files
+- [ ] Auto-encode commits from subject line
+- [ ] Show metadata on sources
+- [ ] Auto-encode commits from full text content (glob pattern)
+- [ ] Auto-encode files from filename (glob patterns)
 - [ ] Change relative links to GitHub links in devlogs
-- [ ] Ignore commits from subject (simple string pattern)
-- [ ] Compile folders from glob pattern
-- [ ] Copy file as sources and encode from filename (glob pattern)
-- [ ] Encode files from text content (glob pattern, aka auto-code)
-- [ ] Encode files from filename (glob patterns)
-- [ ] Encode commits from full text content (glob pattern)
-- [ ] Embed images as base64 in devlogs or link to them on GitHub
 
 
 ## High priority
 
-- [ ] Re-organize the export preview and actions panel
-- [ ] Show metadata on sources
-- [ ] Ideate what content to show when previewing tags
 
 
 ## In progress
 
+- [ ] Auto-encode files from changed files
 
 
 ## Done
 
 **Complete**
+- [x] Ideate what content to show when previewing tags
+- [x] Re-organize the export preview and actions panel
 
 
 ***

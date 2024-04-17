@@ -1,11 +1,9 @@
 <script lang="ts">
   import { createTagsInput } from '@melt-ui/svelte'
-  import { Tags, X } from 'lucide-svelte'
-  import { createEventDispatcher } from 'svelte'
+  import { Tag, Tags, X } from 'lucide-svelte'
 
-  export let startingTags = ['teste', 'teste2']
-
-  const dispatch = createEventDispatcher()
+  export let startingTags = []
+  export let codesChanged
 
   const {
     elements: { root, input, tag, deleteTrigger, edit },
@@ -13,32 +11,36 @@
   } = createTagsInput({
     defaultTags: startingTags,
     unique: true,
-    add(tag) {
-      return { id: tag, value: tag }
+    // add(tag) {
+    //   return { id: tag, value: tag, label: tag }
+    // },
+    // update(tag) {
+    //   return tag
+    // },
+    // remove() {
+    //   return true
+    // },
+    onTagsChange({ curr, next }) {
+      codesChanged(next)
+      return next
     },
     addOnPaste: true
   })
-
-  $: {
-    dispatch('codesChanged', {
-      codes: [...$tags],
-      options: []
-    })
-  }
 </script>
 
 <div class="flex w-full flex-col items-start justify-center gap-2">
   <div
     {...$root}
     use:root
-    class="flex w-full flex-row flex-wrap gap-2.5 rounded-md bg-f-grey-100/50 px-3 py-2 align-middle focus-within:ring-1 focus-within:ring-f-grey-200">
+    class="flex w-full flex-row flex-wrap gap-2.5 border-2 border-c-black bg-c-white px-3 py-2 align-middle focus-within:ring-1 focus-within:ring-f-grey-200">
     <Tags class="mt-2 flex p-0" />
     {#each $tags as t}
       <div
         {...$tag(t)}
         use:tag
-        class="flex items-center overflow-hidden rounded-md bg-f-grey-100 [word-break:break-word] data-[disabled]:bg-neutral-400 data-[selected]:bg-app data-[disabled]:hover:cursor-default data-[disabled]:focus:!outline-none data-[disabled]:focus:!ring-0">
-        <span class="flex items-center border-r border-white/10 px-1.5">{t.value}</span>
+        class="flex items-center overflow-hidden rounded-full bg-magenta/30 [word-break:break-word] data-[disabled]:bg-neutral-400 data-[selected]:bg-app data-[disabled]:hover:cursor-default data-[disabled]:focus:!outline-none data-[disabled]:focus:!ring-0">
+        <span class="flex items-center border-r border-white/10 px-2"
+          ><Tag class="me-1 inline-flex h-5 " /> {t.value}</span>
         <button {...$deleteTrigger(t)} use:deleteTrigger class="flex h-full items-center px-1 enabled:hover:bg-app">
           <X class="h-4 w-4" />
         </button>

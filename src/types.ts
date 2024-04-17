@@ -32,6 +32,7 @@ export type Action = {
   description: string
   selectedCommits?: Commit[]
   ignoredCommits?: string[]
+  filesToObserve?: string[]
   selectedFiles?: RepoDirent[]
   selectedFolders?: RepoDirent[]
   codesToApply?: AppliedCode[]
@@ -46,6 +47,7 @@ export type QDPXData = {
 }
 
 export type CodeOption = {
+  id: string
   value: string
   label: string
   created?: boolean
@@ -103,6 +105,6 @@ export type Devlog = {
 }
 
 export type AppliedCode = {
-  code: { value: string; label: string }
+  code: { id: string; value: string; label: string }
   commitHashes: string[]
 }

@@ -1,6 +1,7 @@
 <script lang="ts">
   import * as d3 from 'd3'
-  import { appStates, qdpx, repo } from '../stores'
+  import { appStates, repo, getCodesForCommit } from '../stores'
+  import { allCodes, codesInCommit, commitEncodingsMap } from '../codes'
   import CommitPillButton from './CommitPillButton.svelte'
   import { DateTime } from 'luxon'
 
@@ -91,19 +92,6 @@
   )
 
   timeExtent = d3.extent(dates)
-
-  $: {
-    console.log('updating codes')
-    commitsVisual.forEach((v) => {
-      v.codes = []
-    })
-    $qdpx.codes.forEach((appliedCode) => {
-      appliedCode.commitHashes.forEach((ch) => {
-        let r = commitsVisual.get(ch)
-        r.codes.push(appliedCode.code)
-      })
-    })
-  }
 
   $: {
     const timeUnit = timeSelected
@@ -427,7 +415,7 @@
                   <!-- {commit.col} -->
                   <p class="m-2 line-clamp-3 text-xl font-semibold">{commit.subject}</p>
                   <div class="flex items-center px-2 py-1">
-                    <p class="w-fit gap-1">
+                    <p class="w-fit gap-2">
                       {#if infoToggles.indexOf('author') > -1}
                         <span class="inline-flex items-center bg-f-info/40 px-1"
                           ><User class="mx-1 inline-flex h-4 w-4"></User>{commit.author_name}</span
@@ -440,10 +428,10 @@
                         {/each}
                       {/if}
                       {#if infoToggles.indexOf('tags') > -1}
-                        {#key $qdpx.codes}
-                          {#each commit.codes as tag}
-                            <span class="inline-flex items-center bg-magenta/30 px-1"
-                              ><Tag class="mx-1 inline-flex h-4 w-4"></Tag> {tag.value}
+                        {#key codesInCommit.get(commit.hash) ?? []}
+                          {#each codesInCommit.get(commit.hash) ?? [] as tag}
+                            <span class="me-1 inline-flex items-center rounded-full bg-magenta/30 px-2"
+                              ><Tag class="mx-1 inline-flex h-4 w-4"></Tag> {tag}
                             </span>
                           {/each}
                         {/key}

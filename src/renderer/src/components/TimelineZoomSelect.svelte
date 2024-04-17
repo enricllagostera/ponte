@@ -16,7 +16,7 @@
     states: { selectedLabel, selected, open },
     helpers: { isSelected }
   } = createSelect<string>({
-    defaultSelected: { value: 'medium', label: '100%' },
+    defaultSelected: { value: 'small', label: '70%' },
     forceVisible: true,
     positioning: {
       placement: 'bottom',

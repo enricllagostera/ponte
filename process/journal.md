@@ -1,5 +1,17 @@
 # Process journal
 
+## 2024-04-17 A week of refactoring ends
+
+While I worked on the auto-encoding features, a lot of issues of performance and of how I was storing info emerged. I ended up having to change a lot of how exporting, encoding and tagging were working. This took a long time, much more than I expected. The plus side is that performance of different parts of the tool seems faster and more solid, but I do anticipate bumping into this kind of issue again as I continue to work on the auto-encoders.
+
+The main reason for all this, I think, is how I prioritized adding features quickly in the early days of development. I am not super experienced with using elaborate frameworks such as Svelte, and going fast meant focusing on getting things working instead of building them more solidly. I think a reason for this is that we are elaborating what the tool is as we go, so in a  way it was always going to be the case of "make it work, make it right, make it fast" kind of process. It does make me feel a bit like my coding is too messy, but I am happy that I can get it to work in meaningful ways.
+
+## 2024-04-10 and 11 Auto-encode from files changed
+
+This is a system for creating rules for auto-encoding commits. This means that a code/tag is applied when a particular condition is met. The first one I want to implement is based on the rule `when file in list was changed -> add tag to commit`. This would make it easier to surface and quickly find specific kinds of changes in a project, like journaling or devlogs (defined as changes to specific notes files). This can also take the form of defining scopes of work in the materials themselves, like tagging "art-making" for changes in specific art-related files. 
+
+Right now the proof of concept implementation I created asks for specific files, but it could actually use glob patterns, so that would allow for quickly tracking changes to a range of files, instead of one at a time.
+
 ## 2024-04-09 Code preview in export panel
 
 Now the list of codes in the project can be clicked and a list of all commits and sources encoded with that code is shown. I think this really helps to give a quick overview and a sense of what preparation was done within the tool.

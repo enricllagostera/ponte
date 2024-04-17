@@ -20,7 +20,7 @@
     states: { selectedLabel, selected, open },
     helpers: { isSelected }
   } = createSelect<string>({
-    defaultSelected: { value: 'day1', label: '1 day' },
+    defaultSelected: { value: 'week1', label: '1 week' },
     forceVisible: true,
     positioning: {
       placement: 'bottom',

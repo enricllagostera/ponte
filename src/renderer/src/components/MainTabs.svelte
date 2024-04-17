@@ -10,6 +10,8 @@
   import GeneralToggle from './GeneralToggle.svelte'
   import { onMount } from 'svelte'
   import { Filter, X } from 'lucide-svelte'
+  import SettingsPanel from './SettingsPanel.svelte'
+  import { codesInCommit, commitEncodings } from '../codes'
 
   const {
     elements: { root, list, content, trigger },
@@ -25,7 +27,8 @@
   const triggers = [
     { id: 'blogroll', title: 'Blogroll view' },
     { id: 'timeline', title: 'Timeline view' },
-    { id: 'exportPanel', title: 'Export panel' }
+    { id: 'exportPanel', title: 'Export panel' },
+    { id: 'settingsTab', title: 'Settings' }
   ]
 
   let mainView
@@ -69,10 +72,12 @@
 
   function changeKeyword(e) {
     filterKeyword = e.target.value
+    filteredCommits()
   }
 
   function clearCommitFilter() {
     filterKeyword = ''
+    filteredCommits()
   }
 
   function filteredCommits() {
@@ -88,6 +93,17 @@
     const filtered = $repo.commits.filter((i) => i.subject.toLowerCase().indexOf(filterKeyword.toLowerCase()) >= 0)
     filteredCommitsCount = filtered.length
     return filtered
+  }
+
+  function filterCommit(commitHash) {
+    let filtered = []
+    if (toggleFullText) {
+      let devlog = allDevlogs.find((d) => d.hash == commitHash)
+      return devlog.content.toLowerCase().indexOf(filterKeyword.toLowerCase()) >= 0
+    }
+
+    let thisCommit = $repo.commits.find((i) => i.hash == commitHash)
+    return thisCommit.subject.toLowerCase().indexOf(filterKeyword.toLowerCase()) >= 0
   }
 
   async function devlogWithTrailerContent(commitHash): Promise<string> {
@@ -125,6 +141,7 @@
     <div {...$content('exportPanel')} use:content id="exportPanelTab" class="h-full w-full">
       <QdpxPreview></QdpxPreview>
     </div>
+    <div {...$content('settingsTab')} use:content id="settingsTab" class="h-full w-full"><SettingsPanel /></div>
     <div {...$content('timeline')} use:content id="chronoTimelineView">
       <ChronologicalTimeline />
     </div>
@@ -155,23 +172,23 @@
               {/key}
             </div>
           </div>
-          {#key filterKeyword}
-            {#each filteredCommits() as commit (commit.hash)}
-              <CommitListItem
-                {commit}
-                userRepoInfo={$repo.userRepoInfo}
-                encodingAction={$appStates.actions.manualEncodeCommits}
-                on:fileToggled={async () => {
-                  await $appStates.updateQDPX($repo, $settings, $appStates.actions)
-                }}
-                on:folderToggled={async () => {
-                  await $appStates.updateQDPX($repo, $settings, $appStates.actions)
-                }}
-                on:commitEncoded={async () => {
-                  await $appStates.updateQDPX($repo, $settings, $appStates.actions)
-                }} />
-            {/each}
-          {/key}
+          {#each $repo.commits as commit (commit.hash)}
+            {#key filterKeyword}
+              {#if filterCommit(commit.hash)}
+                <CommitListItem
+                  {commit}
+                  devlogContent={allDevlogs.find((d) => d.hash == commit.hash)?.content ?? ''}
+                  userRepoInfo={$repo.userRepoInfo}
+                  encodingAction={$appStates.actions.manualEncodeCommits}
+                  on:fileToggled={async () => {
+                    await $appStates.processSources()
+                  }}
+                  on:folderToggled={async () => {
+                    await $appStates.processSources()
+                  }} />
+              {/if}
+            {/key}
+          {/each}
         {:else}
           <p id="gitData">Waiting for repo data.</p>
         {/if}

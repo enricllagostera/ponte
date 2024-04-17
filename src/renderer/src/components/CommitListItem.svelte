@@ -1,10 +1,19 @@
 <script lang="ts">
   /** eslint-disable @typescript-eslint/explicit-function-return-type */
-  import { createEventDispatcher } from 'svelte'
+  import { createEventDispatcher, onMount } from 'svelte'
   import { DateTime } from 'luxon'
   import { marked } from 'marked'
 
-  import { appStates, codeOptions, qdpx, repo, settings } from '../stores'
+  import {
+    allSources,
+    codeOptions,
+    getCodesForCommit,
+    settings,
+    uniqueArray,
+    updateAppliedCodesForCommit
+  } from '../stores'
+
+  import { allCodes, codesInCommit, commitEncodings, commitEncodingsMap, updateEncodingsForCommit } from '../codes'
 
   import { inview } from 'svelte-inview'
   import Tree from './Tree.svelte'
@@ -18,6 +27,9 @@
   export let activeAtStart = true
   export let commit: Commit
   export let userRepoInfo: string
+  export let devlogContent: string
+
+  let currentCodes = []
   let active = activeAtStart
 
   let isInView = false
@@ -25,6 +37,9 @@
     rootMargin: '500px',
     unobserveOnEnter: true
   }
+
+  let startingTags = ($commitEncodings.get(commit.hash) ?? []).map((t) => ({ id: t, value: t, label: t }))
+  let syncedTags = [...startingTags]
 
   const dispatch = createEventDispatcher()
 
@@ -43,87 +58,12 @@
     dispatch('folderToggled')
   }
 
-  function updateCodes(codes, options): void {
-    for (const code of options) {
-      let previousOptions = $codeOptions.filter((o) => o.value != code.value)
-      $codeOptions = [...previousOptions, ...options]
-    }
-    commit.appliedCodes = [...codes]
-    // console.log(commit)
-  }
-
-  function getAllCodesForThisCommit(): CodeOption[] {
-    const res = encodingAction.codesToApply.filter((e) => e.commitHashes.indexOf(commit.hash) >= 0)
-    return res.map((r) => r.code)
-  }
-
-  function findIndexCodeToApply(name: string): number {
-    const res = encodingAction.codesToApply.findIndex((e) => e.code.value == name)
-    return res
-  }
-
-  function appendToCodesToApply(newEntries: AppliedCode[] = []): void {
-    encodingAction.codesToApply = [...encodingAction.codesToApply, ...newEntries]
-  }
-
-  function removeCodeToApply(codeToRemove): void {
-    encodingAction.codesToApply = encodingAction.codesToApply.filter((c) => c.code.value != codeToRemove.code.value)
-  }
-
-  function appendToCommits(indexOfCode: number, newHash: string): void {
-    const other = encodingAction.codesToApply[indexOfCode].commitHashes.filter((c) => c !== newHash)
-    encodingAction.codesToApply[indexOfCode].commitHashes = [...other, newHash]
-  }
-
-  function removeFromCommits(indexOfCode: number, hashToRemove: string): void {
-    const other = encodingAction.codesToApply[indexOfCode].commitHashes.filter((c) => c !== hashToRemove)
-    encodingAction.codesToApply[indexOfCode].commitHashes = [...other]
-  }
-
-  function codesChanged(event: CustomEvent): void {
-    // console.log(event.detail)
-    // console.log('old options', $codeOptions)
-    updateCodes(event.detail.codes, event.detail.options)
-
-    const codesToAdd = event.detail.codes.filter((c) => findIndexCodeToApply(c.value) < 0)
-
-    const codesAlreadyInAction = event.detail.codes.filter((c) => findIndexCodeToApply(c.value) >= 0)
-
-    const entriesWithObsoleteCodes = encodingAction.codesToApply.filter((entry) => {
-      const entryHasThisCommit = entry.commitHashes.indexOf(commit.hash) >= 0
-      const entryCodeIsNotInEvent = event.detail.codes.findIndex((c) => c.value == entry.code.value) < 0
-      return entryHasThisCommit && entryCodeIsNotInEvent
-    })
-
-    // create new codesToApply entries
-    for (const newCode of codesToAdd) {
-      appendToCodesToApply([
-        {
-          code: newCode,
-          commitHashes: [commit.hash]
-        }
-      ])
-    }
-
-    // update existing codesToApply entries
-    for (const codeToAppend of codesAlreadyInAction) {
-      const appendIndex = findIndexCodeToApply(codeToAppend.value)
-      appendToCommits(appendIndex, commit.hash)
-    }
-
-    for (const obsoleteEntry of entriesWithObsoleteCodes) {
-      const obsIndex = findIndexCodeToApply(obsoleteEntry.code.value)
-      removeFromCommits(obsIndex, commit.hash)
-    }
-
-    // remove all empty codes (not referencesd by any commit)
-    const emptyCodesToApply = encodingAction.codesToApply.filter((e) => e.commitHashes.length == 0)
-    for (const emptyCode of emptyCodesToApply) {
-      removeCodeToApply(emptyCode)
-    }
-
-    encodingAction.codesToApply = [...encodingAction.codesToApply]
-    dispatch('commitEncoded', { codes: commit.appliedCodes, commit: commit.hash })
+  async function handleChangedCodes(tags): void {
+    console.log('commitlist handle taginput change: ', commit.hash)
+    updateEncodingsForCommit(
+      tags.map((t) => t.value),
+      commit.hash
+    )
   }
 
   function checkTextSourceExt(filename: string): boolean {
@@ -169,19 +109,7 @@
     // console.log(operation, res)
     return res
   }
-
-  function getCodesForCommit(hash) {
-    let codes = []
-    if ($qdpx.codes.length == 0) {
-      return []
-    }
-    $qdpx.codes.forEach((ac: AppliedCode) => {
-      if (ac.commitHashes.indexOf(hash) >= 0) {
-        codes.push(ac.code)
-      }
-    })
-    return codes
-  }
+  let encodingsStore = commitEncodingsMap.get(commit.hash)
 </script>
 
 <!-- COMPONENT ROOT -->
@@ -198,7 +126,6 @@
     const { inView } = event.detail
     isInView = inView
   }}>
-  <!-- {#if isInView} -->
   <!-- TOP BAR -->
   <div
     class="flex h-16 basis-full flex-row items-center justify-between border-b-2 border-c-black bg-c-black px-8 py-2 align-middle text-sm text-c-white dark:border-b-f-grey-200"
@@ -226,108 +153,109 @@
           {commit.subject}
         </h3>
         {#if commit.body != ''}
-          {#await devlogWithTrailerContent() then dlog}
-            <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-            {@html marked.parse(dlog)}
-          {/await}
+          <!-- {#await devlogWithTrailerContent() then dlog} -->
+          <!-- eslint-disable-next-line svelte/no-at-html-tags -->
+          {@html marked.parse(devlogContent)}
+          <!-- {/await} -->
         {:else}
           <p>No commit message available.</p>
         {/if}
       </div>
     </div>
-
-    <!-- Changed files col -->
-    <Pane class="ms-auto basis-1/4">
-      <div slot="header" class="flex w-full justify-between">
-        <span class="flex w-fit">Changed files</span>
-        <span class="flex w-fit">
-          <a
-            href={`https://github.com/${userRepoInfo}/commit/${commit.hash}`}
-            target="_blank"
-            title="Explore diff details on GitHub"
-            class="flex w-fit text-f-grey-200"><Github class="mt-1 h-4 w-4" />Explore diff</a
-          ></span>
-      </div>
-      <div slot="body">
-        <table class="h-full w-full table-auto border-separate border-spacing-1">
-          {#each commit.fileChangeStats as { operation, filepath }}
-            <tr class="align-top text-sm">
-              <td
-                class="text-balance break-all border-l-2 pb-2 pe-4 ps-2"
-                style:border-left-color={getBgColorByOperation(operation)}
-                style:color={getBgColorByOperation(operation)}>{filepath}</td>
-              <td class="w-4"> {operation}</td>
-              <td class="text-green">
-                {getLineChanges(commit, filepath).added_lines}
-              </td>
-              <td class="text-red">{getLineChanges(commit, filepath).deleted_lines}</td>
-              <td class="w-4 px-2 pt-1">
-                <a
-                  href={`https://github.com/${userRepoInfo}/blob/${commit.hash}/${filepath}`}
-                  target="_blank"
-                  title="See file in GitHub"
-                  class=" text-neutral-600"><Github class="h-4 w-4" /></a>
-              </td>
-            </tr>
-          {/each}
-        </table>
-      </div>
-    </Pane>
-    <!-- All files in project col -->
-    <Pane title="All files in project" class="basis-1/4">
-      <div slot="body">
-        {#key $qdpx.sources}
-          <Tree tree={commit.fileTree} let:node>
-            <div
-              class="flex items-start py-1 align-middle text-sm"
-              class:italic={isUnsupported(node)}
-              class:opacity-50={isUnsupported(node)}>
-              {#if node.children}
-                <input
-                  type="checkbox"
-                  class="form-checkbox text-app-accessible focus:outline-none
-                  focus:ring-2 focus:ring-app-accessible focus:ring-offset-c-white dark:focus:ring-app dark:focus:ring-offset-c-black"
-                  role="switch"
-                  id="folderSwitch_{node.name}"
-                  on:change={(e) => toggleFolder(e, node)}
-                  checked={node.selected} />
-                <i class="bi bi-folder me-1"></i>
-                <label for="folderSwitch_{node.name}">{node.name}</label>
-              {:else}
-                {#if checkTextSourceExt(node.name)}
+    {#if isInView}
+      <!-- Changed files col -->
+      <Pane class="ms-auto basis-1/4">
+        <div slot="header" class="flex w-full justify-between">
+          <span class="flex w-fit">Changed files</span>
+          <span class="flex w-fit">
+            <a
+              href={`https://github.com/${userRepoInfo}/commit/${commit.hash}`}
+              target="_blank"
+              title="Explore diff details on GitHub"
+              class="flex w-fit text-f-grey-200"><Github class="mt-1 h-4 w-4" />Explore diff</a
+            ></span>
+        </div>
+        <div slot="body">
+          <table class="h-full w-full table-auto border-separate border-spacing-1">
+            {#each commit.fileChangeStats as { operation, filepath }}
+              <tr class="align-top text-sm">
+                <td
+                  class="text-balance break-all border-l-2 pb-2 pe-4 ps-2"
+                  style:border-left-color={getBgColorByOperation(operation)}
+                  style:color={getBgColorByOperation(operation)}>{filepath}</td>
+                <td class="w-4"> {operation}</td>
+                <td class="text-green">
+                  {getLineChanges(commit, filepath).added_lines}
+                </td>
+                <td class="text-red">{getLineChanges(commit, filepath).deleted_lines}</td>
+                <td class="w-4 px-2 pt-1">
+                  <a
+                    href={`https://github.com/${userRepoInfo}/blob/${commit.hash}/${filepath}`}
+                    target="_blank"
+                    title="See file in GitHub"
+                    class=" text-neutral-600"><Github class="h-4 w-4" /></a>
+                </td>
+              </tr>
+            {/each}
+          </table>
+        </div>
+      </Pane>
+      <!-- All files in project col -->
+      <Pane title="All files in project" class="basis-1/4">
+        <div slot="body">
+          {#key $allSources}
+            <Tree tree={commit.fileTree} let:node>
+              <div
+                class="flex items-start py-1 align-middle text-sm"
+                class:italic={isUnsupported(node)}
+                class:opacity-50={isUnsupported(node)}>
+                {#if node.children}
                   <input
-                    class="form-checkbox text-app-accessible focus:outline-none
-                  focus:ring-2 focus:ring-app focus:ring-offset-c-white dark:focus:ring-offset-c-black"
                     type="checkbox"
+                    class="form-checkbox text-app-accessible focus:outline-none
+                  focus:ring-2 focus:ring-app-accessible focus:ring-offset-c-white dark:focus:ring-app dark:focus:ring-offset-c-black"
                     role="switch"
-                    id="fileSwitch_{node.name}_{commit.hashAbbrev}"
-                    disabled={!checkTextSourceExt(node.name)}
-                    on:change={(e) => toggleFile(e, node)}
+                    id="folderSwitch_{node.name}"
+                    on:change={(e) => toggleFolder(e, node)}
                     checked={node.selected} />
-                  <i class="bi bi-file-text-fill me-1"></i>
-                  <label for="fileSwitch_{node.name}_{commit.hashAbbrev}">{node.name}</label>
+                  <i class="bi bi-folder me-1"></i>
+                  <label for="folderSwitch_{node.name}">{node.name}</label>
                 {:else}
-                  {node.name}
-                {/if}
+                  {#if checkTextSourceExt(node.name)}
+                    <input
+                      class="form-checkbox text-app-accessible focus:outline-none
+                  focus:ring-2 focus:ring-app focus:ring-offset-c-white dark:focus:ring-offset-c-black"
+                      type="checkbox"
+                      role="switch"
+                      id="fileSwitch_{node.name}_{commit.hashAbbrev}"
+                      disabled={!checkTextSourceExt(node.name)}
+                      on:change={(e) => toggleFile(e, node)}
+                      checked={node.selected} />
+                    <i class="bi bi-file-text-fill me-1"></i>
+                    <label for="fileSwitch_{node.name}_{commit.hashAbbrev}">{node.name}</label>
+                  {:else}
+                    {node.name}
+                  {/if}
 
-                <a
-                  href={`https://github.com/${userRepoInfo}/tree/${commit.hash}/${node.rel}`}
-                  target="_blank"
-                  title="See file in GitHub"
-                  class="mx-2 items-start align-middle text-neutral-600"><Github class="h-4 w-4" /></a>
-              {/if}
-            </div>
-          </Tree>
-        {/key}
-      </div>
-    </Pane>
+                  <a
+                    href={`https://github.com/${userRepoInfo}/tree/${commit.hash}/${node.rel}`}
+                    target="_blank"
+                    title="See file in GitHub"
+                    class="mx-2 items-start align-middle text-neutral-600"><Github class="h-4 w-4" /></a>
+                {/if}
+              </div>
+            </Tree>
+          {/key}
+        </div>
+      </Pane>
+    {/if}
   </div>
   <!-- {/if} -->
 
   <!-- TAGGING ROW -->
   <div class="my-2 flex basis-full px-8">
-    {#key $qdpx.codes}
-      <TagInput on:codesChanged={codesChanged} startingTags={getCodesForCommit(commit.hash)}></TagInput>
+    {#key $encodingsStore}
+      <TagInput startingTags={$encodingsStore} codesChanged={handleChangedCodes}></TagInput>
     {/key}
   </div>
 </div>

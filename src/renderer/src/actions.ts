@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid'
-import type { Action } from '../../types'
+import type { Action, AppliedCode } from '../../types'
 
 export class ActionDB {
   current: Action[]
@@ -108,6 +108,23 @@ export class ActionDB {
       codesToApply: [],
       // codesToApply: [{ value, label }]
       searchPattern: ''
+    }
+    this.current = [...this.current, adding]
+    return this.current
+  }
+
+  addApplyCodeOnFilesChanged(codeToApply, filesToObserve): Action[] {
+    const adding: Action = {
+      name: 'applyCodeOnFilesChanged',
+      guid: uuid(),
+      active: true,
+      title: 'Apply codes to commits if files changed',
+      description: 'Apply codes to commits based on their list of files changed.',
+      selectedCommits: [],
+      // selectedCommits: [ hash0, hash1 ]
+      codesToApply: [codeToApply],
+      // codesToApply: [{ value, label }]
+      filesToObserve
     }
     this.current = [...this.current, adding]
     return this.current

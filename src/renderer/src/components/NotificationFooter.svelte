@@ -1,12 +1,15 @@
-<script lang="ts">
+<script lang="js">
   import { slide } from 'svelte/transition'
 
   let message = ''
 
-  export function setup(): void {
+  export function setup() {
     let progressPerCommit = new Map()
     window.loader.onDownloadInProgress(
-      (_event: any, data: { message: string; progress: { total: number }; hash: any; commitCount: number }) => {
+      (
+        /** @type {any} */ _event,
+        /** @type {{ message: string; progress: { total: number; }; hash: string; commitCount: number; }} */ data
+      ) => {
         if (data.message != '') {
           // if there is a message, just forward it to the footer
           message = data.message
@@ -31,7 +34,7 @@
 </script>
 
 {#if message != ''}
-  <div transition:slide class="flex flex-col grow-0 w-screen p-4 text-center bg-f-warn text-c-black">
+  <div transition:slide class="flex w-screen grow-0 flex-col bg-f-warn p-4 text-center text-c-black">
     {#if message != ''}
       <div class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></div>
       {message}
