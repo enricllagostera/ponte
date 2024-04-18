@@ -13,7 +13,8 @@
   import Dialog from './components/Dialog.svelte'
 
   import MainTabs from './components/MainTabs.svelte'
-  import { initCommitEncodingsMap } from './codes'
+  import { autoencoders, codesDB, codesInCommit, commitsInCode, initCommitEncodingsMap } from './codes'
+  import { get } from 'svelte/store'
 
   const defaultQdpx = { sources: [], codes: [], commits: [] } as QDPXData
 
@@ -71,6 +72,14 @@
     $appStates.repoReady = false
     repoLoadingPromise = null
     $appStates.actions = new ActionDB()
+    $codesDB.clear()
+    commitsInCode.clear()
+    codesInCommit.clear()
+    $autoencoders = {
+      onChangeEncoders: [],
+      onSubjectEncoders: [],
+      onDevlogEncoders: []
+    }
     $project = { ...defaultQdpx }
   }
 
@@ -85,7 +94,14 @@
     let res = JSON.parse(loadReturn)
     resetConfig()
     $repo.userRepoInfo = res.userRepoInfo
+    res.commitsInCode.forEach(([cd, chs]) => {
+      commitsInCode.set(cd, chs)
+    })
+    res.codesDB.forEach(([cd, co]) => {
+      $codesDB.set(cd, co)
+    })
     $repo.commits = await window.loader.loadRepoData($repo.userRepoInfo)
+    $autoencoders = res.autoencoders
     $appStates.actions.current = [...(res.actions as Action[])]
     for (const file of $appStates.actions.manualImportFiles.selectedFiles) {
       findInTreeAndToggleSelected(
@@ -121,11 +137,22 @@
   }
 
   async function saveConfig(): Promise<void> {
+    let serializedCodes = []
+    for (const [codeName, codeOption] of $codesDB) {
+      serializedCodes.push([codeName, codeOption])
+    }
+    let serializedCommitsInCode = []
+    for (const [codeName, commitHashes] of commitsInCode) {
+      serializedCommitsInCode.push([codeName, commitHashes])
+    }
     let saveOptions = {
       title: `Save Ponte config...`,
       data: {
-        userRepoInfo: userRepoInfo,
-        actions: [...$appStates.actions.current]
+        userRepoInfo: $repo.userRepoInfo,
+        actions: [...$appStates.actions.current],
+        commitsInCode: serializedCommitsInCode,
+        codesDB: serializedCodes,
+        autoencoders: $autoencoders
       }
     }
     await window.loader.saveDialog(saveOptions)

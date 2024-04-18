@@ -1,5 +1,9 @@
 # Process journal
 
+2024-04-18 Saving and loading configs with auto-encoding
+
+OK, now it is possible to save and load configuration files with autoencoders and with the new encoding system. The tool is ready for a new build, as this will make it much easier for folks to develop encoding and corpus across multiple sessions.
+
 ## 2024-04-18 Auto-encoding implemented
 
 After all the work on improving the encoding data organization, creating a better interface and actually implementing the autoencoders was quite quick. I settled on implementing three of the ideas on [from our meeting notes](#2024-03-27%20Auto-tagging%20ideas%20after%20meeting): 1) tags per file change, 2) tags per subject line and 3) tags per message / devlog. This allows for a very flexible auto-encoding system.

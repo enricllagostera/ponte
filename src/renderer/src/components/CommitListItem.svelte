@@ -6,21 +6,19 @@
 
   import { allDevlogs, allSources, settings } from '../stores'
 
-  import { codesInCommit, commitEncodings, commitEncodingsMap, updateEncodingsForCommit } from '../codes'
+  import { commitEncodingsMap, updateEncodingsForCommit } from '../codes'
 
   import { inview } from 'svelte-inview'
   import Tree from './Tree.svelte'
-  import type { Action, Commit } from '../../../types'
+  import type { Commit } from '../../../types'
   import { Github } from 'lucide-svelte'
   import CommitPillButton from './CommitPillButton.svelte'
   import TagInput from './TagInput.svelte'
   import Pane from './Pane.svelte'
 
-  export let encodingAction: Action
   export let activeAtStart = true
   export let commit: Commit
   export let userRepoInfo: string
-  export let devlogContent: string
 
   let active = activeAtStart
 
@@ -29,8 +27,6 @@
     rootMargin: '500px',
     unobserveOnEnter: true
   }
-
-  let startingTags = ($commitEncodings.get(commit.hash) ?? []).map((t) => ({ id: t, value: t, label: t }))
 
   const dispatch = createEventDispatcher()
 
@@ -66,11 +62,6 @@
       return false
     }
     return checkTextSourceExt(node.name) == false
-  }
-
-  async function devlogWithTrailerContent(): Promise<string> {
-    const dv = await window.loader.getDevlogForCommit(commit.hash, {})
-    return dv.content
   }
 
   function getLineChanges(commit, filepath: string) {
@@ -242,8 +233,8 @@
 
   <!-- TAGGING ROW -->
   <div class="my-2 flex basis-full px-8">
-    {#key $commitEncodings.get(commit.hash) ?? []}
-      <TagInput startingTags={$commitEncodings.get(commit.hash) ?? []} codesChanged={handleChangedCodes}></TagInput>
+    {#key $encodingsStore ?? []}
+      <TagInput startingTags={$encodingsStore ?? []} codesChanged={handleChangedCodes}></TagInput>
     {/key}
   </div>
 </div>

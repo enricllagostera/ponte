@@ -11,7 +11,6 @@
   import { onMount } from 'svelte'
   import { Filter, X } from 'lucide-svelte'
   import SettingsPanel from './SettingsPanel.svelte'
-  import { codesInCommit, commitEncodings } from '../codes'
 
   const {
     elements: { root, list, content, trigger },

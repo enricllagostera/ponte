@@ -27,8 +27,6 @@ kanban-plugin: basic
 
 ## High priority
 
-- [ ] Save and load autoencoders
-- [ ] Save and load encodings
 
 
 ## In progress
@@ -38,6 +36,8 @@ kanban-plugin: basic
 ## Done
 
 **Complete**
+- [x] Save and load encodings
+- [x] Save and load autoencoders
 
 
 ***

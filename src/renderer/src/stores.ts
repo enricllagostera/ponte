@@ -1,12 +1,9 @@
 import { get, writable } from 'svelte/store'
 import type { AppliedCode, CodeOption, Commit, Devlog } from '../../types'
 import { getAllFilesInFolder, getAllSelectedFiles, getAllSelectedFolders } from './fileSystem'
-import { allCodes } from './codes'
 
 export const repo = writable({
   userRepoInfo: 'enricllagostera/ponte',
-  // userRepoInfo: 'pippinbarr/v-r-5',
-  // userRepoInfo: '',
   commits: []
 })
 
@@ -23,15 +20,15 @@ export const allSources = writable([])
 
 export const allDevlogs = new Map<string, Devlog>()
 
-export function getCodesForCommit(hash) {
-  const codes = get(allCodes)
-  return codes.filter((ac) => ac.commitHashes.includes(hash)).map((ac) => ac.code)
-}
+// export function getCodesForCommit(hash) {
+//   const codes = get(allCodes)
+//   return codes.filter((ac) => ac.commitHashes.includes(hash)).map((ac) => ac.code)
+// }
 
-export function getAppliedCodesForCommit(hash) {
-  const codes = get(allCodes)
-  return codes.filter((ac) => ac.commitHashes.includes(hash))
-}
+// export function getAppliedCodesForCommit(hash) {
+//   const codes = get(allCodes)
+//   return codes.filter((ac) => ac.commitHashes.includes(hash))
+// }
 
 export async function initDevlogs(): Promise<void> {
   for (const commit of get(repo).commits) {
@@ -289,23 +286,6 @@ export const appStates = writable({
       }
     }
 
-    // const allApplyCodeCommitByGlob = actionsValue.getAll('applyCodeCommitGlob')
-    // for (const act of allApplyCodeCommitByGlob) {
-    //   if (act.active) {
-    //     for (const selectedCode of act.codesToApply) {
-    //       const getCodeOnExportList = allCodesToSendToQDPXExport.filter((c) => c.code.value == selectedCode.code.value)
-    //       if (getCodeOnExportList.length == 1) {
-    //         getCodeOnExportList[0].commitHashes = getCodeOnExportList[0].commitHashes.concat(selectedCode.commitHashes)
-    //       } else {
-    //         allCodesToSendToQDPXExport.push({
-    //           code: { ...selectedCode.code },
-    //           commitHashes: act.selectedCommits.map((sc) => sc.hash)
-    //         })
-    //       }
-    //     }
-    //   }
-    // }
-
     const allImportFilesByGlob = actionsValue.getAll('importFilesByGlob')
     for (const act of allImportFilesByGlob) {
       if (act.active) {
@@ -323,22 +303,7 @@ export const appStates = writable({
       }
     }
 
-    // for (const changeEncoder of get(autoencoder).onChangeEncoders) {
-    //   const getCodeOnExportList = allCodesToSendToQDPXExport.filter((c) => c.code.value == changeEncoder.code.value)
-    //   if (getCodeOnExportList.length == 1) {
-    //     getCodeOnExportList[0].commitHashes = Array.from(
-    //       new Set([...getCodeOnExportList[0].commitHashes, ...changeEncoder.commitHashes])
-    //     )
-    //   } else {
-    //     allCodesToSendToQDPXExport.push({
-    //       code: { ...changeEncoder.code },
-    //       commitHashes: changeEncoder.commitHashes
-    //     })
-    //   }
-    // }
-
     allSources.set(sourcesInQDPX)
     allCommits.set(commitsToProcess)
-    // allCodes.set(allCodesToSendToQDPXExport)
   }
 })

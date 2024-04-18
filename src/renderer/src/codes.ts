@@ -3,8 +3,6 @@ import type { AppliedCode, CodeOption } from '../../types'
 import { allDevlogs, repo, uniqueArray } from './stores'
 import { minimatch } from 'minimatch'
 
-export const allCodes = writable<AppliedCode[]>([])
-
 export const codesInCommit = new Map<string, string[]>()
 export const commitsInCode = new Map<string, string[]>()
 
@@ -20,10 +18,19 @@ export const autoencoders = writable({
   onDevlogEncoders: []
 })
 
-export function initCommitEncodingsMap() {
+export function initCommitEncodingsMap(): void {
+  if (commitsInCode.size > 0) {
+    codesInCommit.clear()
+    for (const [codeValue, commitHashes] of commitsInCode) {
+      for (const hash of commitHashes) {
+        const current = codesInCommit.get(hash) ?? []
+        codesInCommit.set(hash, [...current, codeValue])
+      }
+    }
+  }
   commitEncodingsMap = new Map()
   for (const commit of get(repo).commits) {
-    commitEncodingsMap.set(commit.hash, writable([]))
+    commitEncodingsMap.set(commit.hash, writable(codesInCommit.get(commit.hash) ?? []))
   }
 }
 

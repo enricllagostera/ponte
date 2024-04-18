@@ -1,7 +1,7 @@
 <script lang="ts">
   import * as d3 from 'd3'
-  import { appStates, repo, getCodesForCommit } from '../stores'
-  import { allCodes, codesInCommit, commitEncodingsMap } from '../codes'
+  import { appStates, repo } from '../stores'
+  import { codesInCommit } from '../codes'
   import CommitPillButton from './CommitPillButton.svelte'
   import { DateTime } from 'luxon'
 
