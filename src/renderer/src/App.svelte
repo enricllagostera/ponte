@@ -6,7 +6,7 @@
 
   import type { RepoDirent, Action, QDPXData } from '../../types'
   import { ActionDB } from './actions'
-  import { repo, codeOptions, settings, appStates, project } from './stores'
+  import { repo, codeOptions, settings, appStates, project, initDevlogs } from './stores'
   import NotificationFooter from './components/NotificationFooter.svelte'
   import type { PathLike } from 'fs-extra'
   import Button from './components/Button.svelte'
@@ -42,6 +42,7 @@
     $appStates.repoReady = true
     $appStates.updateQDPX()
     initCommitEncodingsMap()
+    initDevlogs()
   }
 
   function findInTreeAndToggleSelected(abs: PathLike, directory: RepoDirent, value: boolean): void {

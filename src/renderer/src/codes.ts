@@ -1,6 +1,6 @@
 import { get, writable } from 'svelte/store'
 import type { AppliedCode, CodeOption } from '../../types'
-import { repo, uniqueArray } from './stores'
+import { allDevlogs, repo, uniqueArray } from './stores'
 import { minimatch } from 'minimatch'
 
 export const allCodes = writable<AppliedCode[]>([])
@@ -15,7 +15,9 @@ export let commitEncodingsMap = undefined
 export const codesDB = writable<Map<string, CodeOption>>(new Map())
 
 export const autoencoders = writable({
-  onChangeEncoders: []
+  onChangeEncoders: [],
+  onSubjectEncoders: [],
+  onDevlogEncoders: []
 })
 
 export function initCommitEncodingsMap() {
@@ -55,7 +57,7 @@ function addEncodingToCommits(codeValue: string, commitHashes: string[]): void {
   commitEncodings.set(codesInCommit)
 }
 
-function removeEncodingFromCommit(codeValue: string, commitHash: string): void {
+export function removeEncodingFromCommit(codeValue: string, commitHash: string): void {
   const currDB = get(codesDB)
   currDB.set(codeValue, { id: codeValue, label: codeValue, value: codeValue })
   commitsInCode.set(codeValue, uniqueArray([...(commitsInCode.get(codeValue) ?? [])].filter((ch) => ch != commitHash)))
@@ -68,6 +70,13 @@ function removeEncodingFromCommit(codeValue: string, commitHash: string): void {
   }
   codesDB.set(currDB)
   commitEncodings.set(codesInCommit)
+}
+
+export function removeEncodingFromAllEncodings(codeValue): void {
+  for (const commit of get(repo).commits) {
+    removeEncodingFromCommit(codeValue, commit.hash)
+    updateEncodingsForCommit(codesInCommit.get(commit.hash) ?? [], commit.hash)
+  }
 }
 
 export function updateAllEncodings(): void {
@@ -85,6 +94,14 @@ export function updateEncodingsForCommit(codes: string[], commitHash: string): v
   }
   for (const code of codes) {
     addEncodingToCommit(code, commitHash)
+  }
+  for (const subjectEncoder of get(autoencoders).onSubjectEncoders) {
+    const adding = encodeBySubjectsGlob(subjectEncoder.glob, subjectEncoder.code)
+    addEncodingToCommits(subjectEncoder.code, adding.commitHashes)
+  }
+  for (const devlogEncoder of get(autoencoders).onDevlogEncoders) {
+    const adding = encodeByDevlogGlob(devlogEncoder.glob, devlogEncoder.code)
+    addEncodingToCommits(devlogEncoder.code, adding.commitHashes)
   }
   for (const changeEncoder of get(autoencoders).onChangeEncoders) {
     const adding = encodeByChangesGlob(changeEncoder.glob, changeEncoder.code)
@@ -125,16 +142,47 @@ export function getCodesAsAppliedCodes() {
   return res
 }
 
-// for (const changeEncoder of get(autoencoder).onChangeEncoders) {
-//   const getCodeOnExportList = allCodesToSendToQDPXExport.filter((c) => c.code.value == changeEncoder.code.value)
-//   if (getCodeOnExportList.length == 1) {
-//     getCodeOnExportList[0].commitHashes = Array.from(
-//       new Set([...getCodeOnExportList[0].commitHashes, ...changeEncoder.commitHashes])
-//     )
-//   } else {
-//     allCodesToSendToQDPXExport.push({
-//       code: { ...changeEncoder.code },
-//       commitHashes: changeEncoder.commitHashes
-//     })
-//   }
-// }
+function encodeBySubjectsGlob(searchPattern: string, codeValueLabel: string): AppliedCode {
+  let res: AppliedCode = {
+    code: codeValueLabel,
+    commitHashes: []
+  }
+  const searches = searchPattern.split('\n')
+  const commits = get(repo).commits
+  for (const commit of commits) {
+    let findings = []
+    for (const pattern of searches) {
+      findings = [...findings, ...minimatch.match([commit.subject], `**${pattern}**`)]
+    }
+    if (findings.length > 0) {
+      res.commitHashes.push(commit.hash)
+    }
+  }
+  return res
+}
+
+function encodeByDevlogGlob(searchPattern: string, codeValueLabel: string): AppliedCode {
+  let res: AppliedCode = {
+    code: codeValueLabel,
+    commitHashes: []
+  }
+  const searches = searchPattern.split('\n')
+  const commits = get(repo).commits
+  for (const commit of commits) {
+    let findings = []
+    const dl = allDevlogs.get(commit.hash)?.content
+    for (const pattern of searches) {
+      const found =
+        commit.subject.toLowerCase().indexOf(pattern.toLowerCase()) > -1 ||
+        commit.body.toLowerCase().indexOf(pattern.toLowerCase()) > -1 ||
+        dl.toLowerCase().indexOf(pattern.toLowerCase()) > -1
+      if (found) {
+        findings = [...findings, commit.hash]
+      }
+    }
+    if (findings.length > 0) {
+      res.commitHashes.push(commit.hash)
+    }
+  }
+  return res
+}

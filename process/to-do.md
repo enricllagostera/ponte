@@ -6,6 +6,8 @@ kanban-plugin: basic
 
 ## Wishlist
 
+- [ ] Change relative links to GitHub links in devlogs
+- [ ] Auto-encode files from filename (glob patterns)
 - [ ] Allow importing from wiki as individual files or as folder compilations
 - [ ] Load commits from wiki repo and display in commit feed
 - [ ] Improve keyboard accessibility of the tree navigation in file selection
@@ -20,33 +22,32 @@ kanban-plugin: basic
 
 ## Backlog
 
-- [ ] Auto-encode commits from subject line
 - [ ] Show metadata on sources
-- [ ] Auto-encode commits from full text content (glob pattern)
-- [ ] Auto-encode files from filename (glob patterns)
-- [ ] Change relative links to GitHub links in devlogs
 
 
 ## High priority
 
+- [ ] Save and load autoencoders
+- [ ] Save and load encodings
 
 
 ## In progress
 
-- [ ] Auto-encode files from changed files
 
 
 ## Done
 
 **Complete**
-- [x] Ideate what content to show when previewing tags
-- [x] Re-organize the export preview and actions panel
 
 
 ***
 
 ## Archive
 
+- [x] 2024-04-18T08:48:27-04:00 -- Auto-encode commits from full text content or subject line
+- [x] 2024-04-18T08:48:27-04:00 -- Auto-encode files from changed files
+- [x] 2024-04-18T08:48:27-04:00 -- Ideate what content to show when previewing tags
+- [x] 2024-04-18T08:48:27-04:00 -- Re-organize the export preview and actions panel
 - [x] 2024-04-05T10:35:27-04:00 -- Exclude sources from export panel
 - [x] 2024-04-05T10:35:27-04:00 -- Collapse timeline entries via text filters
 - [x] 2024-04-05T10:35:27-04:00 -- Accept GitHub URLs on repo loading

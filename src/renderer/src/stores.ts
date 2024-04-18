@@ -1,5 +1,5 @@
 import { get, writable } from 'svelte/store'
-import type { AppliedCode, CodeOption, Commit } from '../../types'
+import type { AppliedCode, CodeOption, Commit, Devlog } from '../../types'
 import { getAllFilesInFolder, getAllSelectedFiles, getAllSelectedFolders } from './fileSystem'
 import { allCodes } from './codes'
 
@@ -21,6 +21,8 @@ export const settings = writable({
 export const allCommits = writable<Commit[]>([])
 export const allSources = writable([])
 
+export const allDevlogs = new Map<string, Devlog>()
+
 export function getCodesForCommit(hash) {
   const codes = get(allCodes)
   return codes.filter((ac) => ac.commitHashes.includes(hash)).map((ac) => ac.code)
@@ -31,49 +33,11 @@ export function getAppliedCodesForCommit(hash) {
   return codes.filter((ac) => ac.commitHashes.includes(hash))
 }
 
-export function updateAppliedCodesForCommit(hash: string, nextCodes: []): void {
-  // const codes = get(allCodes)
-  // const allNextIds = nextCodes.map((nc) => nc.id)
-  // // list of codes to remove
-  // const codesToRemoveHash = getAppliedCodesForCommit(hash)
-  //   .filter((eac) => allNextIds.includes(eac.id) == false)
-  //   .forEach((eac) => {
-  //     eac.commitHashes = eac.commitHashes.filter((h) => h != hash)
-  //   })
-  // allCodes.update((v) => v.filter((c) => c.commitHashes.length > 0))
-  // let codesToAdd = []
-  // for (const nextCode of nextCodes) {
-  //   const nonExistingCode = codes.filter((c) => c.code.id == nextCode.id).length == 0
-  //   if (nonExistingCode) {
-  //     codesToAdd = [...codesToAdd, { code: nextCode, commitHashes: [hash] }]
-  //     continue
-  //   }
-  //   const existingCodesToAddHash = codes.filter(
-  //     (c) => c.code.id == nextCode.id && c.commitHashes.includes(hash) == false
-  //   )
-  //   for (const ecah of existingCodesToAddHash) {
-  //     ecah.commitHashes = [...ecah.commitHashes, hash]
-  //   }
-  // }
-  // allCodes.update((v) => [...v, ...codesToAdd])
-  // const currAppliedCodes = getAppliedCodesForCommit(hash)
-  // nextCodes.forEach((nc) => {
-  //   const curr = currAppliedCodes.find((cac) => cac.code.id == nc.id)
-  //   if (curr != undefined) {
-  //     // update all existing codes to apply (in curr, in next)
-  //     curr.commitHashes = Array.from(new Set([...curr.commitHashes, hash]))
-  //   } else {
-  //     // add new codes to apply (in new, not in old)
-  //     get(allCodes).push({ code: nc, commitHashes: [hash] })
-  //   }
-  // })
-  // // remove leftover codes to apply (in old, not in new)
-  // const currentACs = getAppliedCodesForCommit(hash)
-  // const deleteListACs = currentACs.filter((cc) => nextCodes.map((nn) => nn.id).includes(cc.code.id) == false).map(dc => dc.code.id)
-  // allCodes.update((currValue) => {
-  //   return currValue.filter(cv =>  deleteListACs.includes(cv.code.id) == false)
-  // })
-  // currAppliedCodes.forEach((ac) => { })
+export async function initDevlogs(): Promise<void> {
+  for (const commit of get(repo).commits) {
+    const newDevlog = await window.loader.getDevlogForCommit(commit.hash, {})
+    allDevlogs.set(commit.hash, newDevlog ?? '')
+  }
 }
 
 export function uniqueArray(array): Array {

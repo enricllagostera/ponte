@@ -1,23 +1,16 @@
 <script lang="ts">
   /** eslint-disable @typescript-eslint/explicit-function-return-type */
-  import { createEventDispatcher, onMount } from 'svelte'
+  import { createEventDispatcher } from 'svelte'
   import { DateTime } from 'luxon'
   import { marked } from 'marked'
 
-  import {
-    allSources,
-    codeOptions,
-    getCodesForCommit,
-    settings,
-    uniqueArray,
-    updateAppliedCodesForCommit
-  } from '../stores'
+  import { allDevlogs, allSources, settings } from '../stores'
 
-  import { allCodes, codesInCommit, commitEncodings, commitEncodingsMap, updateEncodingsForCommit } from '../codes'
+  import { codesInCommit, commitEncodings, commitEncodingsMap, updateEncodingsForCommit } from '../codes'
 
   import { inview } from 'svelte-inview'
   import Tree from './Tree.svelte'
-  import type { Action, AppliedCode, CodeOption, Commit } from '../../../types'
+  import type { Action, Commit } from '../../../types'
   import { Github } from 'lucide-svelte'
   import CommitPillButton from './CommitPillButton.svelte'
   import TagInput from './TagInput.svelte'
@@ -29,7 +22,6 @@
   export let userRepoInfo: string
   export let devlogContent: string
 
-  let currentCodes = []
   let active = activeAtStart
 
   let isInView = false
@@ -39,7 +31,6 @@
   }
 
   let startingTags = ($commitEncodings.get(commit.hash) ?? []).map((t) => ({ id: t, value: t, label: t }))
-  let syncedTags = [...startingTags]
 
   const dispatch = createEventDispatcher()
 
@@ -152,13 +143,10 @@
         <h3 class="pb-4 text-2xl font-bold dark:text-white">
           {commit.subject}
         </h3>
-        {#if commit.body != ''}
-          <!-- {#await devlogWithTrailerContent() then dlog} -->
-          <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-          {@html marked.parse(devlogContent)}
-          <!-- {/await} -->
+        {#if commit.body == ''}
+          <p>No commit message or devlog available.</p>
         {:else}
-          <p>No commit message available.</p>
+          {@html marked.parse(allDevlogs.get(commit.hash)?.content ?? 'No commit message or devlog available.')}
         {/if}
       </div>
     </div>
@@ -254,8 +242,8 @@
 
   <!-- TAGGING ROW -->
   <div class="my-2 flex basis-full px-8">
-    {#key $encodingsStore}
-      <TagInput startingTags={$encodingsStore} codesChanged={handleChangedCodes}></TagInput>
+    {#key $commitEncodings.get(commit.hash) ?? []}
+      <TagInput startingTags={$commitEncodings.get(commit.hash) ?? []} codesChanged={handleChangedCodes}></TagInput>
     {/key}
   </div>
 </div>

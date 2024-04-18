@@ -1,35 +1,83 @@
-<script>
-  import { autoencoders, updateAllEncodings } from '../codes'
-  import Button from './Button.svelte'
-  import Pane from './Pane.svelte'
+<script lang="ts">
+  import { autoencoders, removeEncodingFromAllEncodings, updateAllEncodings } from '../codes'
+  import { v4 as uuid } from 'uuid'
+  import AutoEncoderByCondition from './AutoEncoderByCondition.svelte'
 
-  let filesToObserveText = '*/journal.md'
-  let codeOnChange = 'journaling'
-
-  function addOnChangedEncoding(codeOnChange, filesToObserveText) {
+  function addOnChangedEncoding(codeOnChange, filesToObserveText): void {
     console.log('encoding on change: ', codeOnChange, filesToObserveText)
     if (codeOnChange != '' && filesToObserveText != '') {
+      console.log('adding new on change encoder')
       $autoencoders.onChangeEncoders = [
         ...$autoencoders.onChangeEncoders,
-        { glob: filesToObserveText, code: codeOnChange }
+        { id: uuid(), glob: filesToObserveText, code: codeOnChange }
       ]
       updateAllEncodings()
     }
   }
+
+  function removeOnChangedEncoding(id, codeValue): void {
+    $autoencoders.onChangeEncoders = $autoencoders.onChangeEncoders.filter((e) => e.id != id)
+    removeEncodingFromAllEncodings(codeValue)
+  }
+
+  function addOnSubjectEncoding(codeOnSubject, patterns): void {
+    console.log('encoding on subject: ', codeOnSubject, patterns)
+    if (codeOnSubject != '' && patterns != '') {
+      console.log('adding new subject encoder')
+      $autoencoders.onSubjectEncoders = [
+        ...$autoencoders.onSubjectEncoders,
+        { id: uuid(), glob: patterns, code: codeOnSubject }
+      ]
+      updateAllEncodings()
+    }
+  }
+
+  function removeOnSubjectEncoding(id, codeValue): void {
+    $autoencoders.onSubjectEncoders = $autoencoders.onSubjectEncoders.filter((e) => e.id != id)
+    removeEncodingFromAllEncodings(codeValue)
+  }
+
+  function addOnDevlogEncoding(codeOnDevlog, patterns): void {
+    console.log('encoding on devlog: ', codeOnDevlog, patterns)
+    if (codeOnDevlog != '' && patterns != '') {
+      console.log('adding new devlog encoder')
+      $autoencoders.onDevlogEncoders = [
+        ...$autoencoders.onDevlogEncoders,
+        { id: uuid(), glob: patterns, code: codeOnDevlog }
+      ]
+      updateAllEncodings()
+    }
+  }
+
+  function removeOnDevlogEncoding(id, codeValue): void {
+    $autoencoders.onDevlogEncoders = $autoencoders.onDevlogEncoders.filter((e) => e.id != id)
+    removeEncodingFromAllEncodings(codeValue)
+  }
 </script>
 
-<Pane title="Settings" class="flex h-full w-full shrink-0 grow flex-row gap-2 overflow-hidden py-2">
-  <div slot="body">
-    <h2 class="text-xl font-bold">Auto-encoding</h2>
-    <!-- <div class="flex flex-row">
-      <Button>Add changed file encoder</Button>
-    </div> -->
-    <div class="flex flex-row gap-2">
-      <input bind:value={codeOnChange} placeholder="Code..." class="h-8" />
-      <textarea bind:value={filesToObserveText} placeholder="Files to observe..." />
-      <Button class="h-8" on:click={() => addOnChangedEncoding(codeOnChange, filesToObserveText)}>Run</Button>
-      <!-- <GeneralToggle class="h-8">Active</GeneralToggle> -->
-    </div>
-    Applies<code>{codeOnChange}</code> to commits that changed the file(s): {filesToObserveText}.
+<div class="flex h-full w-full shrink-0 grow flex-col gap-2 overflow-hidden py-2">
+  <h2 class="my-2 text-xl font-bold">Auto-encoding</h2>
+  <div class="flex h-full flex-row gap-2">
+    <AutoEncoderByCondition
+      title="Encode by file changes"
+      description={`Apply code to commits in which the files in the glob patterns were changed. You can add one pattern per line.`}
+      encoders={$autoencoders.onChangeEncoders}
+      onAddEncoder={addOnChangedEncoding}
+      onRemoveEncoder={removeOnChangedEncoding}>
+    </AutoEncoderByCondition>
+    <AutoEncoderByCondition
+      title="Encode by commit subject"
+      description={`Apply code to commits if their subject matches a pattern. You can add one pattern per line.`}
+      encoders={$autoencoders.onSubjectEncoders}
+      onAddEncoder={addOnSubjectEncoding}
+      onRemoveEncoder={removeOnSubjectEncoding}>
+    </AutoEncoderByCondition>
+    <AutoEncoderByCondition
+      title="Encode by commit message or devlog content"
+      description={`Apply code to commits if their commit subject, message or devlog matches a pattern. You can add one pattern per line.`}
+      encoders={$autoencoders.onDevlogEncoders}
+      onAddEncoder={addOnDevlogEncoding}
+      onRemoveEncoder={removeOnDevlogEncoding}>
+    </AutoEncoderByCondition>
   </div>
-</Pane>
+</div>

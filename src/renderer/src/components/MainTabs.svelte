@@ -172,21 +172,19 @@
               {/key}
             </div>
           </div>
-          {#each $repo.commits as commit (commit.hash)}
+          {#each filteredCommits() as commit (commit.hash)}
             {#key filterKeyword}
-              {#if filterCommit(commit.hash)}
-                <CommitListItem
-                  {commit}
-                  devlogContent={allDevlogs.find((d) => d.hash == commit.hash)?.content ?? ''}
-                  userRepoInfo={$repo.userRepoInfo}
-                  encodingAction={$appStates.actions.manualEncodeCommits}
-                  on:fileToggled={async () => {
-                    await $appStates.processSources()
-                  }}
-                  on:folderToggled={async () => {
-                    await $appStates.processSources()
-                  }} />
-              {/if}
+              <CommitListItem
+                {commit}
+                devlogContent={allDevlogs.find((d) => d.hash == commit.hash)?.content ?? ''}
+                userRepoInfo={$repo.userRepoInfo}
+                encodingAction={$appStates.actions.manualEncodeCommits}
+                on:fileToggled={async () => {
+                  await $appStates.processSources()
+                }}
+                on:folderToggled={async () => {
+                  await $appStates.processSources()
+                }} />
             {/key}
           {/each}
         {:else}

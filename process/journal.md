@@ -1,5 +1,15 @@
 # Process journal
 
+## 2024-04-18 Auto-encoding implemented
+
+After all the work on improving the encoding data organization, creating a better interface and actually implementing the autoencoders was quite quick. I settled on implementing three of the ideas on [from our meeting notes](#2024-03-27%20Auto-tagging%20ideas%20after%20meeting): 1) tags per file change, 2) tags per subject line and 3) tags per message / devlog. This allows for a very flexible auto-encoding system.
+
+I created a component with a basic structure of input for codes and patterns, plus a listing below in which existing autoencoders can be removed. It worked OK. I'm happy I was able to use a structure of passing in (kind of like a strategy pattern) the handler functions for each of the component behaviors. This made the logic exist all in the `codes` module and in the `SettingsPanel` component.
+
+There is still quite some improvements to implement, the most important being saving and loading the autoencoders in the config files properly.
+
+![Auto-encoding preview](media/Ponte%202024-04-17%2018-30-14.mp4)
+
 ## 2024-04-17 A week of refactoring ends
 
 While I worked on the auto-encoding features, a lot of issues of performance and of how I was storing info emerged. I ended up having to change a lot of how exporting, encoding and tagging were working. This took a long time, much more than I expected. The plus side is that performance of different parts of the tool seems faster and more solid, but I do anticipate bumping into this kind of issue again as I continue to work on the auto-encoders.
