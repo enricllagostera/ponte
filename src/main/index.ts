@@ -16,8 +16,11 @@ import type { Commit, Devlog } from '../types'
 import { parseTrailers } from './gitManager'
 import { exportJsonCanvas } from './jsonCanvas'
 
+import { v4 as uuid } from 'uuid'
+
 let initializer: DataInitializer
 let allCommits: Commit[]
+let devlogCompilation: Devlog | undefined = undefined
 
 function createWindow(): void {
   // Create the browser window.
@@ -58,6 +61,7 @@ function createWindow(): void {
 
   ipcMain.handle('loadRepoData', async (_event: IpcMainInvokeEvent, repoInfo) => {
     const inputGitDataPath = files.getAppGitDataPath()
+    devlogCompilation = undefined
     initializer = new DataInitializer(repoInfo, inputGitDataPath)
     mainWindow.webContents.send('commitDownloadInProgress', {
       message: 'Cloning repository...'
@@ -225,6 +229,7 @@ async function getDevlogForCommit(_event: IpcMainInvokeEvent, commitHash: string
   }
 
   const devlog: Devlog = {
+    guid: uuid(),
     hashAbbrev: commitData.hashAbbrev,
     name: `Devlog for #${commitData.hashAbbrev} on ${commitISODate}`,
     originalExt: 'md',
@@ -237,9 +242,11 @@ async function getDevlogForCommit(_event: IpcMainInvokeEvent, commitHash: string
 }
 
 async function getDevlogCompilation(_event: IpcMainInvokeEvent, devlogCompilationConfig): Promise<Devlog> {
+  if (devlogCompilation != undefined) {
+    return devlogCompilation
+  }
   let comp = '# Devlog compilation\n\n'
-  const selectedCommits = allCommits.filter((c) => devlogCompilationConfig.selectedCommits.indexOf(c.hash) >= 0)
-
+  const selectedCommits = [...allCommits]
   for (let i = 0; i < selectedCommits.length; i++) {
     const sc = selectedCommits[i]
     const devlogContent = await getDevlogForCommit(_event, sc.hash)
@@ -247,6 +254,7 @@ async function getDevlogCompilation(_event: IpcMainInvokeEvent, devlogCompilatio
   }
 
   const devlog = {
+    guid: uuid(),
     parent: 'repository',
     hashAbbrev: '',
     name: `Devlog compilation`,
@@ -254,6 +262,7 @@ async function getDevlogCompilation(_event: IpcMainInvokeEvent, devlogCompilatio
     content: comp,
     hash: ''
   }
+  devlogCompilation = devlog
 
   return devlog
 }

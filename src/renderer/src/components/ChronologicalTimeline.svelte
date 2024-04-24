@@ -1,7 +1,7 @@
 <script lang="ts">
   import * as d3 from 'd3'
   import { appStates, repo } from '../stores'
-  import { codesInCommit } from '../codes'
+  import { allCodes, codesInCommit, getCodeIdsInCommit } from '../codes'
   import CommitPillButton from './CommitPillButton.svelte'
   import { DateTime } from 'luxon'
 
@@ -28,6 +28,7 @@
   import TimelineZoomSelect from './TimelineZoomSelect.svelte'
   import InfoToggleBar from './InfoToggleBar.svelte'
   import GeneralToggle from './GeneralToggle.svelte'
+  import { get } from 'svelte/store'
 
   let scaleX = undefined
   let timeExtent
@@ -428,10 +429,10 @@
                         {/each}
                       {/if}
                       {#if infoToggles.indexOf('tags') > -1}
-                        {#key codesInCommit.get(commit.hash) ?? []}
-                          {#each codesInCommit.get(commit.hash) ?? [] as tag}
+                        {#key getCodeIdsInCommit(commit.hash)}
+                          {#each getCodeIdsInCommit(commit.hash) as codeGUID}
                             <span class="me-1 inline-flex items-center rounded-full bg-magenta/30 px-2"
-                              ><Tag class="mx-1 inline-flex h-4 w-4"></Tag> {tag}
+                              ><Tag class="mx-1 inline-flex h-4 w-4"></Tag> {$allCodes.get(codeGUID).value}
                             </span>
                           {/each}
                         {/key}

@@ -1,6 +1,38 @@
 # Process journal
 
-2024-04-18 Saving and loading configs with auto-encoding
+## 2024-04-24 A lot of saving and loading problems
+
+I continued working on the saving and loading of the project, with annotations and reactive interfaces. I think most areas are working now, with some small issues in showing number of autoencodings in the settings window (this might be working intermittenly???). The QDPX exporter needs to be updated now, as there were quite a few changes in the code, plus to add the annotations themselves.
+
+Performance seems a little better overall, expect for the first drawing of the timeline view. I def need to refactor the nodes into components themselves, so they can be more selectively re-drawn instead of the large redraws happening now. Now that I feel I understand Svelte stores better, I might be able to compartmentalize things in a way that is more performant and fluid. Some ideas:
+
+- Tween the positions and connections, so they can be re-organized on the fly;
+- Stop using scaling, but just draw things with smaller sizes. This might help with performance too.
+- Minimize redraws, have the stores needed for GUI closer in the component tree, but separated as needed.
+
+Just realized when loading Pippin's repo that the blogroll view is not showing the commit messages properly. New bug to fix. (...) I think it's working now.
+
+## 2024-02-23 Fixing autoencoders and save/load annotations
+
+OK, there were few bugs in how codes were being shown in the export panel, which affected the annotations logic. Now both autoencoded and regular encodings are working well enough, and annotations are being displayed correctly. Now I can finally move on to persisting and exporting the annotations. 
+
+Here is how the interface is looking for now:
+
+![](media/20240423T104356-0400--journal.png)
+
+![](media/20240423T104356-0400--journal-1.png)
+
+(...) Argh. Saving and loading annotations has got me stumbling in another block: my own way of defining sources... Now that annotations need a fixed id for identifying sources, the way I basically keep re-building them from git every time starts to not be that great at all. So I'll basically have to re-think hoiw I'm doing this, so here comes another big refactor to the data structures and passing around...
+
+It's weird that during a lot of the dev I didn't really pay much attention to the types of the different things, kind of working very loosely. Now that I'm having to deal more closely with data, I'm relying more on Typescript again and it's been kind of more helpful than before? Not sure what I think of it.
+
+## 2024-04-22 Annotations
+
+I think the export panel would be a good place for adding small text fields to both codes and sources that can then be saved as annotations associated with those items. This would allow the tool to become almost a very minimal QDA tool in itself, allowing for notes on why particular codes or sources were selected or other reminders that emerged during corpus preparation to be included in the project itself. 
+
+(...) I got most of te work done, but there were issues with some changes to encoding started breaking the autoencoders logic again. Back to refactoring...
+
+## 2024-04-18 Saving and loading configs with auto-encoding
 
 OK, now it is possible to save and load configuration files with autoencoders and with the new encoding system. The tool is ready for a new build, as this will make it much easier for folks to develop encoding and corpus across multiple sessions.
 

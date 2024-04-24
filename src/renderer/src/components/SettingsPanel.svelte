@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { autoencoders, removeEncodingFromAllEncodings, updateAllEncodings } from '../codes'
+  import { autoencoders, getCodeIdByValue, removeEncodingFromAll, updateAllEncodings } from '../codes'
   import { v4 as uuid } from 'uuid'
   import AutoEncoderByCondition from './AutoEncoderByCondition.svelte'
 
@@ -12,12 +12,14 @@
         { id: uuid(), glob: filesToObserveText, code: codeOnChange }
       ]
       updateAllEncodings()
+      $autoencoders = $autoencoders
     }
   }
 
   function removeOnChangedEncoding(id, codeValue): void {
     $autoencoders.onChangeEncoders = $autoencoders.onChangeEncoders.filter((e) => e.id != id)
-    removeEncodingFromAllEncodings(codeValue)
+    removeEncodingFromAll(getCodeIdByValue(codeValue))
+    $autoencoders = $autoencoders
   }
 
   function addOnSubjectEncoding(codeOnSubject, patterns): void {
@@ -29,12 +31,14 @@
         { id: uuid(), glob: patterns, code: codeOnSubject }
       ]
       updateAllEncodings()
+      $autoencoders = $autoencoders
     }
   }
 
-  function removeOnSubjectEncoding(id, codeValue): void {
-    $autoencoders.onSubjectEncoders = $autoencoders.onSubjectEncoders.filter((e) => e.id != id)
-    removeEncodingFromAllEncodings(codeValue)
+  function removeOnSubjectEncoding(annotationId, codeValue): void {
+    $autoencoders.onSubjectEncoders = $autoencoders.onSubjectEncoders.filter((e) => e.id != annotationId)
+    removeEncodingFromAll(getCodeIdByValue(codeValue))
+    $autoencoders = $autoencoders
   }
 
   function addOnDevlogEncoding(codeOnDevlog, patterns): void {
@@ -46,17 +50,19 @@
         { id: uuid(), glob: patterns, code: codeOnDevlog }
       ]
       updateAllEncodings()
+      $autoencoders = $autoencoders
     }
   }
 
   function removeOnDevlogEncoding(id, codeValue): void {
     $autoencoders.onDevlogEncoders = $autoencoders.onDevlogEncoders.filter((e) => e.id != id)
-    removeEncodingFromAllEncodings(codeValue)
+    removeEncodingFromAll(getCodeIdByValue(codeValue))
+    $autoencoders = $autoencoders
   }
 </script>
 
 <div class="flex h-full w-full shrink-0 grow flex-col gap-2 overflow-hidden py-2">
-  <h2 class="my-2 text-xl font-bold">Auto-encoding</h2>
+  <h2 class="my-2 ms-4 text-xl font-bold">Auto-encoding</h2>
   <div class="flex h-full flex-row gap-2">
     <AutoEncoderByCondition
       title="Encode by file changes"

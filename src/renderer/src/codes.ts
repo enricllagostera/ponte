@@ -1,16 +1,11 @@
-import { get, writable } from 'svelte/store'
-import type { AppliedCode, CodeOption } from '../../types'
+import { get, writable, type Writable } from 'svelte/store'
+import type { AppliedCode, Code, HASH, GUID } from '../../types'
 import { allDevlogs, repo, uniqueArray } from './stores'
 import { minimatch } from 'minimatch'
 
-export const codesInCommit = new Map<string, string[]>()
-export const commitsInCode = new Map<string, string[]>()
-
-export const commitEncodings = writable(codesInCommit)
-
-export let commitEncodingsMap = undefined
-
-export const codesDB = writable<Map<string, CodeOption>>(new Map())
+export const allCodes = writable(new Map<GUID, Code>())
+export const codesInCommit = new Map<HASH, Writable<GUID[]>>()
+export const commitsInCode = new Map<GUID, Writable<HASH[]>>()
 
 export const autoencoders = writable({
   onChangeEncoders: [],
@@ -21,106 +16,161 @@ export const autoencoders = writable({
 export function initCommitEncodingsMap(): void {
   if (commitsInCode.size > 0) {
     codesInCommit.clear()
-    for (const [codeValue, commitHashes] of commitsInCode) {
-      for (const hash of commitHashes) {
-        const current = codesInCommit.get(hash) ?? []
-        codesInCommit.set(hash, [...current, codeValue])
+    for (const [codeId, commitHashes] of commitsInCode) {
+      for (const hash of get(commitHashes)) {
+        const codesInCommitStore = codesInCommit.get(hash)
+        if (codesInCommitStore != undefined) {
+          codesInCommit.get(hash).set([...get(codesInCommitStore), codeId])
+        } else {
+          codesInCommit.get(hash).set([])
+        }
       }
     }
   }
-  commitEncodingsMap = new Map()
+  get(allCodes).clear()
   for (const commit of get(repo).commits) {
-    commitEncodingsMap.set(commit.hash, writable(codesInCommit.get(commit.hash) ?? []))
+    setCodesInCommit(commit.hash, [])
   }
 }
 
-function addEncodingToCommit(codeValue: string, commitHash: string): void {
-  const currDB = get(codesDB)
-  currDB.set(codeValue, { id: codeValue, label: codeValue, value: codeValue })
-  commitsInCode.set(codeValue, uniqueArray([...(commitsInCode.get(codeValue) ?? []), commitHash]))
-  codesInCommit.set(commitHash, uniqueArray([...(codesInCommit.get(commitHash) ?? []), codeValue]))
-  codesDB.set(currDB)
-  if (commitEncodingsMap.get(commitHash) == undefined) {
-    commitEncodingsMap.set(commitHash, writable(codesInCommit.get(commitHash)))
+function addEncodingToCommit(codeId: GUID, commitHash: HASH): void {
+  const all = get(allCodes)
+  const foundCode = all.get(codeId)
+  if (foundCode == undefined) {
+    console.error('Tried to add encoding for inexisting code GUID.')
+    // all.set(codeId, { guid: codeId, label: codeId, value: codeId })
+  }
+  setCodesInCommit(commitHash, [codeId])
+  setCommitsInCode(codeId, [commitHash])
+}
+
+export function addEncodingToCommits(codeId: GUID, commitHashes: HASH[]): void {
+  for (const commitHash of commitHashes) {
+    addEncodingToCommit(codeId, commitHash)
+  }
+}
+
+function setCodesInCommit(commitHash: HASH, codeIds: GUID[], reset: boolean = false): void {
+  let codesInCommitStore = codesInCommit.get(commitHash)
+  if (codesInCommitStore == undefined) {
+    //console.log('lazy initialization of codesInCommit for ' + commitHash)
+    codesInCommitStore = writable([])
+  }
+  if (reset) {
+    codesInCommitStore.set(uniqueArray([...codeIds]))
   } else {
-    commitEncodingsMap.get(commitHash).set(codesInCommit.get(commitHash))
+    codesInCommitStore.set(uniqueArray([...get(codesInCommitStore), ...codeIds]))
   }
-  commitEncodings.set(codesInCommit)
+  codesInCommit.set(commitHash, codesInCommitStore)
 }
 
-function addEncodingToCommits(codeValue: string, commitHashes: string[]): void {
-  const currDB = get(codesDB)
-  currDB.set(codeValue, { id: codeValue, label: codeValue, value: codeValue })
-  for (const ch of commitHashes) {
-    commitsInCode.set(codeValue, uniqueArray([...(commitsInCode.get(codeValue) ?? []), ch]))
-    codesInCommit.set(ch, uniqueArray([...(codesInCommit.get(ch) ?? []), codeValue]))
-    if (commitEncodingsMap.get(ch) == undefined) {
-      commitEncodingsMap.set(ch, writable(codesInCommit.get(ch)))
-    } else {
-      commitEncodingsMap.get(ch).set(codesInCommit.get(ch))
-    }
+function setCommitsInCode(codeId: GUID, commitHashes: HASH[], reset: boolean = false): void {
+  const commitsInCodeStore = commitsInCode.get(codeId) ?? writable([])
+  if (reset) {
+    commitsInCodeStore.set(uniqueArray([...commitHashes]))
+  } else {
+    commitsInCodeStore.set(uniqueArray([...get(commitsInCodeStore), ...commitHashes]))
   }
-  codesDB.set(currDB)
-  commitEncodings.set(codesInCommit)
+  commitsInCode.set(codeId, commitsInCodeStore)
 }
 
-export function removeEncodingFromCommit(codeValue: string, commitHash: string): void {
-  const currDB = get(codesDB)
-  currDB.set(codeValue, { id: codeValue, label: codeValue, value: codeValue })
-  commitsInCode.set(codeValue, uniqueArray([...(commitsInCode.get(codeValue) ?? [])].filter((ch) => ch != commitHash)))
-  codesInCommit.set(commitHash, uniqueArray([...(codesInCommit.get(commitHash) ?? [])].filter((cd) => cd != codeValue)))
-  if (commitsInCode.get(codeValue).length == 0) {
+export function getCodeIdsInCommit(commitHash: HASH): GUID[] {
+  const store = codesInCommit.get(commitHash)
+  if (store == null) {
+    return []
+  }
+  return get(store)
+}
+
+export function getCommitsInCode(codeId: GUID): HASH[] {
+  const store = commitsInCode.get(codeId)
+  if (store == null) {
+    return []
+  }
+  return get(store)
+}
+
+export function removeEncodingFromCommit(codeId: GUID, commitHash: HASH): void {
+  const all = get(allCodes)
+  setCommitsInCode(codeId, uniqueArray([...getCommitsInCode(codeId)].filter((ch) => ch != commitHash)), true)
+
+  setCodesInCommit(commitHash, uniqueArray([...getCodeIdsInCommit(commitHash)].filter((cd) => cd != codeId)), true)
+
+  if (get(commitsInCode.get(codeId)).length == 0) {
+    commitsInCode.get(codeId).set([])
+    codesInCommit.get(commitHash).set([])
     commitsInCode.delete(commitHash)
-    codesInCommit.delete(codeValue)
-    commitEncodingsMap.get(commitHash).set([])
-    currDB.delete(codeValue)
+    all.delete(codeId)
   }
-  codesDB.set(currDB)
-  commitEncodings.set(codesInCommit)
 }
 
-export function removeEncodingFromAllEncodings(codeValue): void {
+export function removeEncodingFromAll(codeId: GUID): void {
   for (const commit of get(repo).commits) {
-    removeEncodingFromCommit(codeValue, commit.hash)
-    updateEncodingsForCommit(codesInCommit.get(commit.hash) ?? [], commit.hash)
+    removeEncodingFromCommit(codeId, commit.hash)
   }
+  updateAllEncodings()
+}
+
+export function getCodeIdByValue(codeValue): GUID | undefined {
+  const allCodeValues = Array.from(get(allCodes).values())
+  return allCodeValues.find((v) => v.value == codeValue)?.id ?? undefined
 }
 
 export function updateAllEncodings(): void {
+  const all = get(allCodes)
+
   for (const commit of get(repo).commits) {
-    updateEncodingsForCommit(codesInCommit.get(commit.hash) ?? [], commit.hash)
+    updateEncodingsForCommit(
+      getCodeIdsInCommit(commit.hash).map((cid) => all.get(cid)),
+      commit.hash
+    )
   }
 }
 
-export function updateEncodingsForCommit(codes: string[], commitHash: string): void {
-  const oldCodes = codesInCommit.get(commitHash)?.map((h) => h)
+export function updateEncodingsForCommit(newCodes: Code[], commitHash: string): void {
+  const all = get(allCodes)
+  let oldCodes = []
+  if (codesInCommit.get(commitHash) != undefined) {
+    oldCodes = get(codesInCommit.get(commitHash))
+  }
   if (oldCodes != undefined) {
     for (const oldTag of oldCodes) {
       removeEncodingFromCommit(oldTag, commitHash)
     }
   }
-  for (const code of codes) {
-    addEncodingToCommit(code, commitHash)
+  for (const code of newCodes) {
+    if (all.get(code.id) == undefined) {
+      all.set(code.id, code)
+    }
+    addEncodingToCommit(code.id, commitHash)
   }
   for (const subjectEncoder of get(autoencoders).onSubjectEncoders) {
-    const adding = encodeBySubjectsGlob(subjectEncoder.glob, subjectEncoder.code)
-    addEncodingToCommits(subjectEncoder.code, adding.commitHashes)
+    if (all.get(subjectEncoder.id) == undefined) {
+      all.set(subjectEncoder.id, { id: subjectEncoder.id, value: subjectEncoder.code })
+    }
+    const targetCommits = encodeBySubjectsGlob(subjectEncoder.glob)
+    addEncodingToCommits(subjectEncoder.id, targetCommits)
   }
   for (const devlogEncoder of get(autoencoders).onDevlogEncoders) {
-    const adding = encodeByDevlogGlob(devlogEncoder.glob, devlogEncoder.code)
-    addEncodingToCommits(devlogEncoder.code, adding.commitHashes)
+    if (all.get(devlogEncoder.id) == undefined) {
+      all.set(devlogEncoder.id, { id: devlogEncoder.id, value: devlogEncoder.code })
+    }
+    const targetCommits = commitsToEncodeByDevlogGlob(devlogEncoder.glob)
+    addEncodingToCommits(devlogEncoder.id, targetCommits)
   }
   for (const changeEncoder of get(autoencoders).onChangeEncoders) {
-    const adding = encodeByChangesGlob(changeEncoder.glob, changeEncoder.code)
-    addEncodingToCommits(changeEncoder.code, adding.commitHashes)
+    if (all.get(changeEncoder.id) == undefined) {
+      all.set(changeEncoder.id, { id: changeEncoder.id, value: changeEncoder.code })
+    }
+    const targetCommits = commitsToEncodeByChangesGlob(changeEncoder.glob)
+    addEncodingToCommits(changeEncoder.id, targetCommits)
   }
+
+  allCodes.set(all)
 }
 
-export function encodeByChangesGlob(searchPattern: string, codeValueLabel: string): AppliedCode {
-  let res: AppliedCode = {
-    code: codeValueLabel,
-    commitHashes: []
-  }
+function commitsToEncodeByChangesGlob(searchPattern: string): HASH[] {
+  const commitHashes = []
   const searches = searchPattern.split('\n')
   const commits = get(repo).commits
   for (const commit of commits) {
@@ -135,25 +185,25 @@ export function encodeByChangesGlob(searchPattern: string, codeValueLabel: strin
       ]
     }
     if (findings.length > 0) {
-      res.commitHashes.push(commit.hash)
+      commitHashes.push(commit.hash)
     }
   }
-  return res
+  return commitHashes
 }
 
-export function getCodesAsAppliedCodes() {
-  let res = []
-  for (const [codeName, codeOption] of get(codesDB)) {
-    res.push({ code: codeOption, commitHashes: commitsInCode.get(codeName) ?? [] })
+export function getCodesAsAppliedCodes(): AppliedCode[] {
+  const res: AppliedCode[] = []
+  for (const [codeId, codeValue] of get(allCodes)) {
+    res.push({
+      code: { id: codeId, value: codeValue.value, label: codeValue.value },
+      commitHashes: get(commitsInCode.get(codeId)) ?? []
+    })
   }
   return res
 }
 
-function encodeBySubjectsGlob(searchPattern: string, codeValueLabel: string): AppliedCode {
-  let res: AppliedCode = {
-    code: codeValueLabel,
-    commitHashes: []
-  }
+function encodeBySubjectsGlob(searchPattern: string): HASH[] {
+  const commitHashes: HASH[] = []
   const searches = searchPattern.split('\n')
   const commits = get(repo).commits
   for (const commit of commits) {
@@ -162,17 +212,14 @@ function encodeBySubjectsGlob(searchPattern: string, codeValueLabel: string): Ap
       findings = [...findings, ...minimatch.match([commit.subject], `**${pattern}**`)]
     }
     if (findings.length > 0) {
-      res.commitHashes.push(commit.hash)
+      commitHashes.push(commit.hash)
     }
   }
-  return res
+  return commitHashes
 }
 
-function encodeByDevlogGlob(searchPattern: string, codeValueLabel: string): AppliedCode {
-  let res: AppliedCode = {
-    code: codeValueLabel,
-    commitHashes: []
-  }
+function commitsToEncodeByDevlogGlob(searchPattern: string): HASH[] {
+  const commitHashes: HASH[] = []
   const searches = searchPattern.split('\n')
   const commits = get(repo).commits
   for (const commit of commits) {
@@ -188,8 +235,8 @@ function encodeByDevlogGlob(searchPattern: string, codeValueLabel: string): Appl
       }
     }
     if (findings.length > 0) {
-      res.commitHashes.push(commit.hash)
+      commitHashes.push(commit.hash)
     }
   }
-  return res
+  return commitHashes
 }

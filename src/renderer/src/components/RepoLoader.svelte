@@ -1,10 +1,11 @@
 <script lang="ts">
-  import { repo } from '../stores'
   import { createEventDispatcher } from 'svelte'
+  import { slide } from 'svelte/transition'
+  import { FolderCheck, HardDriveDownload } from 'lucide-svelte'
+
   import Pane from './Pane.svelte'
   import Button from './Button.svelte'
-  import { FolderCheck, HardDriveDownload } from 'lucide-svelte'
-  import { slide } from 'svelte/transition'
+  import { repo } from '../stores'
 
   const dispatch = createEventDispatcher()
 
@@ -13,27 +14,24 @@
   export let loadPromise = null
 
   async function checkRepoInfo(): Promise<void> {
+    // processes base github url, .git urls or just user/reponame pairs
     if ($repo.userRepoInfo.startsWith('https://github.com/')) {
       $repo.userRepoInfo = $repo.userRepoInfo.substring(19)
       if ($repo.userRepoInfo.endsWith('.git')) {
         $repo.userRepoInfo = $repo.userRepoInfo.slice(0, -4)
       }
     }
-
     if ($repo.userRepoInfo.endsWith('/')) {
       $repo.userRepoInfo = $repo.userRepoInfo.slice(0, -1)
     }
-
     confirmPromise = window.loader.checkRepoInfo($repo.userRepoInfo)
     confirmedRepoInfo = await confirmPromise
   }
 
   async function loadRepo(): Promise<void> {
     dispatch('startLoading')
-
     loadPromise = window.loader.loadRepoData($repo.userRepoInfo)
     $repo.commits = await loadPromise
-
     dispatch('repoDataLoaded', {
       commits: $repo.commits,
       userRepoInfo: $repo.userRepoInfo
@@ -41,11 +39,11 @@
   }
 </script>
 
-<Pane successClass={$repo.commits.length > 0} title="Repository loader" class={$$restProps.class}>
-  <div slot="body">
+<Pane successClass={$repo.commits.length > 0} title="Repository loader" class="my-auto me-auto ms-auto w-1/3">
+  <div slot="body" class="flex flex-col">
     {#if $repo.commits.length == 0}
-      <p>The tool will load commits from the GitHub repository below.</p>
       {#if confirmedRepoInfo == ''}
+        <p>The tool will load commits from the GitHub repository below.</p>
         <input
           type="text"
           placeholder="myUsername/myRepo"
@@ -65,6 +63,7 @@
       {#if confirmPromise != null}
         {#await confirmPromise then}
           {#if loadPromise == null && $repo.commits.length == 0}
+            <p>Repository is validated. Click to load commits info from GitHub or from a local cache, if available.</p>
             <Button primary type="button" id="loadRepo" on:click={loadRepo} class="my-2">
               <HardDriveDownload class="me-2" /> Load data
             </Button>

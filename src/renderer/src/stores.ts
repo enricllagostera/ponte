@@ -1,5 +1,5 @@
 import { get, writable } from 'svelte/store'
-import type { AppliedCode, CodeOption, Commit, Devlog } from '../../types'
+import type { AppliedCode, CodeOption, Commit, Devlog, HASH, Source } from '../../types'
 import { getAllFilesInFolder, getAllSelectedFiles, getAllSelectedFolders } from './fileSystem'
 
 export const repo = writable({
@@ -16,28 +16,19 @@ export const settings = writable({
 })
 
 export const allCommits = writable<Commit[]>([])
-export const allSources = writable([])
-
-export const allDevlogs = new Map<string, Devlog>()
-
-// export function getCodesForCommit(hash) {
-//   const codes = get(allCodes)
-//   return codes.filter((ac) => ac.commitHashes.includes(hash)).map((ac) => ac.code)
-// }
-
-// export function getAppliedCodesForCommit(hash) {
-//   const codes = get(allCodes)
-//   return codes.filter((ac) => ac.commitHashes.includes(hash))
-// }
+export const allDevlogs = writable(new Map<HASH, Devlog>())
 
 export async function initDevlogs(): Promise<void> {
+  const all = get(allDevlogs)
+  all.clear()
   for (const commit of get(repo).commits) {
     const newDevlog = await window.loader.getDevlogForCommit(commit.hash, {})
-    allDevlogs.set(commit.hash, newDevlog ?? '')
+    all.set(commit.hash, newDevlog ?? {})
   }
+  allDevlogs.set(all)
 }
 
-export function uniqueArray(array): Array {
+export function uniqueArray(array): Array<any> {
   return Array.from(new Set(array))
 }
 
@@ -60,7 +51,7 @@ export const appStates = writable({
     const settingsValue = get(settings)
     const actionsValue = get(appStates).actions
 
-    const sourcesInQDPX = []
+    const sourcesInQDPX: Source[] = []
     let commitsToProcess = []
 
     if (actionsValue.manualIgnoreCommits.active) {
@@ -82,12 +73,12 @@ export const appStates = writable({
             const fileTitle = `${file.rel} @ #${commit.hash.substring(0, 7)}`
             const contentWithHeader = `title:  ${fileTitle}\n\n${content}`
             sourcesInQDPX.push({
-              parent: 'copyTextSource',
+              type: 'textFile',
               content: contentWithHeader,
               originalExt: ext,
               abs: file.abs,
               name: fileTitle,
-              hash: commit.hash
+              commitHash: commit.hash
             })
           }
         }
@@ -103,7 +94,7 @@ export const appStates = writable({
           actionsValue.manualImportFolderText.selectedFolders.push(folder)
           const filesInFolder = getAllFilesInFolder(folder)
           const compilationSource = {
-            parent: 'compilationSource',
+            type: 'compilationSource',
             content: `# Compilation for ${folder.rel} @ #${commit.hashAbbrev}`,
             originalExt: 'md',
             abs: folder.abs,
@@ -140,7 +131,7 @@ export const appStates = writable({
     if (actionsValue.individualCommitDevlog.active) {
       for (const commit of commitsToProcess) {
         const newSource = await window.loader.getDevlogForCommit(commit.hash, {})
-        newSource.parent = 'devlog'
+        newSource.type = 'devlog'
         sourcesInQDPX.push(newSource)
       }
     }
@@ -160,7 +151,6 @@ export const appStates = writable({
     }
   },
   removeSource: (source) => {
-    console.log('removing source via export panel')
     const snapshot = get(repo)
     const commit = snapshot.commits.find((c) => c.hash == source.hash) as Commit
     const allSelected = getAllSelectedFiles(commit.fileTree)
@@ -169,141 +159,6 @@ export const appStates = writable({
     repo.set({ userRepoInfo: snapshot.userRepoInfo, commits: snapshot.commits })
   },
   updateQDPX: async () => {
-    console.log('update qdpx via store')
-
-    const repoValue = get(repo)
-    const settingsValue = get(settings)
-    const actionsValue = get(appStates).actions
-
-    const sourcesInQDPX = []
-    let commitsToProcess = []
-
-    if (actionsValue.manualIgnoreCommits.active) {
-      commitsToProcess = [
-        ...repoValue.commits.filter((v) => actionsValue.manualIgnoreCommits.ignoredCommits.indexOf(v.hash) < 0)
-      ]
-    } else {
-      commitsToProcess = [...repoValue.commits]
-    }
-
-    if (actionsValue.manualImportFiles.active) {
-      actionsValue.manualImportFiles.selectedFiles = []
-      for (const commit of commitsToProcess) {
-        for (const file of getAllSelectedFiles(commit.fileTree)) {
-          actionsValue.manualImportFiles.selectedFiles.push(file)
-          const ext = file.name.split('.')[file.name.split('.').length - 1]
-          if (settingsValue.supportedTextExts.indexOf(ext) >= 0) {
-            const content = await window.files.readFileAtCommit(file.rel, commit.hash)
-            const fileTitle = `${file.rel} @ #${commit.hash.substring(0, 7)}`
-            const contentWithHeader = `title:  ${fileTitle}\n\n${content}`
-            sourcesInQDPX.push({
-              parent: 'copyTextSource',
-              content: contentWithHeader,
-              originalExt: ext,
-              abs: file.abs,
-              name: fileTitle,
-              hash: commit.hash
-            })
-          }
-        }
-      }
-    } else {
-      commitsToProcess = [...repoValue.commits]
-    }
-
-    if (actionsValue.manualImportFolderText.active) {
-      actionsValue.manualImportFolderText.selectedFolders = []
-      for (const commit of commitsToProcess) {
-        for (const folder of getAllSelectedFolders(commit.fileTree)) {
-          actionsValue.manualImportFolderText.selectedFolders.push(folder)
-          const filesInFolder = getAllFilesInFolder(folder)
-          const compilationSource = {
-            parent: 'compilationSource',
-            content: `# Compilation for ${folder.rel} @ #${commit.hashAbbrev}`,
-            originalExt: 'md',
-            abs: folder.abs,
-            name: `${folder.rel} @ ${commit.hash.substring(0, 7)}`,
-            hash: commit.hash
-          }
-          for (const file of filesInFolder) {
-            const ext = file.name.split('.')[file.name.split('.').length - 1]
-            if (settingsValue.supportedTextExts.indexOf(ext) >= 0) {
-              compilationSource.content += `\n\n## [${file.rel}]\n\n`
-              if (ext == 'md') {
-                compilationSource.content += await window.files.readFileAtCommit(file.rel, commit.hash)
-              } else {
-                const fileData = await window.files.readFileAtCommit(file.rel, commit.hash)
-                compilationSource.content += `\`\`\`\n${fileData}\`\`\``
-              }
-            }
-          }
-          sourcesInQDPX.push(compilationSource)
-        }
-      }
-    } else {
-      commitsToProcess = [...repoValue.commits]
-    }
-
-    if (actionsValue.devlogCompilation.active) {
-      const dScs = commitsToProcess.map((commit) => commit.hash)
-      const compilationSource = await window.loader.getDevlogCompilation({
-        selectedCommits: [...dScs]
-      })
-      sourcesInQDPX.push(compilationSource)
-    }
-
-    if (actionsValue.individualCommitDevlog.active) {
-      for (const commit of commitsToProcess) {
-        const newSource = await window.loader.getDevlogForCommit(commit.hash, {})
-        newSource.parent = 'devlog'
-        sourcesInQDPX.push(newSource)
-      }
-    }
-
-    const allCodesToSendToQDPXExport: AppliedCode[] = []
-
-    // encode commits manually
-    if (actionsValue.manualEncodeCommits.active) {
-      for (const codeInAction of actionsValue.manualEncodeCommits.codesToApply) {
-        const getCodeOnExportList = allCodesToSendToQDPXExport.filter((c) => c.code.value == codeInAction.code.value)
-        if (getCodeOnExportList.length == 1) {
-          getCodeOnExportList[0].commitHashes = [
-            ...getCodeOnExportList[0].commitHashes,
-            ...commitsToProcess
-              .filter((c) => codeInAction.commitHashes.findIndex((ca) => ca == c.hash) >= 0)
-              .map((r) => r.hash)
-          ]
-        } else {
-          allCodesToSendToQDPXExport.push({
-            code: { ...codeInAction.code },
-            commitHashes: [
-              ...commitsToProcess
-                .filter((c) => codeInAction.commitHashes.findIndex((ca) => ca == c.hash) >= 0)
-                .map((r) => r.hash)
-            ]
-          })
-        }
-      }
-    }
-
-    const allImportFilesByGlob = actionsValue.getAll('importFilesByGlob')
-    for (const act of allImportFilesByGlob) {
-      if (act.active) {
-        for (const file of act.selectedFiles) {
-          const content = await window.files.readFileAtCommit(file.name, file.commitHash)
-          const fileTitle = `${file.name} @ #${file.commitHash.substring(0, 7)}`
-          const contentWithHeader = `title:  ${fileTitle}\n\n${content}`
-          sourcesInQDPX.push({
-            parent: 'copyTextSource',
-            originalExt: file.name.split('.')[file.name.split('.').length - 1],
-            content: contentWithHeader,
-            name: fileTitle
-          })
-        }
-      }
-    }
-
-    allSources.set(sourcesInQDPX)
-    allCommits.set(commitsToProcess)
+    console.log('[STORES] Updating all project data.')
   }
 })

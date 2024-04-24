@@ -45,6 +45,7 @@
     "marked": "^7.0.5",
     "marked-xhtml": "^1.0.6",
     "minimatch": "^9.0.3",
+    "normalize-path": "^3.0.0",
     "npmlog": "^7.0.1",
     "sanitize-html": "^2.11.0",
     "simple-git": "^3.19.1",

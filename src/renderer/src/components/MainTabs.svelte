@@ -2,7 +2,7 @@
   import { createTabs } from '@melt-ui/svelte'
   import { cubicInOut } from 'svelte/easing'
   import { crossfade } from 'svelte/transition'
-  import { appStates, repo, settings } from '../stores'
+  import { allDevlogs, appStates, repo } from '../stores'
   import CommitListItem from './CommitListItem.svelte'
   import ChronologicalTimeline from './ChronologicalTimeline.svelte'
   import Button from './Button.svelte'
@@ -11,13 +11,14 @@
   import { onMount } from 'svelte'
   import { Filter, X } from 'lucide-svelte'
   import SettingsPanel from './SettingsPanel.svelte'
+  import type { Commit } from '../../../types'
 
   const {
     elements: { root, list, content, trigger },
     states: { value }
   } = createTabs({
     defaultValue: 'blogroll',
-    onValueChange: ({ curr, next }) => {
+    onValueChange: ({ next }) => {
       $appStates.view = next
       return next
     }
@@ -34,19 +35,6 @@
   let filterKeyword = ''
   let filteredCommitsCount = 0
   let toggleFullText = false
-
-  let allDevlogs = []
-
-  onMount(async () => {
-    let allDvsPromises = $repo.commits.map(async (c) => {
-      return { hash: c.hash, content: await devlogWithTrailerContent(c.hash) }
-    })
-
-    allDevlogs = []
-    for await (const devlog of allDvsPromises) {
-      allDevlogs.push(devlog)
-    }
-  })
 
   $: {
     if ($appStates.view != $value) {
@@ -69,20 +57,20 @@
     }
   }
 
-  function changeKeyword(e) {
+  function changeKeyword(e): void {
     filterKeyword = e.target.value
     filteredCommits()
   }
 
-  function clearCommitFilter() {
+  function clearCommitFilter(): void {
     filterKeyword = ''
     filteredCommits()
   }
 
-  function filteredCommits() {
+  function filteredCommits(): Commit[] {
     if (toggleFullText) {
       const filtered = $repo.commits.filter((i) => {
-        let devlog = allDevlogs.find((d) => d.hash == i.hash)
+        let devlog = $allDevlogs.get(i.hash)
         return devlog.content.toLowerCase().indexOf(filterKeyword.toLowerCase()) >= 0
       })
       filteredCommitsCount = filtered.length
@@ -92,22 +80,6 @@
     const filtered = $repo.commits.filter((i) => i.subject.toLowerCase().indexOf(filterKeyword.toLowerCase()) >= 0)
     filteredCommitsCount = filtered.length
     return filtered
-  }
-
-  function filterCommit(commitHash) {
-    let filtered = []
-    if (toggleFullText) {
-      let devlog = allDevlogs.find((d) => d.hash == commitHash)
-      return devlog.content.toLowerCase().indexOf(filterKeyword.toLowerCase()) >= 0
-    }
-
-    let thisCommit = $repo.commits.find((i) => i.hash == commitHash)
-    return thisCommit.subject.toLowerCase().indexOf(filterKeyword.toLowerCase()) >= 0
-  }
-
-  async function devlogWithTrailerContent(commitHash): Promise<string> {
-    const dv = await window.loader.getDevlogForCommit(commitHash, {})
-    return dv.content
   }
 </script>
 
@@ -173,17 +145,7 @@
           </div>
           {#each filteredCommits() as commit (commit.hash)}
             {#key filterKeyword}
-              <CommitListItem
-                {commit}
-                devlogContent={allDevlogs.find((d) => d.hash == commit.hash)?.content ?? ''}
-                userRepoInfo={$repo.userRepoInfo}
-                encodingAction={$appStates.actions.manualEncodeCommits}
-                on:fileToggled={async () => {
-                  await $appStates.processSources()
-                }}
-                on:folderToggled={async () => {
-                  await $appStates.processSources()
-                }} />
+              <CommitListItem {commit} devlog={$allDevlogs.get(commit.hash)} />
             {/key}
           {/each}
         {:else}

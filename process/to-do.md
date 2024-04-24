@@ -7,11 +7,11 @@ kanban-plugin: basic
 ## Wishlist
 
 - [ ] Change relative links to GitHub links in devlogs
-- [ ] Auto-encode files from filename (glob patterns)
 - [ ] Allow importing from wiki as individual files or as folder compilations
 - [ ] Load commits from wiki repo and display in commit feed
 - [ ] Improve keyboard accessibility of the tree navigation in file selection
 - [ ] Create a URI handler (see Electron Deep Link feature) that will open a specific version of the app that can run web-based playable builds from the local commits. Alternatively, show a list of build folders per commit.
+- [ ] Auto-encode files from filename (glob patterns)
 - [ ] Encode manually selected files
 - [ ] Ignore commits from subject (simple string pattern)
 - [ ] Compile folders from glob pattern
@@ -22,28 +22,34 @@ kanban-plugin: basic
 
 ## Backlog
 
+- [ ] Improve blogroll view layout
 - [ ] Show metadata on sources
 
 
 ## High priority
 
+- [ ] Show confirmation dialog on deleting encoders with annotations
+- [ ] Show confirmation dialog on deleting codes with annotations
 
 
 ## In progress
 
+- [ ] Export annotations in QDPX
 
 
 ## Done
 
 **Complete**
-- [x] Save and load encodings
-- [x] Save and load autoencoders
 
 
 ***
 
 ## Archive
 
+- [x] 2024-04-24T15:35:56-04:00 -- Add annotations to sources
+- [x] 2024-04-24T15:35:56-04:00 -- Add annotations to codes
+- [x] 2024-04-18T14:13:05-04:00 -- Save and load encodings
+- [x] 2024-04-18T14:13:05-04:00 -- Save and load autoencoders
 - [x] 2024-04-18T08:48:27-04:00 -- Auto-encode commits from full text content or subject line
 - [x] 2024-04-18T08:48:27-04:00 -- Auto-encode files from changed files
 - [x] 2024-04-18T08:48:27-04:00 -- Ideate what content to show when previewing tags

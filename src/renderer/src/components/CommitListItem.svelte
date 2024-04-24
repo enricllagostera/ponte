@@ -1,12 +1,11 @@
 <script lang="ts">
-  /** eslint-disable @typescript-eslint/explicit-function-return-type */
-  import { createEventDispatcher } from 'svelte'
   import { DateTime } from 'luxon'
   import { marked } from 'marked'
 
-  import { allDevlogs, allSources, settings } from '../stores'
+  import { allDevlogs, repo, settings } from '../stores'
+  import { addSource, allSources, removeSource } from '../sources'
 
-  import { commitEncodingsMap, updateEncodingsForCommit } from '../codes'
+  import { allCodes, codesInCommit, updateEncodingsForCommit } from '../codes'
 
   import { inview } from 'svelte-inview'
   import Tree from './Tree.svelte'
@@ -15,20 +14,52 @@
   import CommitPillButton from './CommitPillButton.svelte'
   import TagInput from './TagInput.svelte'
   import Pane from './Pane.svelte'
+  import { onMount } from 'svelte'
+  import { minimatch } from 'minimatch'
 
   export let activeAtStart = true
   export let commit: Commit
-  export let userRepoInfo: string
+  export let devlog: Devlog
+
+  let devlogContent = ''
+  $: {
+    devlogContent = devlog?.content ?? 'Empty commit message.'
+  }
+  let userRepoInfo: string = $repo.userRepoInfo
 
   let active = activeAtStart
-
   let isInView = false
   let inViewOptions = {
     rootMargin: '500px',
     unobserveOnEnter: true
   }
+  let encodingsStore
+  let processedEncodings = []
 
-  const dispatch = createEventDispatcher()
+  onMount(() => {
+    // console.log('[COMMIT LIST ITEM] Getting encodings store.')
+    encodingsStore = codesInCommit.get(commit.hash)
+  })
+
+  $: {
+    if (encodingsStore != undefined) {
+      processedEncodings = $encodingsStore.map((enc) => $allCodes.get(enc))
+    }
+  }
+
+  function selectIfInSource(node): boolean {
+    // console.log('[FILE TREE ITEM] Updating selected treenodes from sources.')
+    for (const source of $allSources.filter((s) => s.commitHash == commit.hash)) {
+      if (source.type == 'textFile') {
+        return minimatch(source.abs, node.abs)
+      }
+      if (source.type == 'folderCompilation') {
+        console.log('[FILE TREE ITEM] Updating selected folder treenodes from sources.')
+        return minimatch(source.abs, node.abs)
+      }
+    }
+    return false
+  }
 
   function getExt(filename): string {
     const ext = filename.split('.').pop()
@@ -36,21 +67,35 @@
   }
 
   function toggleFile(event, node): void {
+    const newState = event.target.checked
+    if (newState) {
+      // adding file source
+      addSource({ ...node, type: 'textFile' })
+    } else {
+      // removing file source
+      removeSource({ ...node, type: 'textFile' })
+    }
     node.selected = event.target.checked
-    dispatch('fileToggled')
   }
 
   function toggleFolder(event, node): void {
+    const newState = event.target.checked
+    if (newState) {
+      // adding file source
+      addSource({ ...node, type: 'folderCompilation' })
+    } else {
+      // removing file source
+      removeSource({ ...node, type: 'folderCompilation' })
+    }
     node.selected = event.target.checked
-    dispatch('folderToggled')
   }
 
-  async function handleChangedCodes(tags): void {
+  async function handleChangedCodes(tags): Promise<void> {
     console.log('commitlist handle taginput change: ', commit.hash)
-    updateEncodingsForCommit(
-      tags.map((t) => t.value),
-      commit.hash
-    )
+
+    let codes = [...tags]
+
+    updateEncodingsForCommit(codes, commit.hash)
   }
 
   function checkTextSourceExt(filename: string): boolean {
@@ -64,7 +109,7 @@
     return checkTextSourceExt(node.name) == false
   }
 
-  function getLineChanges(commit, filepath: string) {
+  function getLineChanges(commit, filepath: string): { added_lines: string; deleted_lines: string } {
     let res = commit.lineChangeStats.filter((lc) => lc.filepath == filepath)
     if (res.length == 0) {
       return { added_lines: '-', deleted_lines: '-' }
@@ -72,7 +117,12 @@
     return res[0]
   }
 
-  function getBgColorByOperation(operation) {
+  function getCommitBodyAndDevlog(commitHash: HASH) {
+    const dlc = allDevlogs.get(commit.hash)?.content
+    return marked.parse(dlc ?? 'No commit message or devlog available.')
+  }
+
+  function getBgColorByOperation(operation): string {
     let res = 'c-black'
     switch (operation) {
       case 'A':
@@ -88,10 +138,8 @@
         res = 'c-black'
         break
     }
-    // console.log(operation, res)
     return res
   }
-  let encodingsStore = commitEncodingsMap.get(commit.hash)
 </script>
 
 <!-- COMPONENT ROOT -->
@@ -124,9 +172,6 @@
       role="button">
       <Github class="me-1 inline h-5 w-5" /> Browse on Github</a>
   </div>
-  <!-- {#if isInView} -->
-  <!-- {/if} -->
-  <!--  MAIN CONTAINER FOR 3-COLS -->
   <div class="my-2 flex h-full max-h-[400px] w-full flex-row gap-2 px-8 pt-2">
     <!-- Main commit panel -->
     <div class="flex shrink-0 grow flex-col overflow-y-auto scrollbar-thin">
@@ -134,11 +179,13 @@
         <h3 class="pb-4 text-2xl font-bold dark:text-white">
           {commit.subject}
         </h3>
-        {#if commit.body == ''}
-          <p>No commit message or devlog available.</p>
-        {:else}
-          {@html marked.parse(allDevlogs.get(commit.hash)?.content ?? 'No commit message or devlog available.')}
-        {/if}
+        {#key devlogContent}
+          {#if commit.body == ''}
+            <p>No commit message or devlog available.</p>
+          {:else}
+            {@html marked.parse(devlogContent ?? 'Empty message.')}
+          {/if}
+        {/key}
       </div>
     </div>
     {#if isInView}
@@ -195,8 +242,8 @@
                   focus:ring-2 focus:ring-app-accessible focus:ring-offset-c-white dark:focus:ring-app dark:focus:ring-offset-c-black"
                     role="switch"
                     id="folderSwitch_{node.name}"
-                    on:change={(e) => toggleFolder(e, node)}
-                    checked={node.selected} />
+                    on:change={(ev) => toggleFolder(ev, node)}
+                    checked={selectIfInSource(node)} />
                   <i class="bi bi-folder me-1"></i>
                   <label for="folderSwitch_{node.name}">{node.name}</label>
                 {:else}
@@ -208,8 +255,8 @@
                       role="switch"
                       id="fileSwitch_{node.name}_{commit.hashAbbrev}"
                       disabled={!checkTextSourceExt(node.name)}
-                      on:change={(e) => toggleFile(e, node)}
-                      checked={node.selected} />
+                      on:change={(ev) => toggleFile(ev, node)}
+                      checked={selectIfInSource(node)} />
                     <i class="bi bi-file-text-fill me-1"></i>
                     <label for="fileSwitch_{node.name}_{commit.hashAbbrev}">{node.name}</label>
                   {:else}
@@ -233,14 +280,14 @@
 
   <!-- TAGGING ROW -->
   <div class="my-2 flex basis-full px-8">
-    {#key $encodingsStore ?? []}
-      <TagInput startingTags={$encodingsStore ?? []} codesChanged={handleChangedCodes}></TagInput>
+    {#key processedEncodings ?? []}
+      <TagInput startingTags={processedEncodings ?? []} codesChanged={handleChangedCodes}></TagInput>
     {/key}
   </div>
 </div>
-
+<!-- 
 <style>
   :global(.commitBody h1) {
     font-size: 1.5rem;
   }
-</style>
+</style> -->

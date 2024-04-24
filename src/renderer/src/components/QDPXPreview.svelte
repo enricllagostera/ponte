@@ -1,85 +1,95 @@
 <script lang="ts">
-  import Pane from './Pane.svelte'
-  import type { Commit, QDPXData } from '../../../types'
-  import { repo, appStates, allSources, allCommits } from '../stores'
-  import { codesDB, commitsInCode, getCodesAsAppliedCodes } from '../codes'
-  import Button from './Button.svelte'
+  import type { Commit, GUID, HASH, QDPXData, Source } from '../../../types'
+  import { repo, allCommits } from '../stores'
+  import { allCodes, autoencoders, getCodesAsAppliedCodes, getCommitsInCode } from '../codes'
+  import { removeSource, allSources, loadSourceContent } from '../sources'
+  import { annotations } from '../annotations'
+
   import { marked } from 'marked'
 
   import { File, PackageCheck, Tag, Trash2 } from 'lucide-svelte'
 
+  import Button from './Button.svelte'
+  import Pane from './Pane.svelte'
   import CommitPillButton from './CommitPillButton.svelte'
-  import { findInTreeAndToggleSelected } from '../fileSystem'
+  import Annotation from './Annotation.svelte'
 
   let contentInPreview = ''
   let previewSource = undefined
   let previewCode = undefined
 
-  function getExt(filename): string {
-    const ext = filename.split('.').pop()
-    return ext
-  }
+  async function exportQDPX(): Promise<void> {
+    console.time('QDPX export timer')
+    console.log('[EXPORT QDPX BUTTON] Starting.')
 
-  function findDevlogForCommit(hash) {
-    let res = $allSources.filter((s) => s.hash == hash)[0]
-    return res
-  }
-
-  async function exportQDPX() {
     let qdpxExportOptions = {
       title: `Save QDPX file...`
     }
     const qdpxData: QDPXData = {
       sources: $allSources,
       commits: $allCommits,
-      codes: getCodesAsAppliedCodes()
+      codes: getCodesAsAppliedCodes(),
+      annotations: [...$annotations]
     }
     await window.loader.exportQDPX(qdpxData, qdpxExportOptions)
+    console.timeEnd('QDPX export timer')
   }
 
   function getCommit(hash: string): Commit {
     return $repo.commits.find((c) => c.hash == hash)
   }
 
-  function setSourcePreviewContent(source) {
+  async function setSourcePreviewContent(source: Source): Promise<void> {
     clearPreviewContent()
     previewSource = source
-    if (source.originalExt == 'md') {
+    if (source.type == 'textFile') {
+      contentInPreview = await loadSourceContent(source)
+    } else if (source.type == 'folderCompilation') {
+      contentInPreview = await loadSourceContent(source)
+    } else if (source.type == 'devlogCompilation') {
       contentInPreview = source.content
-    } else {
-      contentInPreview = `\`\`\`\`${source.originalExt}\n${source.content}\n\`\`\`\``
     }
   }
 
-  function clearPreviewContent() {
+  function clearPreviewContent(): void {
     previewSource = undefined
+    previewCode = undefined
     contentInPreview = ''
   }
 
-  async function removeSource(source): void {
-    // console.log('mt: source removed ', source)
-    // folder source
-    const commitIndex = $repo.commits.findIndex((c) => c.hash == source.hash)
-    if (source.parent == 'compilationSource' || source.parent == 'copyTextSource') {
-      findInTreeAndToggleSelected(source.abs, $repo.commits[commitIndex].fileTree, false)
-      await $appStates.updateQDPX()
-    }
+  function removeSourceFromListButton(source: Source): void {
+    removeSource(source)
   }
 
-  function showCodeInContentPreview(code: string): void {
-    console.log('showing code in content preview: ', code)
+  function showCodeInContentPreview(code: GUID): void {
+    console.log('showing code in content preview: ', $allCodes.get(code))
     clearPreviewContent()
     previewCode = code
-    contentInPreview = `# Tag: *${code}*\n\n Applied to `
-    for (const hash of commitsInCode.get(code)) {
+    contentInPreview = `# Tag: *${$allCodes.get(code).value}*\n\n Applied to `
+    for (const hash of getCommitsInCode(code)) {
       contentInPreview += `Commit #${hash.substring(0, 7)}\n\n`
     }
   }
 
-  function getSourcesForCommits(commitHashes: any): any {
+  function getSourcesForCommits(commitHashes: HASH[]): any {
     console.log('getting all sources for commit list.')
-    let res = $allSources.filter((s) => s.hash == '' || commitHashes.includes(s.hash))
+    let res = $allSources.filter((s) => s.commitHash == '' || commitHashes.includes(s.commitHash))
     return res
+  }
+
+  $: {
+    console.log('Updating EXPORT PANEL')
+
+    const someCodes = $allCodes
+    const someEncoders = $autoencoders
+
+    if (previewCode != undefined && $allCodes.get(previewCode) == undefined) {
+      clearPreviewContent()
+    }
+
+    if (previewSource != undefined && $allSources.find((s) => s.id == previewSource.id) == undefined) {
+      clearPreviewContent()
+    }
   }
 </script>
 
@@ -90,31 +100,35 @@
       <Pane title="Sources" class="h-[45%]">
         <div slot="body" class="w-full px-0">
           <ul class="w-full">
-            {#each $allSources as source (source.name)}
-              {#if source.parent == 'repository' || source.parent == 'copyTextSource' || source.parent == 'compilationSource' || source.parent == 'devlog'}
-                <li
-                  class="flex w-full flex-row items-center p-1 hover:cursor-pointer hover:bg-app hover:text-c-black {source.name ==
-                  previewSource?.name
-                    ? 'bg-[#ccc] font-bold'
-                    : ''}">
-                  <div class="" on:click={() => setSourcePreviewContent(source)}>{source.name}</div>
-                  {#if source.parent != 'repository'}
-                    <Button on:click={() => removeSource(source)} class="ms-auto h-8 w-8"
-                      ><Trash2 class="inline-flex"></Trash2></Button>
-                  {/if}
-                </li>
-              {/if}
+            {#each $allSources as source (source.id)}
+              <li
+                class="flex w-full flex-row items-center gap-1 p-1 {source.name == previewSource?.abs
+                  ? 'bg-[#ccc] font-bold'
+                  : ''}">
+                <Button class="w-full border-[transparent]" on:click={() => setSourcePreviewContent(source)}
+                  >{source.name}</Button>
+                {#if source.type != 'devlogCompilation'}
+                  <Button on:click={() => removeSourceFromListButton(source)} class="ms-auto h-8 w-8"
+                    ><Trash2 class="inline-flex"></Trash2></Button>
+                {/if}
+              </li>
             {/each}
           </ul>
         </div></Pane
       >{/key}
-    <Pane title="Codebook" class="h-[45%]"
-      ><div slot="body" class="flex flex-wrap gap-1">
-        {#each $codesDB as [code, options] (code)}
-          <Button
-            class="inline-flex items-center rounded-full border-0 border-c-black bg-magenta/30 px-2 py-1 dark:border-app dark:bg-c-black dark:text-app"
-            on:click={() => showCodeInContentPreview(code)}><Tag class="me-1 inline h-5 w-5" /><b>{code}</b></Button>
-        {/each}
+    <Pane title="Codebook" class="h-[45%]">
+      <div slot="body" class="flex flex-wrap gap-1">
+        {#key $allCodes}
+          {#each $allCodes as [codeId, codeObj] (codeId)}
+            <Button
+              class="inline-flex items-center rounded-full border-0 border-c-black px-2 py-1 dark:border-app dark:bg-c-black dark:text-app {previewCode ==
+              codeId
+                ? 'bg-app'
+                : 'bg-transparent'}"
+              on:click={() => showCodeInContentPreview(codeId)}
+              ><Tag class="me-1 inline h-5 w-5" />{codeObj.value}</Button>
+          {/each}
+        {/key}
       </div>
     </Pane>
     <Button primary class="btn btn-primary " type="button" disabled={$allCommits.length <= 0} on:click={exportQDPX}
@@ -122,12 +136,18 @@
   </div>
   <Pane class="w-1/2">
     <div slot="header" class="flex w-full flex-row items-center justify-between">
-      <span class="flex"
-        >Content preview{contentInPreview != ''
-          ? ' for ' + (previewSource != undefined ? 'source: ' + previewSource.name : 'code: ' + previewCode)
-          : ''}</span>
       {#if contentInPreview != ''}
-        <Button class="ms-auto flex h-8" on:click={clearPreviewContent}>Clear preview</Button>{/if}
+        <span class="flex"
+          >Content preview{contentInPreview != ''
+            ? ' for ' +
+              (previewSource != undefined
+                ? 'source: ' + previewSource.name
+                : 'code: ' + $allCodes.get(previewCode).value)
+            : ''}</span>
+        <Button class="ms-auto flex h-8" on:click={clearPreviewContent}>Clear preview</Button>
+      {:else}
+        <span class="flex">Content preview</span>
+      {/if}
     </div>
     <div slot="body" class="prose prose-base prose-neutral max-w-[90%] pt-2">
       {#if contentInPreview == '' || contentInPreview == undefined}
@@ -136,9 +156,9 @@
         <h1 class="text-2xl text-[#777]"><File class="me-1 inline-flex" /> {previewSource.name}</h1>
         {@html marked.parse(contentInPreview)}
       {:else if previewCode != undefined}
-        <h1 class="text-2xl text-[#777]"><Tag class="me-1 inline-flex" /> {previewCode}</h1>
+        <h1 class="text-2xl text-[#777]"><Tag class="me-1 inline-flex" /> {$allCodes.get(previewCode).value}</h1>
         <h2>Commits encoded</h2>
-        {#each commitsInCode.get(previewCode) as hash (hash)}
+        {#each getCommitsInCode(previewCode) as hash (hash)}
           <p class="my-1 flex border-2">
             <span class="flex p-2">{getCommit(hash).subject}</span>
             <CommitPillButton
@@ -149,7 +169,7 @@
         {/each}
 
         <h2>Sources encoded</h2>
-        {#each getSourcesForCommits(commitsInCode.get(previewCode)) as source}
+        {#each getSourcesForCommits(getCommitsInCode(previewCode)) as source}
           {#if source.parent == 'repository' || source.parent == 'copyTextSource' || source.parent == 'compilationSource' || source.parent == 'devlog'}
             <Button
               class="mb-1 flex w-full flex-row items-center border-0 border-[#ddd] p-1"
@@ -160,6 +180,20 @@
     </div>
   </Pane>
   <div class="flex w-1/4 grow flex-col">
-    <Pane title="Metadata">Metadata</Pane>
+    {#key $annotations}
+      <Pane title="Annotation">
+        <div slot="body" class="w-full">
+          {#if contentInPreview == '' || contentInPreview == undefined}
+            No source or code selected.
+          {:else}
+            {#key contentInPreview}
+              <Annotation
+                reference={previewCode != undefined ? $allCodes.get(previewCode).id : previewSource.id}
+                referenceType={previewCode != undefined ? 'code' : 'source'}></Annotation>
+            {/key}
+          {/if}
+        </div>
+      </Pane>
+    {/key}
   </div>
 </div>

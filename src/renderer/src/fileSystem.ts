@@ -1,5 +1,7 @@
-import type { RepoDirent } from '../../types'
+import type { HASH, RepoDirent } from '../../types'
 import type { PathLike } from 'fs-extra'
+
+export const fileList = new Map<HASH, PathLike[]>()
 
 export function getAllSelectedFolders(directory: RepoDirent[]): RepoDirent[] {
   const selected = []

@@ -11,16 +11,7 @@
   } = createTagsInput({
     defaultTags: startingTags,
     unique: true,
-    // add(tag) {
-    //   return { id: tag, value: tag, label: tag }
-    // },
-    // update(tag) {
-    //   return tag
-    // },
-    // remove() {
-    //   return true
-    // },
-    onTagsChange({ curr, next }) {
+    onTagsChange({ next }) {
       codesChanged(next)
       return next
     },

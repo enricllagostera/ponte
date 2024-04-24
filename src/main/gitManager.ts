@@ -1,6 +1,7 @@
 import * as Git from 'simple-git'
 import * as path from 'path'
 import fs from 'fs-extra'
+import { normalize } from './normalize-path'
 
 import utils from './helpers'
 import { Commit, RepoDirent } from '../types'
@@ -79,6 +80,7 @@ class GitManager {
           name: commitLog.author_name,
           timestamp: Number(commitLog.author_timestamp) * 1000
         },
+        fileList: [],
         committer: {
           name: commitLog.committer_name,
           timestamp: Number(commitLog.committer_timestamp) * 1000
@@ -116,11 +118,17 @@ class GitManager {
           return res
         })
       }
+      commit.fileList = await this.getFileList(commit.tree, commit.hash)
       commit.fileTree = await this.getFileTree(commit.tree, commit.hash)
       commits.push(commit)
       progressNotification(`Processing commits...(${commits.length}/${logData.all.length})`)
     }
     return commits
+  }
+
+  async getFileList(commitTree: string, commitHash: string): Promise<string[]> {
+    const paths = [...(await this.git.raw(['ls-tree', commitTree, '-r', '--name-only'])).trim().split('\n')]
+    return paths
   }
 
   async getFileTree(tree: string, commitHash: string): Promise<any> {
@@ -145,16 +153,16 @@ class GitManager {
       if (childrenCount <= 0) {
         res.push({
           name: entry,
-          rel: path.relative(rootPath, path.join(folderPath, entry)),
-          abs: path.join(baseAbsPath, folderPath, entry),
+          rel: normalize(path.relative(rootPath, path.join(folderPath, entry))),
+          abs: normalize(path.join(baseAbsPath, folderPath, entry)),
           selected: false,
           commitHash: commitHash
         })
       } else {
         res.push({
           name: entry,
-          rel: path.join(folderPath, entry),
-          abs: path.join(baseAbsPath, folderPath, entry),
+          rel: normalize(path.join(folderPath, entry)),
+          abs: normalize(path.join(baseAbsPath, folderPath, entry)),
           selected: false,
           commitHash: commitHash,
           children: this.getTree(hierarchy[entry], rootPath, path.join(folderPath, entry), baseAbsPath, commitHash)

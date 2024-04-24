@@ -16,17 +16,27 @@ declare global {
     electron: unknown
     files: {
       forceClearCache: () => Promise<void>
-      readFile: (rel: fsExtra.PathLike) => Promise<string | Buffer>
-      readFileAtCommit: (rel: fsExtra.PathLike, commitHash: string) => Promise<string>
-      showInExplorer: (abs: fsExtra.PathLike) => void
+      readFile: (rel: string) => Promise<string | Buffer>
+      readFileAtCommit: (rel: string, commitHash: string) => Promise<string>
+      showInExplorer: (abs: string) => void
       runGlobOnCommit: (searchPattern: string, commitHash: string) => []
     }
   }
 }
 
+export type GUID = string | undefined
+export type HASH = string | undefined
+
+export type Annotation = {
+  id: GUID
+  reference: string
+  referenceType: 'code' | 'source'
+  content: string
+}
+
 export type Action = {
   name: string
-  guid: string
+  id: GUID
   active: boolean
   title: string
   description: string
@@ -46,8 +56,13 @@ export type QDPXData = {
   codes: []
 }
 
+export type Code = {
+  id: GUID
+  value: string
+}
+
 export type CodeOption = {
-  id: string
+  id: GUID
   value: string
   label: string
   created?: boolean
@@ -56,8 +71,8 @@ export type CodeOption = {
 export type RepoDirent = {
   name: string
   selected: boolean
-  abs?: fsExtra.PathLike
-  rel: fsExtra.PathLike
+  abs?: string
+  rel: string
   children?: RepoDirent[]
   commitHash?: string
 }
@@ -79,6 +94,7 @@ export type Commit = {
   treeAbbrev: string
   branches: string[]
   fileTree: RepoDirent[]
+  fileList: string[]
   fileChangeStats: { operation: string; filepath: string }[]
   lineChangeStats: {
     added_lines?: number | string
@@ -97,6 +113,7 @@ export type CommitAuthor = {
 }
 
 export type Devlog = {
+  id: GUID
   parent?: string
   hashAbbrev: string
   name: string
@@ -105,6 +122,18 @@ export type Devlog = {
 }
 
 export type AppliedCode = {
-  code: { id: string; value: string; label: string }
+  code: { id: GUID; value: string; label: string }
   commitHashes: string[]
+}
+
+export type Source = {
+  id: GUID
+  type: 'devlogCompilation' | 'textFile' | 'folderCompilation'
+  name?: string
+  originalExt?: string
+  commitHash?: HASH
+  parent?: string
+  abs?: string
+  rel?: string
+  content?: string
 }
