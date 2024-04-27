@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.1.4](https://github.com/enricllagostera/repo-to-qda/compare/v0.1.3...v0.1.4) (2024-04-27)
+
+
+### Features
+
+* Add button tor emove sources via export panel tab ([fff0422](https://github.com/enricllagostera/repo-to-qda/commit/fff0422d52c46bc8c17dc6662116b5a82847ed95))
+* Adds a basic auto-encoder (WIP) and performance updates ([c3e86d4](https://github.com/enricllagostera/repo-to-qda/commit/c3e86d419545e0266cb465a14c7a9528740002ec))
+* Adds autoencoders by file change, subject line and devlog content ([625c56e](https://github.com/enricllagostera/repo-to-qda/commit/625c56e3d4d9143d087ba56475132cfca9a6d0fa))
+* Annotations export to QDPX and refactors to data structure ([022c8e6](https://github.com/enricllagostera/repo-to-qda/commit/022c8e6227941c810bf606e62fc7ddd99a52a5c0))
+* Annotations to sources and codes plus refactor of different systems ([ed04c14](https://github.com/enricllagostera/repo-to-qda/commit/ed04c142b13c28ec5ea4fcaa7891f63e2cefe3c7))
+* Experimental export of timeline to Obsidian canvas ([748039d](https://github.com/enricllagostera/repo-to-qda/commit/748039d0881da5a3edeb832b550e742de873bacc))
+* Filter commits in timeline and better filter on blogroll ([c07e781](https://github.com/enricllagostera/repo-to-qda/commit/c07e781fb3d904b3c2dc41b7fc444e1b0ab93d50))
+* Improve info toggles in timeline view ([80af1b6](https://github.com/enricllagostera/repo-to-qda/commit/80af1b689c599a5483e222e0ee0481a1a4bf225a))
+* Improve scaling and node position issues in timeline ([05797b2](https://github.com/enricllagostera/repo-to-qda/commit/05797b271b107067f51ef0d1291343b3b503ba8b))
+* Repo loader accepts GitHub repo page and Git URLs ([c45c5db](https://github.com/enricllagostera/repo-to-qda/commit/c45c5db5f1247be80f04d9933f0d4a429fdd222c))
+* Saving and loading of autoencoders and new encoding system ([6b91066](https://github.com/enricllagostera/repo-to-qda/commit/6b91066ea856f43d4417bffe0a985fa689e1f9de))
+* Show code preview info in export panel ([afd0c62](https://github.com/enricllagostera/repo-to-qda/commit/afd0c62cdb9fa18887862feffb46f4514c2e967f))
+
 ## [0.1.3](https://github.com/enricllagostera/repo-to-qda/compare/v0.1.2...v0.1.3) (2024-03-20)
 
 
