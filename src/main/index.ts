@@ -159,7 +159,7 @@ async function exportQDPX(_event: IpcMainInvokeEvent, exportData, exportOptions)
   } catch (error) {
     return
   }
-  const exporter = new QdpxExporter(join(app.getPath('temp'), 'repo-to-qda', 'qde'))
+  const exporter = new QdpxExporter(join(app.getPath('temp'), 'repo-to-qda', 'qde'), exportData.userRepoInfo)
   await exporter.exportToFile(exportData, res.filePath)
 }
 

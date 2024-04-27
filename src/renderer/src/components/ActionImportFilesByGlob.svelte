@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher, onMount } from 'svelte'
-  import { repo } from '../stores'
+  import { repo } from '../stores/stores'
 
   export let action
 

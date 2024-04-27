@@ -1,9 +1,9 @@
 <script lang="ts">
-  import type { Commit, GUID, HASH, QDPXData, Source } from '../../../types'
-  import { repo, allCommits } from '../stores'
-  import { allCodes, autoencoders, getCodesAsAppliedCodes, getCommitsInCode } from '../codes'
-  import { removeSource, allSources, loadSourceContent } from '../sources'
-  import { annotations } from '../annotations'
+  import type { Commit, GUID, HASH, Source } from '../../../types'
+  import { repo } from '../stores/stores'
+  import { allCodes, autoencoders, getCommitsInCode } from '../stores/codes'
+  import { removeSource, allSources, loadSourceContent } from '../stores/sources'
+  import { annotations } from '../stores/annotations'
 
   import { marked } from 'marked'
 
@@ -13,27 +13,11 @@
   import Pane from './Pane.svelte'
   import CommitPillButton from './CommitPillButton.svelte'
   import Annotation from './Annotation.svelte'
+  import { exportQDPX } from '../qdpxExport'
 
   let contentInPreview = ''
   let previewSource = undefined
   let previewCode = undefined
-
-  async function exportQDPX(): Promise<void> {
-    console.time('QDPX export timer')
-    console.log('[EXPORT QDPX BUTTON] Starting.')
-
-    let qdpxExportOptions = {
-      title: `Save QDPX file...`
-    }
-    const qdpxData: QDPXData = {
-      sources: $allSources,
-      commits: $allCommits,
-      codes: getCodesAsAppliedCodes(),
-      annotations: [...$annotations]
-    }
-    await window.loader.exportQDPX(qdpxData, qdpxExportOptions)
-    console.timeEnd('QDPX export timer')
-  }
 
   function getCommit(hash: string): Commit {
     return $repo.commits.find((c) => c.hash == hash)
@@ -131,7 +115,7 @@
         {/key}
       </div>
     </Pane>
-    <Button primary class="btn btn-primary " type="button" disabled={$allCommits.length <= 0} on:click={exportQDPX}
+    <Button primary class="btn btn-primary " type="button" disabled={$repo.commits.length <= 0} on:click={exportQDPX}
       ><PackageCheck class="me-1 inline-flex"></PackageCheck>Export QDPX</Button>
   </div>
   <Pane class="w-1/2">

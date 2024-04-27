@@ -12,7 +12,10 @@ console.log(pkg.version)
 
 export default defineConfig({
   main: {
-    plugins: [externalizeDepsPlugin()]
+    plugins: [externalizeDepsPlugin()],
+    define: {
+      __VERSION__: JSON.stringify(pkg.version)
+    }
   },
   preload: {
     plugins: [externalizeDepsPlugin()]

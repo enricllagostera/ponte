@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Plus, Tag, Trash2 } from 'lucide-svelte'
-  import { getCodeIdByValue, getCommitsInCode } from '../codes'
+  import { getCodeIdByValue, getCommitsInCode } from '../stores/codes'
   import Button from './Button.svelte'
   import Pane from './Pane.svelte'
 

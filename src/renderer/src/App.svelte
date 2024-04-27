@@ -9,14 +9,17 @@
   import MainTabs from './components/MainTabs.svelte'
 
   import { ActionDB } from './actions'
-  import { autoencoders, allCodes, codesInCommit, commitsInCode, getCommitsInCode, addEncodingToCommits } from './codes'
-  import { repo, settings, appStates, project, initDevlogs } from './stores'
-
-  import type { QDPXData } from '../../types'
-  import { annotations } from './annotations'
-  import { allSources, loadDevlogCompilation, resetSources } from './sources'
-
-  const defaultQdpx = { sources: [], codes: [], commits: [] } as QDPXData
+  import {
+    autoencoders,
+    allCodes,
+    codesInCommit,
+    commitsInCode,
+    getCommitsInCode,
+    addEncodingToCommits
+  } from './stores/codes'
+  import { repo, settings, appStates, initDevlogs } from './stores/stores'
+  import { annotations } from './stores/annotations'
+  import { allSources, loadDevlogCompilation, resetSources } from './stores/sources'
 
   let repoLoader = {}
   let repoLoadingPromise = null
@@ -25,19 +28,16 @@
   let loadConfigDialog: Dialog
 
   $appStates.actions = new ActionDB()
-  $project = { ...defaultQdpx }
   $settings.darkTheme = false
 
   function onLoadedRepoData(): void {
-    // called when repo data is loaded via the repo loader gui
     $appStates.actions = new ActionDB()
     repoDataIsReady()
   }
 
-  async function repoDataIsReady(): void {
+  async function repoDataIsReady(): Promise<void> {
     $appStates.repoReady = true
     $appStates.updateQDPX()
-    //initCommitEncodingsMap()
     initDevlogs()
     await loadDevlogCompilation()
   }
@@ -58,7 +58,6 @@
       onDevlogEncoders: []
     }
     resetSources()
-    $project = { ...defaultQdpx }
   }
 
   async function loadConfig(): Promise<void> {
@@ -109,7 +108,6 @@
       title: `Save Ponte config...`,
       data: {
         userRepoInfo: $repo.userRepoInfo,
-        // actions: [...$appStates.actions.current],
         commitsInCode: serializedCommitsInCode,
         codesDB: serializedCodes,
         autoencoders: $autoencoders,

@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid'
-import type { Action, AppliedCode } from '../../types'
+import type { Action } from '../../types'
 
 export class ActionDB {
   current: Action[]

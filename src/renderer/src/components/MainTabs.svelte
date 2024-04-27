@@ -2,7 +2,7 @@
   import { createTabs } from '@melt-ui/svelte'
   import { cubicInOut } from 'svelte/easing'
   import { crossfade } from 'svelte/transition'
-  import { allDevlogs, appStates, repo } from '../stores'
+  import { allDevlogs, appStates, repo } from '../stores/stores'
   import CommitListItem from './CommitListItem.svelte'
   import ChronologicalTimeline from './ChronologicalTimeline.svelte'
   import Button from './Button.svelte'
@@ -27,7 +27,7 @@
   const triggers = [
     { id: 'blogroll', title: 'Blogroll view' },
     { id: 'timeline', title: 'Timeline view' },
-    { id: 'exportPanel', title: 'Export panel' },
+    { id: 'exportPanel', title: 'Export summary' },
     { id: 'settingsTab', title: 'Settings' }
   ]
 

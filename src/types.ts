@@ -51,9 +51,11 @@ export type Action = {
 }
 
 export type QDPXData = {
-  sources: []
-  commits: []
-  codes: []
+  userRepoInfo: string
+  sources: Source[]
+  commits: Commit[]
+  codes: AppliedCode[]
+  annotations: Annotation[]
 }
 
 export type Code = {

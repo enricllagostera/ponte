@@ -1,5 +1,5 @@
 appId: com.electron.app
-productName: RepoToQDA
+productName: Ponte
 directories:
   buildResources: build
 files:
@@ -11,7 +11,7 @@ files:
 asarUnpack:
   - resources/**
 win:
-  executableName: repo-to-qda
+  executableName: Ponte
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}

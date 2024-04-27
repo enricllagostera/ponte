@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { autoencoders, getCodeIdByValue, removeEncodingFromAll, updateAllEncodings } from '../codes'
+  import { autoencoders, getCodeIdByValue, removeEncodingFromAll, updateAllEncodings } from '../stores/codes'
   import { v4 as uuid } from 'uuid'
   import AutoEncoderByCondition from './AutoEncoderByCondition.svelte'
 

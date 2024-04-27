@@ -3,7 +3,7 @@
   import Select from 'svelte-select'
   import type { CodeOption } from '../../../types'
   import { Tags } from 'lucide-svelte'
-  import { settings } from '../stores'
+  import { settings } from '../stores/stores'
 
   export let initialOptions: CodeOption[]
   export let initialValues: CodeOption[]
@@ -51,9 +51,9 @@
   }
 </script>
 
-<div class="flex items-center border-2 my-2 w-100 dark:bg-neutral-800 dark:text-neutral-200">
+<div class="w-100 my-2 flex items-center border-2 dark:bg-neutral-800 dark:text-neutral-200">
   <div class="m-2"><Tags class="inline" /></div>
-  <div class="flex fc-select w-full max-w-full">
+  <div class="fc-select flex w-full max-w-full">
     {#if $settings.darkTheme}
       <Select
         on:change={handleChange}

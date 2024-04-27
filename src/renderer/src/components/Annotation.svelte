@@ -1,7 +1,7 @@
 <script lang="ts">
   import { marked } from 'marked'
   import Button from './Button.svelte'
-  import { addAnnotation, getAnnotationContent, updateAnnotation } from '../annotations'
+  import { addAnnotation, getAnnotationContent, updateAnnotation } from '../stores/annotations'
   import { onMount } from 'svelte'
 
   export let reference

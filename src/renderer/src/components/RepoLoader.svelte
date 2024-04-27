@@ -5,7 +5,7 @@
 
   import Pane from './Pane.svelte'
   import Button from './Button.svelte'
-  import { repo } from '../stores'
+  import { repo } from '../stores/stores'
 
   const dispatch = createEventDispatcher()
 

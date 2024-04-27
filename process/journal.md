@@ -1,5 +1,26 @@
 # Process journal
 
+## 2024-04-26 and 27 New release and some small bugs
+
+I finally got the selected sources bugs fixed. I can finally prepare a new buil (and change all the executable names to "Ponte").
+
+## 2024-04-25 Exporting annotations in QDPX
+
+Back to the land of JSON / XML shenanigans. Now I'm working on getting the annotations to properly work in QDPX. Here is an example of what an annotation looks like in the QDE XML file from the [REFI-QDA-1-5](ref_materials/REFI-QDA-1-5.pdf) standard:
+
+```xml
+<Notes>
+	<Note creatingUser="AD68FBE7-E1EE-4A82-A279-23CC698C89EB" creationDateTime="2018-03-27T19:38:46Z" modifyingUser="AD68FBE7-E1EE-4A82-A279-23CC698C89EB" name="Research Plan" modifiedDateTime="2018-03-27T19:41:09Z" guid="CE15250D-46AD-42C2-B90F-A509B8D64EC8"> 
+		<Description>day to day log about this amazing project</Description> 
+		<PlainTextContent>This is a great project by a dynamic team of researcher-developers.</PlainTextContent> 
+	</Note>
+</Notes>
+```
+
+(...) OK, adding notes themselves was not difficult. The issue is more with how NVivo reads and associates them with other things, such as sources or codes. In the end, I was able to create source-linked annotations (by attaching them to `PlainTextSelection` tags) but not for codes. For that I ended up just adding the notes as standalone "memos" in NVivo, with a name that says to which code they refer. Not ideal, but memos are still very flexible (they are basically text sources) and can be coded and annotated themselves, which might be useful. I guess now it's a case of checking what functionality we will really need. And to test this out with ATLAS once we start working with it.
+
+I'm glad that the code to deal with QDPX exports was quite OK to re-read after a long time. That is kind of a good sign.
+
 ## 2024-04-24 A lot of saving and loading problems
 
 I continued working on the saving and loading of the project, with annotations and reactive interfaces. I think most areas are working now, with some small issues in showing number of autoencodings in the settings window (this might be working intermittenly???). The QDPX exporter needs to be updated now, as there were quite a few changes in the code, plus to add the annotations themselves.

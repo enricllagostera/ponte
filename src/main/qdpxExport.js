@@ -6,9 +6,10 @@ import AdmZip from 'adm-zip'
 import { convertMdToDocx, convertCodeToDocx } from './docxBuilder'
 
 class QdpxExporter {
-  constructor(qdeFolderPath, userGuid = utils.guid(), userName = 'DEFAULT') {
+  constructor(qdeFolderPath, userRepoInfo, userGuid = utils.guid(), userName = 'DEFAULT') {
     this.userGuid = userGuid
     this.userName = userName
+    this.userRepoInfo = userRepoInfo
     this.xml = this.createBlankProject()
     this.extToConvertToDocx = ['md', 'docx']
     this.qdeFolderPath = qdeFolderPath
@@ -16,6 +17,30 @@ class QdpxExporter {
 
   appendTextSource(ts) {
     this.xml.Project.Sources.TextSource.push(ts)
+  }
+
+  appendNoteToCodings(noteGuid, annotation) {
+    const targetTS = this.xml.Project.Sources.TextSource.find((t) => t['@guid'] == annotation.reference)
+    const noteRef = {
+      '@targetGUID': noteGuid
+    }
+    const pts = this.createPlainTextSelection('note ref', 0, 2)
+    pts['NoteRef'] = pts['NoteRef'] ?? []
+    pts['NoteRef'].push(noteRef)
+    targetTS['PlainTextSelection'] = targetTS['PlainTextSelection'] ?? []
+    targetTS['PlainTextSelection'].push(pts)
+  }
+
+  appendNoteToTextSource(noteGuid, annotation) {
+    const targetTS = this.xml.Project.Sources.TextSource.find((t) => t['@guid'] == annotation.reference)
+    const noteRef = {
+      '@targetGUID': noteGuid
+    }
+    const pts = this.createPlainTextSelection('note ref', 0, 2)
+    pts['NoteRef'] = pts['NoteRef'] ?? []
+    pts['NoteRef'].push(noteRef)
+    targetTS['PlainTextSelection'] = targetTS['PlainTextSelection'] ?? []
+    targetTS['PlainTextSelection'].push(pts)
   }
 
   appendCode(c) {
@@ -28,8 +53,8 @@ class QdpxExporter {
         '@xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
         '@xsi:schemaLocation':
           'urn:QDA-XML:project:1.0 http://schema.qdasoftware.org/versions/Project/v1.0/Project.xsd',
-        '@origin': 'RepoToQDA 0.0.1',
-        '@name': 'repo-to-qda test ' + utils.getNowDateTime(),
+        '@origin': `Ponte ${__VERSION__}`,
+        '@name': `${this.userRepoInfo.replace('/', '--')} ${utils.getNowDateTime()}`,
         '@creatingUserGUID': this.userGuid,
         '@creationDateTime': utils.getNowDateTime(),
         '@xmlns': 'urn:QDA-XML:project:1.0',
@@ -46,7 +71,8 @@ class QdpxExporter {
             Code: [this.createCode('Sample code')]
           }
         },
-        Sources: { TextSource: [] }
+        Sources: { TextSource: [] },
+        Notes: {}
       }
     }
   }
@@ -73,6 +99,16 @@ class QdpxExporter {
       ]
     }
     return cd
+  }
+
+  createNote(noteName, noteGuid = utils.guid(), description, plainText) {
+    return {
+      '@name': noteName,
+      '@guid': noteGuid,
+      '@creatingUser': this.userGuid,
+      // Description: description ?? 'Some description for note.',
+      PlainTextContent: plainText ?? 'Some annotation content'
+    }
   }
 
   createPlainTextSelection(name, start = 0, end = 1) {
@@ -136,7 +172,7 @@ class QdpxExporter {
     } catch (error) {
       console.log(error)
     }
-    // const outputXml = doc.end({ prettyPrint: true, allowEmptyTags: true });
+
     const outputXml = doc.end({ prettyPrint: true })
     fs.writeFileSync(path.join(sourceExportPath, 'project.qde'), outputXml)
     // Add export folder to ZIP, write it to disk as .QDPX file
@@ -163,11 +199,23 @@ class QdpxExporter {
         undefined,
         source.parent == 'compilationSource' ? true : false
       )
+
+      const foundAnnotation = exportData.annotations.find((an) => an.reference == source.id)
+      if (foundAnnotation != undefined) {
+        foundAnnotation.reference = new_ts['@guid']
+      }
+
       new_ts.PlainTextSelection = []
       allTs.push(new_ts)
     }
+    //const allCodingsWithAnnotations = []
     for (const appliedCode of exportData.codes) {
       let new_c = this.createCode(appliedCode.code.value)
+      const foundAnnotation = exportData.annotations.find((an) => an.reference == appliedCode.code.id)
+      if (foundAnnotation != undefined) {
+        foundAnnotation.reference = new_c['@guid']
+      }
+
       let matchCount = 0
       for (const hash of appliedCode.commitHashes) {
         allTs.forEach((ts, i) => {
@@ -192,6 +240,28 @@ class QdpxExporter {
         delete ts.PlainTextSelection
       }
       this.appendTextSource(ts)
+    }
+
+    for (const an of exportData.annotations) {
+      console.log(an)
+      let newNote = this.createNote(an.id, undefined, undefined, an.content)
+      if (an.referenceType == 'source') {
+        this.appendNoteToTextSource(newNote['@guid'], an)
+      }
+      if (an.referenceType == 'code') {
+        for (const code of this.xml.Project.CodeBook.Codes.Code.filter((cd) => cd['@guid'] == an.reference)) {
+          newNote['@name'] = `Code annotation -- ${code['@name']}`
+          code.Description = an.content
+        }
+      }
+
+      this.xml.Project.Notes.Note = this.xml.Project.Notes.Note ?? []
+      this.xml.Project.Notes.Note.push(newNote)
+    }
+
+    if (this.xml.Project.Notes.Note.length == 0) {
+      // empty notes, remove key
+      delete this.xml.Project.Notes
     }
 
     await this.writeFile(this.qdeFolderPath, exportPath)

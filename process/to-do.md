@@ -34,7 +34,6 @@ kanban-plugin: basic
 
 ## In progress
 
-- [ ] Export annotations in QDPX
 
 
 ## Done
@@ -46,6 +45,7 @@ kanban-plugin: basic
 
 ## Archive
 
+- [x] 2024-04-27T16:58:48-04:00 -- Export annotations in QDPX
 - [x] 2024-04-24T15:35:56-04:00 -- Add annotations to sources
 - [x] 2024-04-24T15:35:56-04:00 -- Add annotations to codes
 - [x] 2024-04-18T14:13:05-04:00 -- Save and load encodings

@@ -1,7 +1,7 @@
 <script lang="ts">
   import * as d3 from 'd3'
-  import { appStates, repo } from '../stores'
-  import { allCodes, codesInCommit, getCodeIdsInCommit } from '../codes'
+  import { appStates, repo } from '../stores/stores'
+  import { allCodes, getCodeIdsInCommit } from '../stores/codes'
   import CommitPillButton from './CommitPillButton.svelte'
   import { DateTime } from 'luxon'
 
@@ -28,7 +28,6 @@
   import TimelineZoomSelect from './TimelineZoomSelect.svelte'
   import InfoToggleBar from './InfoToggleBar.svelte'
   import GeneralToggle from './GeneralToggle.svelte'
-  import { get } from 'svelte/store'
 
   let scaleX = undefined
   let timeExtent

@@ -1,21 +1,22 @@
 <script lang="ts">
+  import type { Commit, Devlog, RepoDirent } from '../../../types'
+
   import { DateTime } from 'luxon'
   import { marked } from 'marked'
-
-  import { allDevlogs, repo, settings } from '../stores'
-  import { addSource, allSources, removeSource } from '../sources'
-
-  import { allCodes, codesInCommit, updateEncodingsForCommit } from '../codes'
-
+  import { minimatch } from 'minimatch'
+  import { onMount } from 'svelte'
   import { inview } from 'svelte-inview'
+
+  import { allDevlogs, repo, settings } from '../stores/stores'
+  import { addSource, allSources, removeSource } from '../stores/sources'
+  import { allCodes, codesInCommit, updateEncodingsForCommit } from '../stores/codes'
+
   import Tree from './Tree.svelte'
-  import type { Commit } from '../../../types'
   import { Github } from 'lucide-svelte'
   import CommitPillButton from './CommitPillButton.svelte'
   import TagInput from './TagInput.svelte'
   import Pane from './Pane.svelte'
-  import { onMount } from 'svelte'
-  import { minimatch } from 'minimatch'
+  import { findInTreeAndToggleSelected } from '../fileSystem'
 
   export let activeAtStart = true
   export let commit: Commit
@@ -41,6 +42,25 @@
     encodingsStore = codesInCommit.get(commit.hash)
   })
 
+  let sourcesInCommit = []
+
+  $: {
+    console.log('[FILE TREE SOURCES] Updating selected treenodes from sources.')
+    const someSources = $allSources
+
+    sourcesInCommit = $allSources.filter((s) => s.commitHash == commit.hash)
+    for (const source of sourcesInCommit) {
+      const root: RepoDirent = {
+        abs: '',
+        rel: '',
+        selected: false,
+        name: '',
+        children: commit.fileTree
+      }
+      findInTreeAndToggleSelected(source.abs, root, true)
+    }
+  }
+
   $: {
     if (encodingsStore != undefined) {
       processedEncodings = $encodingsStore.map((enc) => $allCodes.get(enc))
@@ -48,14 +68,15 @@
   }
 
   function selectIfInSource(node): boolean {
-    // console.log('[FILE TREE ITEM] Updating selected treenodes from sources.')
+    console.log('[FILE TREE ITEM] Updating selected treenodes from sources: ' + node.abs)
     for (const source of $allSources.filter((s) => s.commitHash == commit.hash)) {
       if (source.type == 'textFile') {
-        return minimatch(source.abs, node.abs)
+        //return minimatch(source.abs, node.abs)
+        return source.abs == node.abs
       }
       if (source.type == 'folderCompilation') {
         console.log('[FILE TREE ITEM] Updating selected folder treenodes from sources.')
-        return minimatch(source.abs, node.abs)
+        return source.abs == node.abs
       }
     }
     return false
@@ -117,10 +138,10 @@
     return res[0]
   }
 
-  function getCommitBodyAndDevlog(commitHash: HASH) {
-    const dlc = allDevlogs.get(commit.hash)?.content
-    return marked.parse(dlc ?? 'No commit message or devlog available.')
-  }
+  // function getCommitBodyAndDevlog(commitHash: HASH) {
+  //   const dlc = allDevlogs.get(commit.hash)?.content
+  //   return marked.parse(dlc ?? 'No commit message or devlog available.')
+  // }
 
   function getBgColorByOperation(operation): string {
     let res = 'c-black'
@@ -230,47 +251,50 @@
       <Pane title="All files in project" class="basis-1/4">
         <div slot="body">
           {#key $allSources}
-            <Tree tree={commit.fileTree} let:node>
-              <div
-                class="flex items-start py-1 align-middle text-sm"
-                class:italic={isUnsupported(node)}
-                class:opacity-50={isUnsupported(node)}>
-                {#if node.children}
-                  <input
-                    type="checkbox"
-                    class="form-checkbox text-app-accessible focus:outline-none
-                  focus:ring-2 focus:ring-app-accessible focus:ring-offset-c-white dark:focus:ring-app dark:focus:ring-offset-c-black"
-                    role="switch"
-                    id="folderSwitch_{node.name}"
-                    on:change={(ev) => toggleFolder(ev, node)}
-                    checked={selectIfInSource(node)} />
-                  <i class="bi bi-folder me-1"></i>
-                  <label for="folderSwitch_{node.name}">{node.name}</label>
-                {:else}
-                  {#if checkTextSourceExt(node.name)}
+            {#if $allSources != undefined}
+              {@const sourceTree = commit.fileTree}
+              <Tree tree={sourceTree} let:node>
+                <div
+                  class="flex items-start py-1 align-middle text-sm"
+                  class:italic={isUnsupported(node)}
+                  class:opacity-50={isUnsupported(node)}>
+                  {#if node.children}
                     <input
-                      class="form-checkbox text-app-accessible focus:outline-none
-                  focus:ring-2 focus:ring-app focus:ring-offset-c-white dark:focus:ring-offset-c-black"
                       type="checkbox"
+                      class="form-checkbox text-app-accessible focus:outline-none
+                  focus:ring-2 focus:ring-app-accessible focus:ring-offset-c-white dark:focus:ring-app dark:focus:ring-offset-c-black"
                       role="switch"
-                      id="fileSwitch_{node.name}_{commit.hashAbbrev}"
-                      disabled={!checkTextSourceExt(node.name)}
-                      on:change={(ev) => toggleFile(ev, node)}
-                      checked={selectIfInSource(node)} />
-                    <i class="bi bi-file-text-fill me-1"></i>
-                    <label for="fileSwitch_{node.name}_{commit.hashAbbrev}">{node.name}</label>
+                      id="folderSwitch_{node.name}"
+                      on:change={(ev) => toggleFolder(ev, node)}
+                      checked={node.selected} />
+                    <i class="bi bi-folder me-1"></i>
+                    <label for="folderSwitch_{node.name}">{node.name}</label>
                   {:else}
-                    {node.name}
-                  {/if}
+                    {#if checkTextSourceExt(node.name)}
+                      <input
+                        class="form-checkbox text-app-accessible focus:outline-none
+                  focus:ring-2 focus:ring-app focus:ring-offset-c-white dark:focus:ring-offset-c-black"
+                        type="checkbox"
+                        role="switch"
+                        id="fileSwitch_{node.name}_{commit.hashAbbrev}"
+                        disabled={!checkTextSourceExt(node.name)}
+                        on:change={(ev) => toggleFile(ev, node)}
+                        checked={node.selected} />
+                      <i class="bi bi-file-text-fill me-1"></i>
+                      <label for="fileSwitch_{node.name}_{commit.hashAbbrev}">{node.name}</label>
+                    {:else}
+                      {node.name}
+                    {/if}
 
-                  <a
-                    href={`https://github.com/${userRepoInfo}/tree/${commit.hash}/${node.rel}`}
-                    target="_blank"
-                    title="See file in GitHub"
-                    class="mx-2 items-start align-middle text-neutral-600"><Github class="h-4 w-4" /></a>
-                {/if}
-              </div>
-            </Tree>
+                    <a
+                      href={`https://github.com/${userRepoInfo}/tree/${commit.hash}/${node.rel}`}
+                      target="_blank"
+                      title="See file in GitHub"
+                      class="mx-2 items-start align-middle text-neutral-600"><Github class="h-4 w-4" /></a>
+                  {/if}
+                </div>
+              </Tree>
+            {/if}
           {/key}
         </div>
       </Pane>

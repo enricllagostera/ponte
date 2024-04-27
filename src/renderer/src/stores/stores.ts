@@ -1,6 +1,7 @@
 import { get, writable } from 'svelte/store'
-import type { AppliedCode, CodeOption, Commit, Devlog, HASH, Source } from '../../types'
-import { getAllFilesInFolder, getAllSelectedFiles, getAllSelectedFolders } from './fileSystem'
+import type { CodeOption, Commit, Devlog, HASH, Source } from '../../../types'
+import { getAllFilesInFolder, getAllSelectedFiles, getAllSelectedFolders } from '../fileSystem'
+import { allSources } from './sources'
 
 export const repo = writable({
   userRepoInfo: 'enricllagostera/ponte',
@@ -15,7 +16,6 @@ export const settings = writable({
   darkTheme: false
 })
 
-export const allCommits = writable<Commit[]>([])
 export const allDevlogs = writable(new Map<HASH, Devlog>())
 
 export async function initDevlogs(): Promise<void> {
@@ -31,11 +31,6 @@ export async function initDevlogs(): Promise<void> {
 export function uniqueArray(array): Array<any> {
   return Array.from(new Set(array))
 }
-
-export const project = writable<{ commits: []; sources: [] }>({
-  commits: [],
-  sources: []
-})
 
 export const appStates = writable({
   mainView: 'blogroll' || 'timeline',

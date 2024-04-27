@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher, onMount } from 'svelte'
   import { minimatch } from 'minimatch'
-  import { codeOptions } from '../stores'
+  import { codeOptions } from '../stores/stores'
   import CodeSelect from './CodeSelect.svelte'
 
   export let action

@@ -1,5 +1,5 @@
 import { get, writable } from 'svelte/store'
-import type { GUID, HASH, RepoDirent, Source } from '../../types'
+import type { GUID, HASH, RepoDirent, Source } from '../../../types'
 import { repo, settings, uniqueArray } from './stores'
 import type { PathLike } from 'fs-extra'
 import { minimatch } from 'minimatch'
@@ -8,20 +8,22 @@ import { hasAnnotationForReference, removeAnnotation } from './annotations'
 export const allSources = writable<Source[]>([])
 
 export function resetSources(serializedSources: Source[] = []): void {
-  const sources = []
-  for (const sourceInfo of serializedSources) {
-    sources.push({
-      ...sourceInfo
-    })
+  const all = get(allSources)
+  if (serializedSources.length == 0) {
+    allSources.set([])
+    return
   }
-  allSources.set(sources)
+  for (const sourceInfo of serializedSources) {
+    addSource(sourceInfo)
+  }
+  allSources.set(all.length > 0 ? all : get(allSources))
 }
 
 export function addSource(newSourceData: Source): void {
   const all = get(allSources)
+  const localCopy = { ...newSourceData }
   if (!newSourceData?.id || newSourceData.id == '') {
-    console.log('[SOURCE] Adding disconnected source')
-    const localCopy = { ...newSourceData }
+    console.log('[SOURCE] Adding source')
     localCopy.id = createIdFromData(localCopy)
     localCopy.name = createNameFromData(localCopy)
     if (localCopy.type == 'textFile') {
@@ -29,7 +31,14 @@ export function addSource(newSourceData: Source): void {
     } else if (localCopy.type == 'folderCompilation') {
       localCopy.originalExt = undefined
     }
+  }
+  let foundSource = all.find((s) => s.id == localCopy.id)
+  if (foundSource == undefined) {
     allSources.set(uniqueArray([...all, localCopy]))
+  } else {
+    console.log('[SOURCE] Updating existing source')
+    foundSource = { ...localCopy }
+    allSources.set(all)
   }
 }
 

@@ -1,5 +1,5 @@
 {
-  "name": "repo-to-qda",
+  "name": "ponte",
   "version": "0.1.3",
   "description": "A tool to create QDA projects from Git repositories.",
   "main": "./out/main/index.js",

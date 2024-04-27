@@ -1,5 +1,5 @@
 import { get, writable, type Writable } from 'svelte/store'
-import type { AppliedCode, Code, HASH, GUID } from '../../types'
+import type { AppliedCode, Code, HASH, GUID } from '../../../types'
 import { allDevlogs, repo, uniqueArray } from './stores'
 import { minimatch } from 'minimatch'
 

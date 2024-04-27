@@ -1,5 +1,5 @@
 import { get, writable } from 'svelte/store'
-import type { Annotation } from '../../types'
+import type { Annotation } from '../../../types'
 
 export const annotations = writable<Annotation[]>([])
 

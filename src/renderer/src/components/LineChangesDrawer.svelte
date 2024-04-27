@@ -1,7 +1,7 @@
 <script lang="ts">
   import * as d3 from 'd3'
   import type { Commit } from '../../../types'
-  import { repo } from '../stores'
+  import { repo } from '../stores/stores'
 
   export let commit: Commit
   export let lineChangesExtents

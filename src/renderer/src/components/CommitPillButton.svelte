@@ -3,7 +3,7 @@
   import { createEventDispatcher } from 'svelte'
   import { DateTime } from 'luxon'
 
-  import { appStates } from '../stores'
+  import { appStates } from '../stores/stores'
   import Button from './Button.svelte'
 
   const dispatch = createEventDispatcher()
