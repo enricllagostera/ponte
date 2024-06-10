@@ -15,6 +15,7 @@ declare global {
     }
     electron: unknown
     files: {
+      exportJsonCanvas(commitsVisual: Map<any, any>, userRepoInfo: string): unknown
       forceClearCache: () => Promise<void>
       readFile: (rel: string) => Promise<string | Buffer>
       readFileAtCommit: (rel: string, commitHash: string) => Promise<string>
@@ -107,6 +108,18 @@ export type Commit = {
   }[]
   trailers?: string
   appliedCodes?: AppliedCode[]
+}
+
+export type VisualCommit = {
+  commitHash: HASH
+  x: number
+  y: number
+  h: number
+  autoHeight: number
+  w: number
+  col: number
+  filtered: boolean
+  band: number
 }
 
 export type CommitAuthor = {

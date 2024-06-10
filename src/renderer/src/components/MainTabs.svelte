@@ -107,14 +107,18 @@
   <div
     class="flex w-full shrink grow overflow-auto px-4 scrollbar"
     id="mainTabbedView"
-    on:scroll={() => ($appStates.mainViewScroll = mainView.scrollTop)}
+    on:scroll={() => {
+      $appStates.mainViewScroll = mainView.scrollTop
+      $appStates.mainViewLeft = mainView.scrollLeft
+      $appStates.mainViewWidth = mainView.clientWidth
+    }}
     bind:this={mainView}>
     <div {...$content('exportPanel')} use:content id="exportPanelTab" class="h-full w-full">
       <QdpxPreview></QdpxPreview>
     </div>
     <div {...$content('settingsTab')} use:content id="settingsTab" class="h-full w-full"><SettingsPanel /></div>
     <div {...$content('timeline')} use:content id="chronoTimelineView">
-      <ChronologicalTimeline />
+      <ChronologicalTimeline parentBox={mainView} />
     </div>
     <div {...$content('blogroll')} use:content>
       <div class="flex w-full flex-col" id="commitListViewContainer">

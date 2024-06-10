@@ -12,6 +12,13 @@
   export let timestamp: string = ''
   export let clickable: boolean = true
   export let forceDarkTheme: boolean = false
+  export let zoomLevel: string = 'medium'
+
+  let iconSizes = 'medium'
+
+  $: {
+    iconSizes = zoomLevel == 'medium' ? '4' : zoomLevel == 'small' ? '3' : '3'
+  }
 
   function switchToBlogroll(): void {
     if ($appStates.view != 'blogroll') {
@@ -35,18 +42,20 @@
     ><GitCommit class="inline" /> #{hashAbbrev}
   </button>
   {#if timestamp != ''}
-    <Calendar class="inline h-4 w-4" />{DateTime.fromMillis(timestamp).toISODate()}
+    <Calendar class="inline h-3 w-3" />{DateTime.fromMillis(timestamp).toISODate()}
   {/if}
 {:else}
   <div
     class="flex flex-row items-center gap-1 border-c-black font-mono font-semibold text-c-black {forceDarkTheme
       ? 'bg-[#ddd] text-f-grey-200'
       : ''}  {$$restProps.class}">
-    <GitCommit class="inline-flex h-4 w-4" /> #{hashAbbrev}
-    <Button class="ms-auto inline-flex" on:click={switchToBlogroll}><ScrollText class="h-4 w-4"></ScrollText></Button>
-    <Button class="inline-flex" on:click={switchToTimeline}><Waypoints class="h-4 w-4"></Waypoints></Button>
+    <GitCommit class="h-{iconSizes} w-{iconSizes}" /> #{hashAbbrev}
+    <Button class="ms-auto flex h-fit" on:click={switchToBlogroll}
+      ><ScrollText class="h-{iconSizes} w-{iconSizes}"></ScrollText></Button>
+    <Button class="h-fit" on:click={switchToTimeline}
+      ><Waypoints class="h-{iconSizes} w-{iconSizes}"></Waypoints></Button>
   </div>
   {#if timestamp != ''}
-    <Calendar class="inline h-4 w-4" />{DateTime.fromMillis(timestamp).toISODate()}
+    <Calendar class="inline h-auto w-[70%]" />{DateTime.fromMillis(timestamp).toISODate()}
   {/if}
 {/if}

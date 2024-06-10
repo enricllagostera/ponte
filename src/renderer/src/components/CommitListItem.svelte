@@ -188,7 +188,7 @@
       ).toRelative()}.</time>
     <a
       class="active:hover:ring-0! me-2 ms-auto inline-flex h-fit w-fit cursor-pointer items-center border-2 border-c-black bg-transparent p-2 text-center text-sm font-medium text-c-white underline ring-offset-2 ring-offset-c-white hover:bg-c-black hover:text-app focus:outline-none focus-visible:z-10 focus-visible:border-2 focus-visible:ring-2 focus-visible:ring-c-black active:border-app active:bg-app active:text-c-black active:focus-visible:border-c-white disabled:bg-f-grey-200 disabled:text-c-white"
-      href={`https://github.com/${userRepoInfo}/tree/${commit.hash}`}
+      href={`https://github.com/${userRepoInfo}/commit/${commit.hash}`}
       target="_blank"
       role="button">
       <Github class="me-1 inline h-5 w-5" /> Browse on Github</a>

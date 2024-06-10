@@ -35,6 +35,8 @@ export function uniqueArray(array): Array<any> {
 export const appStates = writable({
   mainView: 'blogroll' || 'timeline',
   mainViewScroll: 0,
+  mainViewLeft: 0,
+  mainViewWidth: 0,
   repoReady: false,
   actions: undefined,
   view: 'blogroll',

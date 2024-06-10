@@ -22,12 +22,16 @@ kanban-plugin: basic
 
 ## Backlog
 
+- [ ] Start new project option on start
+- [ ] Load from local clone option on start
+- [ ] Open recent projects option on start
 - [ ] Improve blogroll view layout
 - [ ] Show metadata on sources
 
 
 ## High priority
 
+- [ ] Add application version number in save file
 - [ ] Show confirmation dialog on deleting encoders with annotations
 - [ ] Show confirmation dialog on deleting codes with annotations
 
@@ -45,6 +49,7 @@ kanban-plugin: basic
 
 ## Archive
 
+- [x] 2024-05-07T17:51:58-04:00 -- Only show timeline nodes when near screen
 - [x] 2024-04-27T16:58:48-04:00 -- Export annotations in QDPX
 - [x] 2024-04-24T15:35:56-04:00 -- Add annotations to sources
 - [x] 2024-04-24T15:35:56-04:00 -- Add annotations to codes
