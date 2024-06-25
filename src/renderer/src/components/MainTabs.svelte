@@ -8,7 +8,6 @@
   import Button from './Button.svelte'
   import QdpxPreview from './QDPXPreview.svelte'
   import GeneralToggle from './GeneralToggle.svelte'
-  import { onMount } from 'svelte'
   import { Filter, X } from 'lucide-svelte'
   import SettingsPanel from './SettingsPanel.svelte'
   import type { Commit } from '../../../types'
@@ -25,8 +24,8 @@
   })
 
   const triggers = [
-    { id: 'blogroll', title: 'Blogroll view' },
-    { id: 'timeline', title: 'Timeline view' },
+    { id: 'blogroll', title: 'Blogroll' },
+    { id: 'timeline', title: 'Timeline' },
     { id: 'exportPanel', title: 'Export summary' },
     { id: 'settingsTab', title: 'Settings' }
   ]

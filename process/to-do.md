@@ -22,18 +22,21 @@ kanban-plugin: basic
 
 ## Backlog
 
-- [ ] Start new project option on start
-- [ ] Load from local clone option on start
-- [ ] Open recent projects option on start
+- [ ] Fix sources encoded section in the export summary
+- [ ] Show confirmation dialog on deleting codes with annotations
+- [ ] Show confirmation dialog on deleting encoders with annotations
+- [ ] Import hashtags from commit messages and devlogs
 - [ ] Improve blogroll view layout
+- [ ] Make encodings take up the whole line where the commit hash or keyword appears
 - [ ] Show metadata on sources
+- [ ] Load from local clone option on start
+- [ ] Start new project option on start
+- [ ] Open recent projects option on start
 
 
 ## High priority
 
 - [ ] Add application version number in save file
-- [ ] Show confirmation dialog on deleting encoders with annotations
-- [ ] Show confirmation dialog on deleting codes with annotations
 
 
 ## In progress

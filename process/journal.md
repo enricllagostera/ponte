@@ -1,5 +1,17 @@
 # Process journal
 
+## 2024-06-26
+
+### Possibility 01 - Matt's Purrrfect Pizza
+
+https://github.com/mouseandthebillionaire/purrrfectPizza/, the week from 2022-09-19 a 2022-09-22. 
+
+![](media/20240625T144934-0400--journal.png)
+
+## 2024-06-10 Returning to development
+
+I ended up focusing on the last 4 weeks on thesis work, so I spent less hours in tool development. There were other GaR activities in the period, the Black Bar Summit and preparing the CGSA presentation. Now I want to return to tool development and in thinking about the 1 ) theoretical grounding and positioning about the tool; 2) how to communicate the tool workflows; 3) preparing for using it with the GaR group.
+
 ## 2024-04-26 and 27 New release and some small bugs
 
 I finally got the selected sources bugs fixed. I can finally prepare a new buil (and change all the executable names to "Ponte").
