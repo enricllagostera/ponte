@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.1.5](https://github.com/enricllagostera/repo-to-qda/compare/v0.1.4...v0.1.5) (2024-06-26)
+
+
+### Features
+
+* Refactor and improve timeline performance ([ecf8e6f](https://github.com/enricllagostera/repo-to-qda/commit/ecf8e6f9403a8896843aa51f81e8dcf36b9cf3e6))
+
 ## [0.1.4](https://github.com/enricllagostera/repo-to-qda/compare/v0.1.3...v0.1.4) (2024-04-27)
 
 
