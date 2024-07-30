@@ -1,10 +1,46 @@
 # Process journal
 
+## 2024-07-29 Code duplication bug
+
+During the coding exercise (see here), a few bugs showed up. I'm working on fixing a key one, by which entering codes that already exist in the tag input ends up duplicating that code instead of re-using it. (...) OK, after quite some tweaking at the tag input and the loading of files, the duplication seems to be mostly gone, and annotations seem to be merged when loading files that already contain duplicates. Tested it with my own files and of Courtney's coding exercise and things seem to be OK.
+
+## 2024-06-27 Meeting and Ponte tutorial
+
+### Week picking for exercise
+
+### Bugs
+
+Already found a bug, the full-text auto-encoder is not working anymore.
+
+### Tutorial
+
+1. Picking a repo
+2. New, save, load configs
+3. Different views
+   1. Switching
+   2. Filtering
+   3. Timeline
+      1. Time units
+      2. Info drawers
+   4. Blogroll
+      1. Exploring project files
+      2. Selecting sources
+      3. Individual coding
+4. Coding commits
+   1. Individual
+   2. Autoencoders
+5. Annotating
+   1. Sources
+   2. Codes
+6. Export summary
+   1. Sources
+   2. Codes
+
 ## 2024-06-26
 
 ### Possibility 01 - Matt's Purrrfect Pizza
 
-https://github.com/mouseandthebillionaire/purrrfectPizza/, the week from 2022-09-19 a 2022-09-22. 
+Repo is https://github.com/mouseandthebillionaire/purrrfectPizza/, with a focus on the week from 2022-09-19 a 2022-09-22. Rilla and Kalervo liked this proposal. It has a transition from analog to digital. lots of setup work, some notes and also some changes to materials.
 
 ![](media/20240625T144934-0400--journal.png)
 
@@ -22,9 +58,9 @@ Back to the land of JSON / XML shenanigans. Now I'm working on getting the annot
 
 ```xml
 <Notes>
-	<Note creatingUser="AD68FBE7-E1EE-4A82-A279-23CC698C89EB" creationDateTime="2018-03-27T19:38:46Z" modifyingUser="AD68FBE7-E1EE-4A82-A279-23CC698C89EB" name="Research Plan" modifiedDateTime="2018-03-27T19:41:09Z" guid="CE15250D-46AD-42C2-B90F-A509B8D64EC8"> 
-		<Description>day to day log about this amazing project</Description> 
-		<PlainTextContent>This is a great project by a dynamic team of researcher-developers.</PlainTextContent> 
+	<Note creatingUser="AD68FBE7-E1EE-4A82-A279-23CC698C89EB" creationDateTime="2018-03-27T19:38:46Z" modifyingUser="AD68FBE7-E1EE-4A82-A279-23CC698C89EB" name="Research Plan" modifiedDateTime="2018-03-27T19:41:09Z" guid="CE15250D-46AD-42C2-B90F-A509B8D64EC8">
+		<Description>day to day log about this amazing project</Description>
+		<PlainTextContent>This is a great project by a dynamic team of researcher-developers.</PlainTextContent>
 	</Note>
 </Notes>
 ```
@@ -47,7 +83,7 @@ Just realized when loading Pippin's repo that the blogroll view is not showing t
 
 ## 2024-02-23 Fixing autoencoders and save/load annotations
 
-OK, there were few bugs in how codes were being shown in the export panel, which affected the annotations logic. Now both autoencoded and regular encodings are working well enough, and annotations are being displayed correctly. Now I can finally move on to persisting and exporting the annotations. 
+OK, there were few bugs in how codes were being shown in the export panel, which affected the annotations logic. Now both autoencoded and regular encodings are working well enough, and annotations are being displayed correctly. Now I can finally move on to persisting and exporting the annotations.
 
 Here is how the interface is looking for now:
 
@@ -61,7 +97,7 @@ It's weird that during a lot of the dev I didn't really pay much attention to th
 
 ## 2024-04-22 Annotations
 
-I think the export panel would be a good place for adding small text fields to both codes and sources that can then be saved as annotations associated with those items. This would allow the tool to become almost a very minimal QDA tool in itself, allowing for notes on why particular codes or sources were selected or other reminders that emerged during corpus preparation to be included in the project itself. 
+I think the export panel would be a good place for adding small text fields to both codes and sources that can then be saved as annotations associated with those items. This would allow the tool to become almost a very minimal QDA tool in itself, allowing for notes on why particular codes or sources were selected or other reminders that emerged during corpus preparation to be included in the project itself.
 
 (...) I got most of te work done, but there were issues with some changes to encoding started breaking the autoencoders logic again. Back to refactoring...
 
@@ -83,11 +119,11 @@ There is still quite some improvements to implement, the most important being sa
 
 While I worked on the auto-encoding features, a lot of issues of performance and of how I was storing info emerged. I ended up having to change a lot of how exporting, encoding and tagging were working. This took a long time, much more than I expected. The plus side is that performance of different parts of the tool seems faster and more solid, but I do anticipate bumping into this kind of issue again as I continue to work on the auto-encoders.
 
-The main reason for all this, I think, is how I prioritized adding features quickly in the early days of development. I am not super experienced with using elaborate frameworks such as Svelte, and going fast meant focusing on getting things working instead of building them more solidly. I think a reason for this is that we are elaborating what the tool is as we go, so in a  way it was always going to be the case of "make it work, make it right, make it fast" kind of process. It does make me feel a bit like my coding is too messy, but I am happy that I can get it to work in meaningful ways.
+The main reason for all this, I think, is how I prioritized adding features quickly in the early days of development. I am not super experienced with using elaborate frameworks such as Svelte, and going fast meant focusing on getting things working instead of building them more solidly. I think a reason for this is that we are elaborating what the tool is as we go, so in a way it was always going to be the case of "make it work, make it right, make it fast" kind of process. It does make me feel a bit like my coding is too messy, but I am happy that I can get it to work in meaningful ways.
 
 ## 2024-04-10 and 11 Auto-encode from files changed
 
-This is a system for creating rules for auto-encoding commits. This means that a code/tag is applied when a particular condition is met. The first one I want to implement is based on the rule `when file in list was changed -> add tag to commit`. This would make it easier to surface and quickly find specific kinds of changes in a project, like journaling or devlogs (defined as changes to specific notes files). This can also take the form of defining scopes of work in the materials themselves, like tagging "art-making" for changes in specific art-related files. 
+This is a system for creating rules for auto-encoding commits. This means that a code/tag is applied when a particular condition is met. The first one I want to implement is based on the rule `when file in list was changed -> add tag to commit`. This would make it easier to surface and quickly find specific kinds of changes in a project, like journaling or devlogs (defined as changes to specific notes files). This can also take the form of defining scopes of work in the materials themselves, like tagging "art-making" for changes in specific art-related files.
 
 Right now the proof of concept implementation I created asks for specific files, but it could actually use glob patterns, so that would allow for quickly tracking changes to a range of files, instead of one at a time.
 
@@ -99,9 +135,9 @@ Now the list of codes in the project can be clicked and a list of all commits an
 
 ## 2024-04-07 Exporting timeline to Obsidian
 
-I had seen a while ago that the ObsidianMD devs had released a spec for their canvas format, which is basically a quite simple but flexible file format for graphs of text, media and links. It allows for an "endless" canvas, with nice support in Obsidian. 
+I had seen a while ago that the ObsidianMD devs had released a spec for their canvas format, which is basically a quite simple but flexible file format for graphs of text, media and links. It allows for an "endless" canvas, with nice support in Obsidian.
 
-Our current timeline view ends up being a quite static and read-only view to the repo history. So, I though of making it more actionable by exporting it as a canvas that can be exported and then opened in ObsidianMD for further annotation and visual interpretation. I basically used the positions of the current timeline mode (weekly, monthly, daily) to distribute the commit nodes in the canvas and then save its JSON. For now the exported version only includes the hash abbreviation, subject line and a link to the GitHub commit page. We could change that in later versions. 
+Our current timeline view ends up being a quite static and read-only view to the repo history. So, I though of making it more actionable by exporting it as a canvas that can be exported and then opened in ObsidianMD for further annotation and visual interpretation. I basically used the positions of the current timeline mode (weekly, monthly, daily) to distribute the commit nodes in the canvas and then save its JSON. For now the exported version only includes the hash abbreviation, subject line and a link to the GitHub commit page. We could change that in later versions.
 
 Ideally, this exported timeline could allow for integration with Obsidian plugins for qualitative coding and analysis, such as Quadro (which I found out a couple weeks ago, I'll write more about it later). As it is right now, there is still some information loss (need to add time markers somehow, probably by grouping columns and naming them), but I can see this being very useful for an annotated portfolio approach that integrates photos and other media into a view of the project history.
 
@@ -125,7 +161,7 @@ OK, managed to get all the functionality I wanted yesterday working. The perform
 
 ## 2024-03-27 and 28 Collapsible timeline nodes
 
-Managed to implement this way of quickly scanning for keywords. It took longer than I expected because I has to fix all the height and Y position calculations (they were really bad before anyway). 
+Managed to implement this way of quickly scanning for keywords. It took longer than I expected because I has to fix all the height and Y position calculations (they were really bad before anyway).
 
 ![](media/20240327-collapsible-filter-timeline%20-%20Made%20with%20Clipchamp.mp4)
 
@@ -134,20 +170,20 @@ Worked some more today (Thu Mar 28) on improving the GUI for filtering in both b
 ## 2024-03-27 Auto-tagging ideas after meeting
 
 1. Auto-tagging
-	1. They are all configurable as rules in the tool settings.
-	2. There would be a default set of rules at the start.
-	3. The below list is mostly in order of priority. 
-	4. Autotag from commit message / subject (if search is found, add tag)
-		1. **releases**, **post-mortems**, **playtesting**.
-	5. Autotags from file changes (if change to file, add tag to commit).
-		1. **journal** as changes to `/journal.md`. 
-		2. **why** as changes to `/why.md`.
-	6. Autotags from relative distribution of changes (calculate additions, deletions, modifications; add tag)
-		1. Not very sure about this.
-		2. **additions-top-x**, **deletions-bottom-x**.
+   1. They are all configurable as rules in the tool settings.
+   2. There would be a default set of rules at the start.
+   3. The below list is mostly in order of priority.
+   4. Autotag from commit message / subject (if search is found, add tag)
+      1. **releases**, **post-mortems**, **playtesting**.
+   5. Autotags from file changes (if change to file, add tag to commit).
+      1. **journal** as changes to `/journal.md`.
+      2. **why** as changes to `/why.md`.
+   6. Autotags from relative distribution of changes (calculate additions, deletions, modifications; add tag)
+      1. Not very sure about this.
+      2. **additions-top-x**, **deletions-bottom-x**.
 2. Default codebook
-	1. As autocomplete suggestions?
-	2. As a checklist / flowchart to help elaborate starting point?
+   1. As autocomplete suggestions?
+   2. As a checklist / flowchart to help elaborate starting point?
 
 ## 2024-03-25 Timeline info toggles
 

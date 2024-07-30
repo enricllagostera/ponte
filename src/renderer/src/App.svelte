@@ -15,10 +15,18 @@
     codesInCommit,
     commitsInCode,
     getCommitsInCode,
-    addEncodingToCommits
+    addEncodingToCommits,
+    getCodeIdByValue
   } from './stores/codes'
   import { repo, settings, appStates, initDevlogs } from './stores/stores'
-  import { annotations } from './stores/annotations'
+  import {
+    addAnnotation,
+    annotations,
+    getAnnotationContent,
+    hasAnnotationForReference,
+    removeAnnotation,
+    updateAnnotation
+  } from './stores/annotations'
   import { allSources, loadDevlogCompilation, resetSources } from './stores/sources'
 
   let repoLoader = {}
@@ -60,6 +68,16 @@
     resetSources()
   }
 
+  function findFirstCodeWithName(collection: [], targetCode) {
+    let sameName = collection.filter((c) => targetCode.value == c.value)
+    if (sameName.length > 0) {
+      //console.log('loading same name: ', targetCode.value)
+      return { ...sameName[0] }
+    } else {
+      return { ...targetCode }
+    }
+  }
+
   async function loadConfig(): Promise<void> {
     let loadOptions = {
       title: `Load Ponte config...`
@@ -80,8 +98,38 @@
     res.codesDB.forEach(([cd, co]) => {
       $allCodes.set(cd, co)
     })
+
+    let groupedCodes = new Map()
+
+    $allCodes.forEach((v, k) => {
+      if (!groupedCodes.has(v.value)) {
+        groupedCodes.set(v.value, [v])
+      } else {
+        groupedCodes.get(v.value).push(v)
+      }
+    })
+    console.log(groupedCodes)
+
     res.commitsInCode.forEach(({ id, commitHashes }) => {
-      addEncodingToCommits(id, commitHashes)
+      let namedCode = $allCodes.get(id).value
+      addEncodingToCommits(groupedCodes.get(namedCode)[0].id, commitHashes)
+    })
+
+    groupedCodes.forEach((codesInGroup, gk) => {
+      let firstCodeReferenceId = codesInGroup[0].id
+      if (!hasAnnotationForReference(firstCodeReferenceId)) {
+        addAnnotation(firstCodeReferenceId, 'code', '')
+      }
+      let codesToRemove = codesInGroup.filter((code) => code.id != firstCodeReferenceId)
+      for (const removing of codesToRemove) {
+        let annotationContentForCode = $annotations.find((a) => a.reference == removing.id)?.content ?? ''
+        updateAnnotation(
+          firstCodeReferenceId,
+          getAnnotationContent(firstCodeReferenceId) + '\n\n' + annotationContentForCode
+        )
+        removeAnnotation(removing.id)
+        $allCodes.delete(removing.id)
+      }
     })
 
     repoDataIsReady()

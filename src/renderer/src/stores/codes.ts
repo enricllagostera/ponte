@@ -139,10 +139,16 @@ export function updateEncodingsForCommit(newCodes: Code[], commitHash: string): 
     }
   }
   for (const code of newCodes) {
-    if (all.get(code.id) == undefined) {
+    let candidate = { id: '', value: '' }
+    const codeWithSameValue = [...all.values()].filter((c) => c.value == code.value)
+    if (codeWithSameValue != undefined && codeWithSameValue.length > 0) {
+      console.log('has code with this name')
+      candidate = codeWithSameValue[0]
+    } else if (all.get(code.id) == undefined) {
+      candidate = code
       all.set(code.id, code)
     }
-    addEncodingToCommit(code.id, commitHash)
+    addEncodingToCommit(candidate.id, commitHash)
   }
   for (const subjectEncoder of get(autoencoders).onSubjectEncoders) {
     if (all.get(subjectEncoder.id) == undefined) {

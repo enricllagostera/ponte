@@ -1,4 +1,4 @@
-# Repo to QDA (WIP name)
+# Ponte
 
 A tool to prepare game dev project repositories for analysis using QDA (qualitative data analysis) digital tools. Its main purpose is to facilitate qualitative methodologies being applied to game creation processes documented using the [MDM](https://www.gamesasresearch.com/mdm) approach. It takes a project repository URL from GitHub and processes it to create a structured project file in the REFI-QDA format, ready to be imported into QDA tools (e.g. QualCoder, Atlas.ti, NVivo) for analysis.
 
