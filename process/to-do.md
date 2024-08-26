@@ -6,6 +6,11 @@ kanban-plugin: basic
 
 ## Wishlist
 
+- [ ] Merging system for putting together multiple config files for the same repo
+- [ ] Make encodings take up the whole line where the commit hash or keyword appears
+- [ ] Show metadata on sources
+- [ ] Import hashtags from commit messages and devlogs
+- [ ] Improve blogroll view layout
 - [ ] Change relative links to GitHub links in devlogs
 - [ ] Allow importing from wiki as individual files or as folder compilations
 - [ ] Load commits from wiki repo and display in commit feed
@@ -23,15 +28,12 @@ kanban-plugin: basic
 ## Backlog
 
 - [ ] Fix sources encoded section in the export summary
+- [ ] Create more project settings options (username, prefix, supported extensions)
 - [ ] Show confirmation dialog on deleting codes with annotations
-- [ ] Show confirmation dialog on deleting encoders with annotations
-- [ ] Import hashtags from commit messages and devlogs
-- [ ] Improve blogroll view layout
-- [ ] Make encodings take up the whole line where the commit hash or keyword appears
-- [ ] Show metadata on sources
+- [ ] Open recent projects option on start
 - [ ] Load from local clone option on start
 - [ ] Start new project option on start
-- [ ] Open recent projects option on start
+- [ ] Show confirmation dialog on deleting encoders with annotations
 
 
 ## High priority

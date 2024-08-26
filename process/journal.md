@@ -1,5 +1,21 @@
 # Process journal
 
+## 2024-08-26 Returning to tool programming and design
+
+Well, the last weeks have been intense elsewhere. I was working on my PhD defence preparation and after that on revisions and job searching. I am planning to return to the tool development work I had been doing before this period.
+
+I am re-reading some of my last notes, as well as the [to-do](to-do.md) file. There are a few tasks and ideas from previous work, like improving the first interactions (loading, quick access to recent configs/repos) or fixing bugs with encodings. I certainly will have to work on those some hours, but I also wonder if should prioritize this right now, considering that it is unclear how my future involvement with the project will go.
+
+Another possible area of focus is to consider the experiences of folks when using the tool for the encoding exercise we developed in the last month (my work on this is in this other repo: https://github.com/enricllagostera/gar_coding_exercise_enric). Some of the main use cases that emerged in the exercise and some other design features I thought of were: 
+
+1. **Merge different Ponte files** together;
+	1. Shahrom created a script to merge config files together. That was very useful to see the different approaches to coding by different users.
+	2. This could be supported by the tool out-of-the-box, by 1) opening multiple files; 2) checking if they all refer to the same repo; 3) add a prefix to codes by diff users; 4) add a header line to source annotation to track user that added them.
+2. **Exporting a codebook** with annotations
+	1. For the kind of coding discussion we were having, it might have been better to have a table-like export of the codebook that could be manipulated in software like Excel or Sheets. I imagine the columns could be codename, frequency (no. of commits), annotation (if any), username. This might be enough for getting an overview and for using this information outside of a dedicated QDA tool as the main export QDPX function supports. Some format like CSV or TSV would be quite powerful.
+3. **Filter timeline by tags**
+	1. This feature would allow for quickly collapsing or hiding posts without a particular encoding. I think this would make it easier to get a quick visual summary of its distribution across a project. This would in turn allow for quicker comparisons (with context) of encodings made by different users (when merging) or when reviewing the role of a particular encoding.
+
 ## 2024-07-29 Code duplication bug
 
 During the coding exercise (see here), a few bugs showed up. I'm working on fixing a key one, by which entering codes that already exist in the tag input ends up duplicating that code instead of re-using it. (...) OK, after quite some tweaking at the tag input and the loading of files, the duplication seems to be mostly gone, and annotations seem to be merged when loading files that already contain duplicates. Tested it with my own files and of Courtney's coding exercise and things seem to be OK.
