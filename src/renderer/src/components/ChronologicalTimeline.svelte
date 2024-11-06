@@ -452,11 +452,11 @@
                     scrollToIndex(currentCommitIndex)
                   }}><Pin class="h-3 w-3" /></Button>
 
-                <Button
+                <!-- <Button
                   class=""
                   on:click={() => {
                     console.log('play')
-                  }}><Play class="h-3 w-3" /></Button>
+                  }}><Play class="h-3 w-3" /></Button> -->
               </div>
 
               {#if infoToggles.indexOf('file_diff') > -1}
