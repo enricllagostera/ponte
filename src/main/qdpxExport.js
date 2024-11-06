@@ -242,6 +242,8 @@ class QdpxExporter {
       this.appendTextSource(ts)
     }
 
+    this.xml.Project.Notes.Note = this.xml.Project.Notes.Note ?? []
+
     for (const an of exportData.annotations) {
       console.log(an)
       let newNote = this.createNote(an.id, undefined, undefined, an.content)
@@ -254,8 +256,6 @@ class QdpxExporter {
           code.Description = an.content
         }
       }
-
-      this.xml.Project.Notes.Note = this.xml.Project.Notes.Note ?? []
       this.xml.Project.Notes.Note.push(newNote)
     }
 

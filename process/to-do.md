@@ -27,6 +27,7 @@ kanban-plugin: basic
 
 ## Backlog
 
+- [ ] Add application version number in save file
 - [ ] Fix sources encoded section in the export summary
 - [ ] Create more project settings options (username, prefix, supported extensions)
 - [ ] Show confirmation dialog on deleting codes with annotations
@@ -38,11 +39,11 @@ kanban-plugin: basic
 
 ## High priority
 
-- [ ] Add application version number in save file
 
 
 ## In progress
 
+- [ ] Export codebook as table
 
 
 ## Done

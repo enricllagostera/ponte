@@ -14,6 +14,7 @@
     GitBranch,
     User,
     Tag,
+    Play,
     X,
     Filter,
     Pin,
@@ -450,6 +451,12 @@
                     currentCommitIndex = i
                     scrollToIndex(currentCommitIndex)
                   }}><Pin class="h-3 w-3" /></Button>
+
+                <Button
+                  class=""
+                  on:click={() => {
+                    console.log('play')
+                  }}><Play class="h-3 w-3" /></Button>
               </div>
 
               {#if infoToggles.indexOf('file_diff') > -1}

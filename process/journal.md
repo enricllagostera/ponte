@@ -1,10 +1,18 @@
 # Process journal
 
+## 2024-09-13 Next steps
+
+I know, the latest posts have been pretty much about figuring out next steps and actually start to take them. There have been quite a lot of transitions lately, from the end of the dissertation to figuring out what I'll be working on next. 
+
+## 2024-08-27 Exporting a codebook
+
+Following up from the [previous post](<#2024-08-26 Returning to tool programming and design>), I will get started on adding a table-like export of the codebook. My idea is to add a button to the "Codebook" section of the "Export summary" (maybe in the header bar) to export the encodings. Most of the work will happen in the main process (pick a location for the file, convert the information to CSV, write to file).
+
 ## 2024-08-26 Returning to tool programming and design
 
 Well, the last weeks have been intense elsewhere. I was working on my PhD defence preparation and after that on revisions and job searching. I am planning to return to the tool development work I had been doing before this period.
 
-I am re-reading some of my last notes, as well as the [to-do](to-do.md) file. There are a few tasks and ideas from previous work, like improving the first interactions (loading, quick access to recent configs/repos) or fixing bugs with encodings. I certainly will have to work on those some hours, but I also wonder if should prioritize this right now, considering that it is unclear how my future involvement with the project will go.
+I am re-reading some of my last notes, as well as the [to-do](<./to-do.md>) file. There are a few tasks and ideas from previous work, like improving the first interactions (loading, quick access to recent configs/repos) or fixing bugs with encodings. I certainly will have to work on those some hours, but I also wonder if should prioritize this right now, considering that it is unclear how my future involvement with the project will go.
 
 Another possible area of focus is to consider the experiences of folks when using the tool for the encoding exercise we developed in the last month (my work on this is in this other repo: https://github.com/enricllagostera/gar_coding_exercise_enric). Some of the main use cases that emerged in the exercise and some other design features I thought of were: 
 
@@ -58,7 +66,7 @@ Already found a bug, the full-text auto-encoder is not working anymore.
 
 Repo is https://github.com/mouseandthebillionaire/purrrfectPizza/, with a focus on the week from 2022-09-19 a 2022-09-22. Rilla and Kalervo liked this proposal. It has a transition from analog to digital. lots of setup work, some notes and also some changes to materials.
 
-![](media/20240625T144934-0400--journal.png)
+![](<./media/20240625T144934-0400--journal.png>)
 
 ## 2024-06-10 Returning to development
 
@@ -70,7 +78,7 @@ I finally got the selected sources bugs fixed. I can finally prepare a new buil 
 
 ## 2024-04-25 Exporting annotations in QDPX
 
-Back to the land of JSON / XML shenanigans. Now I'm working on getting the annotations to properly work in QDPX. Here is an example of what an annotation looks like in the QDE XML file from the [REFI-QDA-1-5](ref_materials/REFI-QDA-1-5.pdf) standard:
+Back to the land of JSON / XML shenanigans. Now I'm working on getting the annotations to properly work in QDPX. Here is an example of what an annotation looks like in the QDE XML file from the [REFI-QDA-1-5](<./ref_materials/REFI-QDA-1-5.pdf>) standard:
 
 ```xml
 <Notes>
@@ -103,9 +111,9 @@ OK, there were few bugs in how codes were being shown in the export panel, which
 
 Here is how the interface is looking for now:
 
-![](media/20240423T104356-0400--journal.png)
+![](<./media/20240423T104356-0400--journal.png>)
 
-![](media/20240423T104356-0400--journal-1.png)
+![](<./media/20240423T104356-0400--journal-1.png>)
 
 (...) Argh. Saving and loading annotations has got me stumbling in another block: my own way of defining sources... Now that annotations need a fixed id for identifying sources, the way I basically keep re-building them from git every time starts to not be that great at all. So I'll basically have to re-think hoiw I'm doing this, so here comes another big refactor to the data structures and passing around...
 
@@ -123,13 +131,13 @@ OK, now it is possible to save and load configuration files with autoencoders an
 
 ## 2024-04-18 Auto-encoding implemented
 
-After all the work on improving the encoding data organization, creating a better interface and actually implementing the autoencoders was quite quick. I settled on implementing three of the ideas on [from our meeting notes](#2024-03-27%20Auto-tagging%20ideas%20after%20meeting): 1) tags per file change, 2) tags per subject line and 3) tags per message / devlog. This allows for a very flexible auto-encoding system.
+After all the work on improving the encoding data organization, creating a better interface and actually implementing the autoencoders was quite quick. I settled on implementing three of the ideas on [from our meeting notes](<#2024-03-27 Auto-tagging ideas after meeting>): 1) tags per file change, 2) tags per subject line and 3) tags per message / devlog. This allows for a very flexible auto-encoding system.
 
 I created a component with a basic structure of input for codes and patterns, plus a listing below in which existing autoencoders can be removed. It worked OK. I'm happy I was able to use a structure of passing in (kind of like a strategy pattern) the handler functions for each of the component behaviors. This made the logic exist all in the `codes` module and in the `SettingsPanel` component.
 
 There is still quite some improvements to implement, the most important being saving and loading the autoencoders in the config files properly.
 
-![Auto-encoding preview](media/Ponte%202024-04-17%2018-30-14.mp4)
+![Auto-encoding preview](<./media/Ponte 2024-04-17 18-30-14.mp4>)
 
 ## 2024-04-17 A week of refactoring ends
 
@@ -147,7 +155,7 @@ Right now the proof of concept implementation I created asks for specific files,
 
 Now the list of codes in the project can be clicked and a list of all commits and sources encoded with that code is shown. I think this really helps to give a quick overview and a sense of what preparation was done within the tool.
 
-![](media/20240409T135405-0400--journal.png)
+![](<./media/20240409T135405-0400--journal.png>)
 
 ## 2024-04-07 Exporting timeline to Obsidian
 
@@ -157,7 +165,7 @@ Our current timeline view ends up being a quite static and read-only view to the
 
 Ideally, this exported timeline could allow for integration with Obsidian plugins for qualitative coding and analysis, such as Quadro (which I found out a couple weeks ago, I'll write more about it later). As it is right now, there is still some information loss (need to add time markers somehow, probably by grouping columns and naming them), but I can see this being very useful for an annotated portfolio approach that integrates photos and other media into a view of the project history.
 
-![](media/exporting%20to%20obsidian%20-%20Made%20with%20Clipchamp.mp4)
+![](<./media/exporting to obsidian - Made with Clipchamp.mp4>)
 
 ## 2024-04-04 Excluding sources from export panel
 
@@ -179,7 +187,7 @@ OK, managed to get all the functionality I wanted yesterday working. The perform
 
 Managed to implement this way of quickly scanning for keywords. It took longer than I expected because I has to fix all the height and Y position calculations (they were really bad before anyway).
 
-![](media/20240327-collapsible-filter-timeline%20-%20Made%20with%20Clipchamp.mp4)
+![](<./media/20240327-collapsible-filter-timeline - Made with Clipchamp.mp4>)
 
 Worked some more today (Thu Mar 28) on improving the GUI for filtering in both blogroll and timeline views. I should probably move this logic into a separate component file later.
 
@@ -207,7 +215,7 @@ Worked some more today (Thu Mar 28) on improving the GUI for filtering in both b
 
 I'm adding the toolbar toggles to show/hide different info (author, branches, tags, files, lines) from all the timeline nodes. I think this would be a simple and effective way to control a bit the visual density of this display. I'll probably end up reusing the `ToggleGroup` component builder from MeltUI. (...) I'm happy that this is working quite well. Performance is still too slow, but the functionality is there.
 
-![](media/Ponte%202024-03-25%2015-37-07.mp4)
+![](<./media/Ponte 2024-03-25 15-37-07.mp4>)
 
 ## 2024-03-19 Fixing bugs and some zooming issues
 
@@ -225,7 +233,7 @@ The 3-level zoom is implemented. I think it feels easy enough to use. Maybe the 
 
 This is for the medium density version. I just added the info as a kind of list of pills with icons after the main commit subject. Below is an example of how it looks. I also added the author info. This already works quite well, but it does make the boxes too tall, so I'm thinking of adding some form of toggling, similar to the file and line changes info, so that users can choose to show or hide these different pieces of info. I think a general toggle for the whole timeline would be enough, instead of per-commit toggles. There is still a bug with loading tags from config files, but I'll add it to the fix-it list for later.
 
-![](media/20240318T175433-0400--journal.png)
+![](<./media/20240318T175433-0400--journal.png>)
 
 ## 2024-03-15 Continuing timeline redesign
 
@@ -275,25 +283,25 @@ Did a bunch of layout fixes. Flexbox is pretty frustrating sometimes, in order t
 
 Added a basic implementation, with a filter input and a clear button. This is already a pretty useful way to quickly check subject lines for important keywords. However, just the subject line might be too narrow a search scope, leaving out info about commits that is in the body of the message or in a devlog. So, later I'll add a toggle to choose to search within the shole message plus devlog. That way we can leverage conventional commit prefixes with the narrower search or more open-ended and exploratory full-text-like searches.
 
-![](media/20240305T152630-0500--journal.png)
+![](<./media/20240305T152630-0500--journal.png>)
 
 ## 2024-03-04 Blogroll rework
 
 (timestamp::2024-03-04T18:38:15-05:00)
 
-I started implementing a blogroll version that shows both the changes in that commit and the file structure. It is an attempt at a more concise presentation and also with more space for metadata and details. It is roughly similar with the mockup I made back in [2024-02-21](#2024-02-21%20Some%20panel%20re-org). It is mostly working now, I just need to show the diff files properly (right now I'm only showing the complete file tree correctly).
+I started implementing a blogroll version that shows both the changes in that commit and the file structure. It is an attempt at a more concise presentation and also with more space for metadata and details. It is roughly similar with the mockup I made back in [2024-02-21](<#2024-02-21 Some panel re-org>). It is mostly working now, I just need to show the diff files properly (right now I'm only showing the complete file tree correctly).
 
 (timestamp::2024-03-04T20:18:21-05:00)
 
 The changed files and file tree work well. I probably should add a checkbox to add/remove the file as a source directly in the file changes panel, but that can come later.
 
-![](media/20240304T201816-0500--journal.png)
+![](<./media/20240304T201816-0500--journal.png>)
 
 (timestamp::2024-03-05T10:34:30-05:00)
 
 Did a pass with some color coding for the different operations plus the "explore diff on GitHub" link.
 
-![](media/20240305T103508-0500--journal.png)
+![](<./media/20240305T103508-0500--journal.png>)
 
 ## 2024-02-26 and 28 Improving the timeline implementation
 
@@ -319,15 +327,15 @@ I'm trying to improve the timeline component but it still feels kind of janky. I
 
 (timestamp::2024-02-21T18:47:45-05:00)
 
-![](media/20240221T183124-0500--journal.png)
+![](<./media/20240221T183124-0500--journal.png>)
 
-![](media/20240221T185921-0500--journal.png)
+![](<./media/20240221T185921-0500--journal.png>)
 
 (timestamp::2024-02-22T16:28:56-05:00)
 
-![](media/20240222T164736-0500--journal.png)
+![](<./media/20240222T164736-0500--journal.png>)
 
-![](media/20240222T182503-0500--journal.png)
+![](<./media/20240222T182503-0500--journal.png>)
 
 I think this idea of the sources as small files to the left makes a lot of sense. The metadata information gives a reminder of how this source was created. Finally, the annotation as a last detail to the right also makes sense, and keeps complexity to a minimum by only allowing one annotation per source. I'll probably also have to create some kind of quick edit or quick annotation buttons to the list of sources. Also some kind of bulk action system using checkboxes might be useful as well. Another feature that might be useful would be to show a small notification toast at the bottom of the screen or at the top when a source is added to the project with a link to click and see it in the export preview panel.
 
@@ -347,7 +355,7 @@ The last group meeting we had last Friday (Dec 01) was quite useful for me to en
 
 So I've been thinking about this annotated portfolio approach that I've been using in my thesis (for the chapter about my phone experiments). In some of the literature that I read for the chapter (to support the use of this technique) there were some interesting case studies and approaches that combined visual documentation with diagrams and written observations. I started preparing a draft of what an **annotated reflective portfolio** approach could look like for game design projects, adapted from Cathryn Hall's use of "experience-based annotated portfolios" [@hall2020]. I think it can be adapted as a reflective 2nd layer of process documentation, happening in addition and after more descriptive everyday notes are taken.
 
-![](media/20231208T163515-0500--journal.png)
+![](<./media/20231208T163515-0500--journal.png>)
 
 (Hall, 2020, p. 10) Above: An example of experience-based annotated portfolio. The central vertical layout (top to bottom) accounts for chronology.
 
@@ -361,9 +369,9 @@ It could also work well with screenshot-gathering of play sessions!
 
 Added a line changes drawer. I'm pretty happy with how it turned out, but I might need to increase the contrast of the colors to make it readable.
 
-![](media/20231124T085416-0500--journal.png)
+![](<./media/20231124T085416-0500--journal.png>)
 
-![](media/20231124T085416-0500--journal-1.png)
+![](<./media/20231124T085416-0500--journal-1.png>)
 
 ### After GaR meeting
 
@@ -373,29 +381,29 @@ We had a conversation about publications. I'll start outlining a general structu
 
 (ts::2023-11-11T18:52:39-05:00) Starting out development.
 
-![](../media/20231111T185300-0500--screenrecording.mp4)
+![](<./media/20231111T185300-0500--screenrecording.mp4>)
 
 (ts::2023-11-15T16:05:46-05:00) After some more work on this front, I think that the passage of time is being depicted in an OK way. The zoom performance is still pretty bad, but it seems to be functional. I think I'll move on to the other information I want to display.
 
-![](../media/20231115T161500-0500--timeline.mp4)
+![](<./media/20231115T161500-0500--timeline.mp4>)
 
 (...) Got some branch linking and file change summaries working.
 
 (ts::2023-11-15T19:02:43-05:00) Started thinking more about how to create a minimal version of the commit pill. Maybe something with drawer-like compartments that can be toggled in the top menu? Each drawer could also be "pinned" so they remain visible even if turned off on the top menu.
 
-![](../media/20231115T190824-0500--20_commits_timeline.jpg)
+![](<./media/20231115T190824-0500--20_commits_timeline.jpg>)
 
 (ts::2023-11-20T17:14:03-05:00) During the weekend I made a few sketches of other drawers to add to the views. I think this can work quite well.
 
-![](media/20231123T114951-0500--journal.jpg)
+![](<./media/20231123T114951-0500--journal.jpg>)
 
 I will begin to implement an expandable drawer now. Here is a file change format:
 
-![](../media/20231122T163643-0500--20_commits_timeline.png)
+![](<./media/20231122T163643-0500--20_commits_timeline.png>)
 
 (ts::2023-11-22T16:27:42-05:00) OK, back to work. I tried to create a small scaling factor to make the commit tiles smaller when zooming out and it looks promising. I think up to 50% scale is still somewhat readable (even if not ideal). I will add the `top 5%` and other relative badges on the same line as the drawer title.
 
-![](../media/20231122T172558-0500--20_commits_timeline.png)
+![](<./media/20231122T172558-0500--20_commits_timeline.png>)
 
 ## 2023-11-09 Adding changelogs
 
@@ -409,19 +417,19 @@ We had a meeting today. I presented the GUI redesign and folks seemed to approve
 
 One of the things we had discussed after the workshop was a suggestion by Chip of clicking on mentioned commits to see them in the main timeline view. So, I implemented that on the current "blogroll" view. I think this will be very useful in different places of the app.
 
-![](media/20231103T172739-0400--scroll_on_click.mp4)
+![](<./media/20231103T172739-0400--scroll_on_click.mp4>)
 
 ## 2023-11-02 GUI redesign continues
 
 Made quite a few changes to the styling and structure of the components. I based on the Boosted design system. I think it looks very readable and helps to de-clutter the interface. I still have to finish refining and converting a few aspects to it, but I think it is looking much more usable.
 
-![](media/20231102T140224-0400--journal.png)
+![](<./media/20231102T140224-0400--journal.png>)
 
 As I changed things so that the dark mode would also work well, I managed to get a better separation of commit subject and the rest of the display:
 
-![](media/20231102T170406-0400--journal.png)
+![](<./media/20231102T170406-0400--journal.png>)
 
-![](media/20231102T170444-0400--journal.png)
+![](<./media/20231102T170444-0400--journal.png>)
 
 ## 2023-10-31 Devlogs from Git trailers and changes to Dialog components
 
@@ -433,7 +441,7 @@ devlog: process/devlog/some_filename.md
 
 And how the content of that file is rendered:
 
-![](media/20231031T124101-0400--journal.png)
+![](<./media/20231031T124101-0400--journal.png>)
 
 There are still refinements, particularly to styling / customziation, but the base feature is there and does not stand in the way of users who aren't using Git trailers.
 
@@ -443,13 +451,13 @@ There are still refinements, particularly to styling / customziation, but the ba
 
 Re-implementing the GUI via TailwindCSS and Lucide icons, removing Bootstrap (it's CSS and icons). Now with dark theme.
 
-![](media/20231027T111147-0400--journal.png)
+![](<./media/20231027T111147-0400--journal.png>)
 
-![](media/20231027T111201-0400--journal.png)
+![](<./media/20231027T111201-0400--journal.png>)
 
 (ts::2023-10-27T17:59:07-04:00) With better scrollbars now.
 
-![](media/20231027T175904-0400--journal.png)
+![](<./media/20231027T175904-0400--journal.png>)
 
 ### Meeting notes
 
@@ -469,7 +477,7 @@ On other front, I decided to create an untracked folder for files that are store
 
 Here is how the TailwindCSS styles and Lucide iconography are turning out.
 
-![](media/20231026T185936-0400--journal.png)
+![](<./media/20231026T185936-0400--journal.png>)
 
 ## 2023-10-25 Small fixes on previewing files
 
@@ -483,7 +491,7 @@ I'm glad I did all the research on caching and file system. The app feels snappi
 
 The basic idea is to have something along the general lines below.
 
-![](media/20231023T192545-0400--file_handling_diagram.png)
+![](<./media/20231023T192545-0400--file_handling_diagram.png>)
 
 By doing this indirection, it might be possible to keep local file copying to a minimum. This would be particularly important for more long-lived projects, that get tweaked often and re-exported.
 
@@ -505,35 +513,35 @@ We had a pretty good discussion over visualizations and the tool. Lots of useful
 
 Pre-meeting notes.
 
-![](media/20231020T120408-0400--pre_meeting_notes.png)
+![](<./media/20231020T120408-0400--pre_meeting_notes.png>)
 
 Notes from the brainstorming session on 2023-10-20.
 
-![](media/20231020T120425-0400--meeting_notes.png)
+![](<./media/20231020T120425-0400--meeting_notes.png>)
 
 ## 2023-10-19 Some more viz and meeting prep
 
 Now one that shows the [branching of commits](https://svelte.dev/repl/0302d29e5426419f97d24e2abe389f11?version=4.2.2).
 
-![](media/20231019T000000-0400--viz_branches.mp4)
+![](<./media/20231019T000000-0400--viz_branches.mp4>)
 
 After some more refinements:
 
-![](media/20231019T184213-0400--viz_branch_icons.png)
+![](<./media/20231019T184213-0400--viz_branch_icons.png>)
 
 ## 2023-10-17 Visualization tests
 
-I decided to experiment a bit with viz for commits. I didn't want to have to completely integrate it into the app for now, so I made use of the Svelte REPL tool. I created a [small app there](https://svelte.dev/repl/b8366d3e58024016a655fc7601d58054?version=4.2.1) that uses d3 and Svelte to summarize file changes in commits. Also added [a zipped version fo the test here](media/20231017T000000-0400--svelte_repl_viz_01.zip). It was tricky setting it up, as I kind of have to (re)learn d3 to do that, but it did work out in the end.
+I decided to experiment a bit with viz for commits. I didn't want to have to completely integrate it into the app for now, so I made use of the Svelte REPL tool. I created a [small app there](https://svelte.dev/repl/b8366d3e58024016a655fc7601d58054?version=4.2.1) that uses d3 and Svelte to summarize file changes in commits. Also added [a zipped version fo the test here](<./media/20231017T000000-0400--svelte_repl_viz_01.zip>). It was tricky setting it up, as I kind of have to (re)learn d3 to do that, but it did work out in the end.
 
 Here is a small video showing it:
 
-![](media/20231017T000000-0400--viz_file_changes.mp4)
+![](<./media/20231017T000000-0400--viz_file_changes.mp4>)
 
 I think this is an interesting data change to highlight, but it should not be fully equated to significance. Lots of changes in files might be connected to re-versioning and changes in dependencies, for instance. It is a start though.
 
 ## 2023-10-16 Architecture work
 
-I've been mostly trying to better elaborate the [architecture of the app](devlog/16_architecture.md)before I start handling with disk use and memory optimizations. I just want to make sure that I won't have to redo a lot of it later. My goal is to find a way to encapsulate the parts of the system (repo data indexing and storage, caching, searching) in ways that can be flexibly changed if needed. So, more complexity, but necessary.
+I've been mostly trying to better elaborate the [architecture of the app](<./devlog/16_architecture.md>)before I start handling with disk use and memory optimizations. I just want to make sure that I won't have to redo a lot of it later. My goal is to find a way to encapsulate the parts of the system (repo data indexing and storage, caching, searching) in ways that can be flexibly changed if needed. So, more complexity, but necessary.
 
 ## 2023-10-13 Meeting with Rilla and TS conversion
 
@@ -560,15 +568,15 @@ I decided to try again to refactor to TS. I know I had trouble before, but I do 
 
 ## 2023-10-10 Back to dev
 
-During the weekend, Chip sent more detailed feedback, which I added to the [analysis_workshop_01](analysis_workshop_01.md) notes. Before I get into exploring new design directions or features, I'll work on trying to fix the broken export and on optimizing the use of disk in users' computers.
+During the weekend, Chip sent more detailed feedback, which I added to the [analysis_workshop_01](<./analysis_workshop_01.md>) notes. Before I get into exploring new design directions or features, I'll work on trying to fix the broken export and on optimizing the use of disk in users' computers.
 
 ## 2023-10-06 Workshop notes
 
-The workshop wen very well. Lots of interesting insight and lines for further research and refinement. I added another file with [notes and observations](analysis_workshop_01.md). After I got back home, I started the transcription efforts and some research on caching and ways to optimize disk space.
+The workshop wen very well. Lots of interesting insight and lines for further research and refinement. I added another file with [notes and observations](<./analysis_workshop_01.md>). After I got back home, I started the transcription efforts and some research on caching and ways to optimize disk space.
 
 ## 2023-10-05 Building 0.0.2 and workshop prep
 
-Rilla has proposed that we do a qualitative analysis workshop on Oct 06, 2023. I created some questions and ideas for it [over here](analysis_workshop_01.md).
+Rilla has proposed that we do a qualitative analysis workshop on Oct 06, 2023. I created some questions and ideas for it [over here](<./analysis_workshop_01.md>).
 
 The idea is to familiarize folks in the research group with the methodology and the tools involved. In this case, this will mean both the repo-to-qda tool for preparing a corpus of data. The workshop might be multi-part.
 
@@ -592,9 +600,9 @@ When I was doing the last batch of features, I realized that the code is very me
 
 ## 2023-09-22 Pre-meeting fixes
 
-I added a first version of the [related_work](related_work.md) notes. Also, I fixed some bugs with the saving and loading of the config file (it was generating a 40MB JSON before for some reason). Now that works OK, together with manually ignoring commits. Made a small change to improve the import of text sources in NVivo, should be working fine now, both with text sources and codes.
+I added a first version of the [related_work](<./related_work.md>) notes. Also, I fixed some bugs with the saving and loading of the config file (it was generating a 40MB JSON before for some reason). Now that works OK, together with manually ignoring commits. Made a small change to improve the import of text sources in NVivo, should be working fine now, both with text sources and codes.
 
-![Video update](media/20230922T000000-0400--repo_to_qda.mp4)
+![Video update](<./media/20230922T000000-0400--repo_to_qda.mp4>)
 
 ## 2023-09-21 File visualizations
 
@@ -620,7 +628,7 @@ I finally finished doing this, downloading things to a better organized temp fol
 
 After I talked about how design is more of a distributed process than just the integration on one folder/tool, and that this might need a combination of methodologies for analysis, Danny mentioned that even though automating some of that would be beneficial, it was important to not lose sight of the process, and that journaling / practices like that could support that. I sent the message below on Zoom as a clarification.
 
-![](media/20230915T115024-0400--screenshot.png)
+![](<./media/20230915T115024-0400--screenshot.png>)
 
 ## 2023-09-08 GaR meeting
 
@@ -739,7 +747,7 @@ Also added some initial notes for a [paper idea](paper-ideas) about this tool pr
 
 ### Thinking about tool design, Archivista and QDA integration
 
-![Flowcharts about integration](repo_to_qda_pipelines.png)
+![Flowcharts about integration](<./repo_to_qda_pipelines.png>)
 
 Above: flowcharts showing some ideas about different pipelines from game project repo to final qualitative analysis.
 
