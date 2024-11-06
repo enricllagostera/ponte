@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.1.6](https://github.com/enricllagostera/repo-to-qda/compare/v0.1.5...v0.1.6) (2024-11-06)
+
+
+### Bug Fixes
+
+* Handles code duplication and merges code annotations in config files when loading ([bb6eb6e](https://github.com/enricllagostera/repo-to-qda/commit/bb6eb6e11c8b4bda3052de7c49aa4b0408f0a797))
+* QDPX export bug fixing ([85c5745](https://github.com/enricllagostera/repo-to-qda/commit/85c57451bf9557fbe8da1f9622231d4d4738816b))
+* Remove placeholder play button ([becba0b](https://github.com/enricllagostera/repo-to-qda/commit/becba0b4b5904d36631519991ba703e123ab47b4))
+
 ## [0.1.5](https://github.com/enricllagostera/repo-to-qda/compare/v0.1.4...v0.1.5) (2024-06-26)
 
 
