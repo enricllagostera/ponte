@@ -1,5 +1,15 @@
 # Process journal
 
+## 2024-11-20 Devlog added on information design
+
+The rest of the notes are on [23_analysis_information_design](<./devlog/23_analysis_information_design.md>).
+
+## 2024-11-18 Experiments on new features and directions
+
+The group finally has access to NVivo and now we have been using it for more analysis. This means that more use-originating issues and ideas have been emerging. For instance: exporting more fine-grained files with commit messages, instead of a monolithic devlog compilation. This would allow for more granular coding in NVivo.
+
+Another thing that happened was that I have been trying to use the tool with larger repos. I talked to my friend M who wanted to use Ponte with a 64k+ commits repo, and it just crashes. I think this is a reflection of the quick and dirty approach I took to handling the data management in the app. So, I have been looking into using a local database (in SQLite) to manage the data. I am sketching some of the data management ideas visually on a canvas.
+
 ## 2024-09-13 Next steps
 
 I know, the latest posts have been pretty much about figuring out next steps and actually start to take them. There have been quite a lot of transitions lately, from the end of the dissertation to figuring out what I'll be working on next. 
@@ -747,7 +757,7 @@ Also added some initial notes for a [paper idea](paper-ideas) about this tool pr
 
 ### Thinking about tool design, Archivista and QDA integration
 
-![Flowcharts about integration](<./repo_to_qda_pipelines.png>)
+![Flowcharts about integration](<./media/repo_to_qda_pipelines.png>)
 
 Above: flowcharts showing some ideas about different pipelines from game project repo to final qualitative analysis.
 

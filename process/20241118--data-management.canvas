@@ -1,0 +1,41 @@
+{
+	"nodes":[
+		{"id":"3517edc321c18a34","type":"text","text":"# **.ponte file** (a zip under the hood)","x":-430,"y":-420,"width":359,"height":60},
+		{"id":"0afb819f53c7461b","type":"text","text":"Export options","x":-385,"y":565,"width":231,"height":60,"color":"1"},
+		{"id":"b046fb6789eada97","type":"text","text":"Repository URL, user /name, timestamp of  last data import","x":-385,"y":262,"width":230,"height":90,"color":"1"},
+		{"id":"4ca7f7fed929b01a","type":"text","text":"Paths: resources, temp, clones","x":-384,"y":472,"width":230,"height":60,"color":"1"},
+		{"id":"d44fac33411e9133","type":"text","text":"Ponte username and initials","x":-386,"y":-106,"width":230,"height":60,"color":"2"},
+		{"id":"f7e3c6ca1c63917e","type":"text","text":"Ponte version","x":-386,"y":-14,"width":229,"height":60,"color":"2"},
+		{"id":"ff64566f13b5a486","type":"text","text":"Misc options","x":-387,"y":78,"width":230,"height":60,"color":"2"},
+		{"id":"75aef9fb36833790","type":"text","text":"Last project update \nand saving policy","x":-386,"y":170,"width":230,"height":60,"color":"2"},
+		{"id":"dda86a73fa83a59a","type":"text","text":"Repo updates policy","x":-384,"y":384,"width":230,"height":56,"color":"1"},
+		{"id":"ae1371fba67ae969","type":"text","text":"**Notes** \n(i.e. annotations)","x":164,"y":297,"width":156,"height":60,"color":"6"},
+		{"id":"b1eeec8ec769e79f","type":"text","text":"**Sources** to export","x":164,"y":392,"width":130,"height":60,"color":"6"},
+		{"id":"b4f6833ee3da758a","type":"text","text":"**Codes**\n(i.e. qualitative codes)","x":164,"y":488,"width":195,"height":60,"color":"6"},
+		{"id":"acf2d5813a7c8848","type":"text","text":"Repository processed data","x":164,"y":-103,"width":178,"height":60,"color":"3"},
+		{"id":"044493045c85dce2","type":"text","text":"Generated metadata about repository (used for survival, file age, heatmaps)","x":164,"y":-8,"width":316,"height":90,"color":"3"},
+		{"id":"ece47495488ceced","type":"text","text":"**Build** contents (as zipped BLOBs)","x":164,"y":118,"width":259,"height":51,"color":"3"},
+		{"id":"d1123da4894af2ff","type":"text","text":"**File contents** for sources  (as BLOBs)","x":164,"y":200,"width":259,"height":62,"color":"3"},
+		{"id":"169404a8266270f2","type":"text","text":"## Database for project (./db.sqlite)","x":-159,"y":-240,"width":323,"height":51,"color":"4"},
+		{"id":"5af8bf38b9e7905c","type":"text","text":"## Project settings (./project.json)","x":-705,"y":-240,"width":318,"height":51,"color":"1"}
+	],
+	"edges":[
+		{"id":"37803ae3f6255d36","fromNode":"169404a8266270f2","fromSide":"bottom","toNode":"acf2d5813a7c8848","toSide":"left"},
+		{"id":"a55845b974848e9e","fromNode":"169404a8266270f2","fromSide":"bottom","toNode":"ae1371fba67ae969","toSide":"left"},
+		{"id":"622320f240c7126a","fromNode":"169404a8266270f2","fromSide":"bottom","toNode":"b1eeec8ec769e79f","toSide":"left"},
+		{"id":"cf90313518ab330e","fromNode":"5af8bf38b9e7905c","fromSide":"bottom","toNode":"f7e3c6ca1c63917e","toSide":"left"},
+		{"id":"9fb74f089b47c3e6","fromNode":"5af8bf38b9e7905c","fromSide":"bottom","toNode":"0afb819f53c7461b","toSide":"left"},
+		{"id":"65940df776ea8b9c","fromNode":"5af8bf38b9e7905c","fromSide":"bottom","toNode":"4ca7f7fed929b01a","toSide":"left"},
+		{"id":"d2379a8dde0494cc","fromNode":"5af8bf38b9e7905c","fromSide":"bottom","toNode":"75aef9fb36833790","toSide":"left"},
+		{"id":"f19d3c7849e1263d","fromNode":"5af8bf38b9e7905c","fromSide":"bottom","toNode":"dda86a73fa83a59a","toSide":"left"},
+		{"id":"6b9af991075e3e1b","fromNode":"169404a8266270f2","fromSide":"bottom","toNode":"044493045c85dce2","toSide":"left"},
+		{"id":"4a0d4dd3ae02907d","fromNode":"3517edc321c18a34","fromSide":"bottom","toNode":"5af8bf38b9e7905c","toSide":"top"},
+		{"id":"1773e6e115700bb4","fromNode":"3517edc321c18a34","fromSide":"bottom","toNode":"169404a8266270f2","toSide":"top"},
+		{"id":"d55dcb719110d049","fromNode":"5af8bf38b9e7905c","fromSide":"bottom","toNode":"d44fac33411e9133","toSide":"left"},
+		{"id":"67733fd8843a50d4","fromNode":"5af8bf38b9e7905c","fromSide":"bottom","toNode":"ff64566f13b5a486","toSide":"left"},
+		{"id":"fb29cf02d5f68940","fromNode":"169404a8266270f2","fromSide":"bottom","toNode":"b4f6833ee3da758a","toSide":"left"},
+		{"id":"598c48e61a034e81","fromNode":"5af8bf38b9e7905c","fromSide":"bottom","toNode":"b046fb6789eada97","toSide":"left"},
+		{"id":"143f478f3a83e674","fromNode":"169404a8266270f2","fromSide":"bottom","toNode":"ece47495488ceced","toSide":"left"},
+		{"id":"d46cb4ce6369328b","fromNode":"169404a8266270f2","fromSide":"bottom","toNode":"d1123da4894af2ff","toSide":"left"}
+	]
+}
