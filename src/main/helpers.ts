@@ -64,6 +64,9 @@ export default {
   },
   getNowDateTime: (): string => {
     return DateTime.utc().toFormat("yyyy-LL-dd'T'hh:mm:ss'Z'")
+  },
+  getISODate(timestamp: string | number): string {
+    return DateTime.fromMillis(timestamp).toISO()
   }
 }
 

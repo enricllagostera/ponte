@@ -31,9 +31,18 @@ export async function convertMdToDocx(md, name = '', basePath = '', isFolder = f
       }
     }
   }
+  cheerio('table').attr('style', 'width: 100%; margin-left: 0px; margin-right: 0px; border: 0;')
+  cheerio('td').attr('style', 'border: 0px; border-top: 1px solid black;')
+  cheerio('th').attr('style', 'border: 0px; font-weight: bold;')
+  cheerio('h1').attr('style', 'font-size: 14pt; font-weight: bold;')
+  cheerio('h2').attr('style', 'font-size: 12pt; font-weight: bold;')
+  cheerio('h3').attr('style', 'font-size: 11pt; font-weight: 500;')
   const processedHtml = cheerio.xml()
   let sanitizedHtml = sanitizeHtml(processedHtml, {
     allowedTags: defaults.allowedTags.concat(['img']),
+    allowedAttributes: {
+      '*': ['style']
+    },
     allowedSchemesByTag: {
       img: ['file', 'https', 'http', 'data']
     }
@@ -45,7 +54,7 @@ export async function convertMdToDocx(md, name = '', basePath = '', isFolder = f
       footer: true,
       pageNumber: false,
       font: 'Roboto',
-      fontSize: '12pt',
+      fontSize: '10pt',
       title: name,
       decodeUnicode: true
     })

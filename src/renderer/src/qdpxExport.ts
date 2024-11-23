@@ -14,6 +14,7 @@ export async function exportQDPX(): Promise<void> {
   const qdpxExportOptions = {
     title: `Save QDPX file...`
   }
+
   for (const source of get(allSources)) {
     if (!source.content || source.content == '') {
       await loadSourceContent(source)

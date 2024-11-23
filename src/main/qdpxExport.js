@@ -3,6 +3,8 @@ import * as fs from 'fs-extra'
 import * as path from 'path'
 import { create as xmlCreate } from 'xmlbuilder2'
 import AdmZip from 'adm-zip'
+import { DateTime } from 'luxon'
+
 import { convertMdToDocx, convertCodeToDocx } from './docxBuilder'
 
 class QdpxExporter {
@@ -101,12 +103,11 @@ class QdpxExporter {
     return cd
   }
 
-  createNote(noteName, noteGuid = utils.guid(), description, plainText) {
+  createNote(noteName, noteGuid = utils.guid(), _description, plainText) {
     return {
       '@name': noteName,
       '@guid': noteGuid,
       '@creatingUser': this.userGuid,
-      // Description: description ?? 'Some description for note.',
       PlainTextContent: plainText ?? 'Some annotation content'
     }
   }
@@ -121,6 +122,22 @@ class QdpxExporter {
       '@endPosition': end
     }
     return pts
+  }
+
+  findEncodedLinePositions(keyword, content) {
+    let start = 0
+    let head = 0
+    let lines = content.split('\n')
+    for (let i = 0; i < lines.length; i++) {
+      const l = lines[i]
+      start = head
+      head += l.length
+      let match = l.indexOf(keyword)
+      if (match > -1) {
+        return [start, head]
+      }
+    }
+    return []
   }
 
   async createTextSourceFromTextData(
@@ -188,7 +205,82 @@ class QdpxExporter {
     fs.emptyDirSync(this.qdeFolderPath)
     fs.emptyDirSync(qdeSourcesFolder)
     let allTs = []
-    for (const source of exportData.sources) {
+
+    const exportSources = [...exportData.sources]
+
+    let commitSummaries = []
+    for (let i = exportData.commits.length - 1; i >= 0; i--) {
+      const c = exportData.commits[i]
+      const summary = {
+        id: utils.guid(),
+        abs: '',
+        type: 'compilationSource',
+        commitHash: exportData.commits[i].hash,
+        content: '',
+        originalExt: 'md',
+        '@creationDateTime': utils.formatDate(DateTime.fromMillis(c.committer.timestamp))
+      }
+
+      summary.name = `${String(exportData.commits.length - i).padStart(
+        exportData.commits.length.toString().length,
+        '0'
+      )} #${c.hashAbbrev} ${c.subject}`
+      const simplifiedC = { ...c }
+      delete simplifiedC.fileTree
+      delete simplifiedC.fileList
+      delete simplifiedC.fileChangeStats
+      //delete simplifiedC.parents // avoids duplicate encodings, but it is a hack
+      summary.content = `# ${summary.name}
+
+
+| Key | Value |
+| --- | --- |
+| Author | ${c.author_name} <${c.author_email}> |
+| Authoring date | ${utils.getISODate(c.author.timestamp)} |
+| Committer | ${c.committer_name} <${c.committer_email}> |
+| Commit date | ${utils.getISODate(c.committer.timestamp)} |
+| Branches | ${c.branches.toString().replaceAll(',', ', ')} |
+
+## Message body
+
+${c.body == '' ? '*Commit message body is empty.*' : c.body}
+
+### Trailers
+
+${c.trailers.length == 0 ? '*No trailers in commit.*' : c.trailers.toString()}
+
+## Changes
+
+${
+  c.fileChangeStats.length > 0
+    ? `| Path | Change |
+| --- | --- |${c.fileChangeStats
+        .map((fc) => `\n| ${fc.filepath} | ${fc.operation} |`)
+        .toString()
+        .replaceAll(',', '')}`
+    : `*No file changes.*`
+}
+
+## All files
+
+| Path |
+|--- |
+| ${c.fileList.toString().replaceAll(',', ' |\n| ')} |
+
+---
+
+## Raw metadata
+
+\`\`\`json
+${JSON.stringify(simplifiedC, null, 2)}
+\`\`\`
+`
+      commitSummaries.push(summary)
+    }
+
+    exportSources.push(...commitSummaries)
+
+    for (const source of exportSources) {
       let ext = source.originalExt ? source.originalExt : source.name.split('.')[source.name.split('.').length - 1]
       const new_ts = await this.createTextSourceFromTextData(
         qdeSourcesFolder,
@@ -196,7 +288,7 @@ class QdpxExporter {
         ext,
         source.content,
         source.abs,
-        undefined,
+        source['@creationDateTime'] ?? undefined,
         source.parent == 'compilationSource' ? true : false
       )
 
@@ -219,13 +311,14 @@ class QdpxExporter {
       let matchCount = 0
       for (const hash of appliedCode.commitHashes) {
         allTs.forEach((ts, i) => {
-          const s = exportData.sources[i].content.indexOf(hash.substring(0, 7))
+          const s = exportSources[i].content.indexOf('#' + hash.substring(0, 7))
           if (s >= 0) {
             matchCount++
+            const [start, end] = this.findEncodedLinePositions('#' + hash.substring(0, 7), exportSources[i].content)
             const pts = this.createPlainTextSelection(
               `Match ${matchCount} of ${appliedCode.code.value} @ #${hash.substring(0, 7)}`,
-              s,
-              s + hash.substring(0, 7).length
+              start,
+              end
             )
             pts.Coding = this.createCoding(new_c['@guid'])
             ts.PlainTextSelection.push(pts)

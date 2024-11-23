@@ -12,7 +12,7 @@ import DataInitializer from './dataInitializer'
 import { clearCache } from './dataInitializer'
 import { formatCodeAsHTML } from './docxBuilder'
 
-import type { Commit, Devlog } from '../types'
+import type { Commit, Devlog, HASH } from '../types'
 import { parseTrailers } from './gitManager'
 import { exportJsonCanvas } from './jsonCanvas'
 
@@ -234,7 +234,7 @@ async function getDevlogForCommit(_event: IpcMainInvokeEvent, commitHash: string
     name: `Devlog for #${commitData.hashAbbrev} on ${commitISODate}`,
     originalExt: 'md',
     content: `
-      #${commitData.hashAbbrev} : ${commitData.subject}\n\n**Commit date**\n\n${DateTime.fromMillis(
+      #${commitData.hashAbbrev} ${commitData.subject}\n\n**Commit date**\n\n${DateTime.fromMillis(
         commitData.author.timestamp
       ).toISO()}\n\n**Commit message**\n\n${commitData.body}\n\n${devlogsContent}`.trim()
   }
@@ -266,5 +266,3 @@ async function getDevlogCompilation(_event: IpcMainInvokeEvent, devlogCompilatio
 
   return devlog
 }
-// In this file you can include the rest of your app"s specific main process
-// code. You can also put them in separate files and require them here.
