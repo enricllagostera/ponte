@@ -1,42 +1,19 @@
-import { contextBridge, ipcRenderer } from 'electron'
+import { contextBridge, ipcRenderer } from 'electron';
 
 // Custom APIs for renderer
-const api = {}
-const files = {}
+const api = {
+  validateRepo: (userRepoInfo) => ipcRenderer.invoke('validateRepo', userRepoInfo)
+};
 
 // Use `contextBridge` APIs to expose Electron APIs to
 // renderer only if context isolation is enabled, otherwise
 // just add to the DOM global.
 if (process.contextIsolated) {
   try {
-    //contextBridge.exposeInMainWorld('electron', electronAPI)
-    contextBridge.exposeInMainWorld('api', api)
-    contextBridge.exposeInMainWorld('loader', {
-      checkRepoInfo: (repoInfo) => ipcRenderer.invoke('checkRepoInfo', repoInfo),
-      loadRepoData: (repoInfo) => ipcRenderer.invoke('loadRepoData', repoInfo),
-      getDevlogForCommit: (hash, devlogConfig) => ipcRenderer.invoke('getDevlogForCommit', hash, devlogConfig),
-      getDevlogCompilation: (devlogCompilationConfig) =>
-        ipcRenderer.invoke('getDevlogCompilation', devlogCompilationConfig),
-      saveDialog: (saveOptions) => ipcRenderer.invoke('saveDialog', saveOptions),
-      loadDialog: (loadOptions) => ipcRenderer.invoke('loadDialog', loadOptions),
-      exportQDPX: (exportData, exportOptions) => ipcRenderer.invoke('exportQDPX', exportData, exportOptions),
-      onDownloadInProgress: (callback) => ipcRenderer.on('commitDownloadInProgress', callback)
-    })
-    contextBridge.exposeInMainWorld('files', {
-      forceClearCache: () => ipcRenderer.invoke('forceClearCache'),
-      readFile: (filePath) => ipcRenderer.invoke('readFile', filePath),
-      exportJsonCanvas: (commitsData, userRepoInfo) =>
-        ipcRenderer.invoke('exportJsonCanvas', commitsData, userRepoInfo),
-      runGlobOnCommit: (pattern, commitHash) => ipcRenderer.invoke('runGlobOnCommit', pattern, commitHash),
-      readFileAtCommit: (filePath, commitHash) => ipcRenderer.invoke('readFileAtCommit', filePath, commitHash),
-      convertCodeToHTML: (content) => ipcRenderer.invoke('convertCodeToHTML', content),
-      showInExplorer: (filePath) => ipcRenderer.invoke('showInExplorer', filePath)
-    })
+    contextBridge.exposeInMainWorld('api', api);
   } catch (error) {
-    console.error(error)
+    console.error(error);
   }
 } else {
-  // window.electron = electronAPI
-  window.api = api
-  window.files = files
+  window.api = api;
 }

@@ -1,8 +1,10 @@
-.vscode/
-.obsidian/
 node_modules
 dist
 out
+.DS_Store
+*.log*
+.vscode/
+.obsidian/
 process/ref_materials/samples/nvivo-export.qdpx
 process/ref_materials/samples/**/
 *.log*

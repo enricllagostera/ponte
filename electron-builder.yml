@@ -1,5 +1,5 @@
 appId: com.electron.app
-productName: Ponte
+productName: electron-svelte-shadcn-sequelize-js
 directories:
   buildResources: build
 files:
@@ -11,7 +11,7 @@ files:
 asarUnpack:
   - resources/**
 win:
-  executableName: Ponte
+  executableName: electron-svelte-shadcn-sequelize-js
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}

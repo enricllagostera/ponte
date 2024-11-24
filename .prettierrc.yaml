@@ -1,8 +1,8 @@
 singleQuote: true
-semi: false
+semi: true
 printWidth: 120
+endOfLine: lf
 trailingComma: none
-bracketSameLine: true
 plugins:
   - prettier-plugin-svelte
   - prettier-plugin-tailwindcss

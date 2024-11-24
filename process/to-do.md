@@ -1,7 +1,5 @@
 ---
-
 kanban-plugin: basic
-
 ---
 
 ## Wishlist
@@ -24,7 +22,6 @@ kanban-plugin: basic
 - [ ] Embed images as base64 in devlogs or link to them on GitHub
 - [ ] Encode files from text content (glob pattern, aka auto-code)
 
-
 ## Backlog
 
 - [ ] Add application version number in save file
@@ -36,22 +33,17 @@ kanban-plugin: basic
 - [ ] Start new project option on start
 - [ ] Show confirmation dialog on deleting encoders with annotations
 
-
 ## High priority
-
-
 
 ## In progress
 
 - [ ] Export codebook as table
 
-
 ## Done
 
 **Complete**
 
-
-***
+---
 
 ## Archive
 
@@ -111,7 +103,9 @@ kanban-plugin: basic
 - [x] 2023-10-06T13:07:32-04:00 -- Prepare MAC build
 
 %% kanban:settings
+
 ```
 {"kanban-plugin":"basic"}
 ```
+
 %%
